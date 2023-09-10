@@ -1,16 +1,25 @@
-import { SubscribeMessage, WebSocketGateway, WsResponse } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
+import { OnModuleInit } from '@nestjs/common';
+import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { Server } from 'socket.io';
 
 @WebSocketGateway()
-export class GameGateway {
-  @SubscribeMessage('client.ping')
-  onPing(client: Socket): WsResponse<{ message: string }>
-  {
-    return {
-      event: 'server.pong',
-      data: {
-        message: 'pong'
-      }
-    }
+export class GameGateway implements OnModuleInit {
+
+  @WebSocketServer()
+  server: Server
+
+  onModuleInit() {
+    this.server.on('connection', (socket) => {
+      console.log(`Connected: ${socket.id}`);
+    })
+  }
+
+  @SubscribeMessage('newMessage')
+  onNewMessage(@MessageBody() body: any) {
+    console.log(body);
+    this.server.emit('onMessage', {
+      msg:'New Message',
+      content: body,
+    });
   }
 }
