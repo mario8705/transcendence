@@ -1,4 +1,9 @@
 :root {
+    --color-yellow: rgb(251, 218, 86);
+    --color-purple: rgb(170, 156, 232);
+    --color-blue: rgb(142, 212, 215);
+    --color-light-pink: rgb(248, 163, 139);
+
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
