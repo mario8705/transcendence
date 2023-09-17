@@ -4,7 +4,7 @@ html {
 
 body {
   margin: 0;
-  display: flex;
+  /* display: flex; */
   place-items: center;
   background: linear-gradient(to bottom, #BF9CE8 10%, #FFEA95 100%);
   font-family: "Short Stack";
