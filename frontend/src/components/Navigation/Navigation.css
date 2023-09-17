@@ -1,0 +1,12 @@
+/*
+    minimum: 16px (small screens)
+    5% of the viewport width (middle)
+    maximum: 28px (large screens)
+*/
+.logo {
+    color: white; 
+    padding: 5px 10px; 
+    margin: 5px 10px;
+    font-size: calc(18px + 0.390625vw);
+    cursor: pointer;
+}
