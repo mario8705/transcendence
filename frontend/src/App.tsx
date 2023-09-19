@@ -1,35 +1,52 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+//import { useState } from 'react'
+import { Component } from "react";
+import './App.css';
+import Navigation from './components/Navigation/Navigation';
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+interface InitialState {
+  route: string;
+  isSignedIn: boolean;
 }
 
-export default App
+interface Props {}
+
+const initialState: InitialState = {
+  route: 'game', // Change when signin is done
+  isSignedIn: true,
+};
+
+class App extends Component<Props, InitialState> {
+  constructor(props: Props) {
+    super(props);
+    this.state = initialState;
+  }
+
+  onRouteChange = (route: string): void => {
+    if (route === 'signout') {
+      this.setState(initialState);
+    } else if (route === 'game' || route === 'profile' || route === 'chat' || route === 'pong') {
+      this.setState({isSignedIn: true});
+    }
+    this.setState({route: route});
+  }
+
+  render() {
+    const { isSignedIn, route }: {isSignedIn: boolean; route: string } = this.state;
+    return (
+        <div className="App">
+          {
+            (route === 'game' || route === 'chat' || route === 'profile' || route === 'pong') 
+            ?
+              <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange}/>
+            : (
+              route === 'signin' 
+              ? '' /* <Signin onRouteChange={this.onRouteChange}/> */
+              : '' /* <Register={this.onRouteChange)/> */
+            )
+          }
+        </div>
+    );
+  }
+}
+
+export default App;
