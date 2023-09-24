@@ -1,0 +1,70 @@
+:root{
+    --color-yellow: rgb(251, 218, 86);
+    --color-purple: rgb(170, 156, 232);
+    --color-light-purple: rgb(191, 183, 229);
+    --color-blue: rgb(142, 212, 215);
+    --color-light-pink: rgb(248, 163, 139);
+}
+
+.box-parent {
+    display: flex;
+    justify-content: center;
+}
+
+.box-popup {
+    position: relative;
+    width: 400px;
+    height: 440px;
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 30px rgb(0, 0, 0, .5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 40px;
+}
+
+
+
+
+
+
+
+.input-box {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    border-bottom: 2px solid white;
+    margin: 30px 0;
+}
+
+.input-box label{
+    position: absolute;
+    top: 0;
+    left: 5px;
+    /* transform: translateY(-50%); */
+    font-size: 1em;
+    color: white;
+    font-weight: 500;
+    pointer-events: none;
+    transition: top 0.3s ease;
+}
+
+/* .input-box input:focus~label,
+ .input-box input:not(:placeholder-shown)~label {top: -5px;}  */
+
+/* .input-box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1em;
+    color: white;
+            text-shadow: 0 0 4px cadetblue;
+    font-weight: 600;
+    padding: 0 35px 0 5px;
+} */
