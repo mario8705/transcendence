@@ -1,7 +1,10 @@
 import React from 'react';
 import './LoginForm.css';
+import MainButton from '../MainButton/MainButton'
+// import MainButton from '..MainButton/MainButton'
 import { IoMailOutline } from "react-icons/io5";
 import { IoLockClosedOutline } from "react-icons/io5";
+import { Button } from '@mui/material';
 
 
 const LoginForm: React.FC = () => {
@@ -40,14 +43,14 @@ const LoginForm: React.FC = () => {
 							<input type="checkbox"/>Remember me
 							<a href="#">Forgot Password?</a>
 						</div>
-						<button className='login' >Login</button>
+						<MainButton buttonName='login'/>
+						{/* <button className='btn' >Login</button> */}
 						<div className="input-box">
 							<p>or</p>
-							<button type="button" className="btn">42 Account</button>
-							{/* <!-- <span class="icon"><ion-icon name="mail-outline"></ion-icon></span>
-							<input type="email" required>
-							<label>Email</label> --> */}
+						<MainButton buttonName='42 Account'/>
+							{/* <button type="button" className="btn">42 Account</button> */}
 						</div>
+						<p>Don't have an account ? <a href="#" className="register-link">Register</a></p>
 					</form>
 				</div>
 			</div>
