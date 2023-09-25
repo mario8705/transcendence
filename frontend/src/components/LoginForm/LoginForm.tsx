@@ -43,7 +43,7 @@ const LoginForm: React.FC = () => {
 							<input type="checkbox"/>Remember me
 							<a href="#">Forgot Password?</a>
 						</div>
-						<MainButton buttonName='login'/>
+						<MainButton buttonName='Login'/>
 						{/* <button className='btn' >Login</button> */}
 						<div className="input-box">
 							<p>or</p>
