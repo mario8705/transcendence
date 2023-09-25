@@ -13,10 +13,7 @@ h2 {
 p {
     font-size: 1em;
     color: white;
-    /* font-weight: 500; */
     margin-top: 60px;
-    /* display: flex;
-    justify-content: center; */
 }
 
 p a {
@@ -30,8 +27,6 @@ p a:hover {
 .box-parent {
     display: flex;
     justify-content: center;
-    /* top: 25%; */
-    /* height: 25vh; */
 }
 
 .box-popup {
@@ -48,16 +43,9 @@ p a:hover {
     align-items: center;
     overflow: hidden;
     padding: 40px;
-    /* top: 100px; */
     top: 15vh;
 
 }
-
-
-
-
-
-
 
 .input-box {
     position: relative;
@@ -65,16 +53,12 @@ p a:hover {
     height: 50px;
     border-bottom: 2px solid white;
     margin: 30px 0;
-    /* display: block; */
-    /* justify-content: space-between; */
-    /* align-items: center; */
 }
 
 .input-box label{
     position: absolute;
     top: 0;
     left: 5px;
-    /* transform: translateY(-50%); */
     font-size: 1em;
     color: white;
     font-weight: 500;
@@ -82,44 +66,18 @@ p a:hover {
     transition: top 0.3s ease;
 }
 
-/* .input-box input:focus~label,
- .input-box input:not(:placeholder-shown)~label {top: -5px;}  */
-
-/* .input-box input {
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    border: none;
-    outline: none;
-    font-size: 1em;
-    color: white;
-            text-shadow: 0 0 4px cadetblue;
-    font-weight: 600;
-    padding: 0 35px 0 5px;
-} */
-
 .input-box input {
     width: 100%;
     height: 130%;
-    /* bottom: 20px; */
-    /* display: flex; */
-    /* justify-content: space-between; */
     background: transparent;
     border: none;
-    /* border: 2px solid white; */
-    /* border-radius: 6px; */
     outline: none;
     font-size: 1em;
     color: white;
             text-shadow: 0 0 4px var(--color-yellow);
             /* text-shadow: 0 0 4px var(--color-light-pink); */
-    /* font-weight: 600; */
     padding: 0 35px 0 5px;
 }
-
-
-
-
 
 .input-box .icon {
     position: absolute;
@@ -143,7 +101,6 @@ p a:hover {
 .input-box p {
     font-size: 1em;
     color: white;
-    /* font-weight: 500; */
     margin: -15px 0 15px;
     display: flex;
     justify-content: center;
@@ -155,13 +112,7 @@ p a:hover {
     font-weight: 500;
     margin: -15px 0 15px;
     display: flex;
-    /* justify-content: space-between; */
 }
-
-/* .remember-forgot label input {
-    accent-color: white;
-    margin-right: 30px;
-} */
 
 .remember-forgot a {
     color: white;
@@ -174,21 +125,6 @@ p a:hover {
     text-shadow: 0 0 6px var(--color-yellow);
 }
 
-.btn {
+/* .btn {
     width: 100%;
-    height:  45px;
-    background: var(--color-light-purple);
-    /* background-color: transparent; */
-    border: none;
-    outline: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1em;
-    color: white;
-    font-weight: 500;
-}
-
-.btn:hover {
-    background-color: var(--color-purple);
-    color: white;
-}
+} */
