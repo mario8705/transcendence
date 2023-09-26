@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Button } from "@mui/material";
+import { Avatar, Button, TextField } from "@mui/material";
 import default_avatar from "../../assets/images/default_avatar.png";
 import './Profile.css';
 
@@ -13,13 +13,54 @@ const Profile: React.FC<Props> = ({ onRouteChange }) => {
             <Avatar 
                 alt="Avatar" 
                 src={default_avatar}
-                style={{ border: '1px solid green'}}
+                sx={{ 
+                    width: '6vh', 
+                    height: '6vh' 
+                }}
             />
-            <Button 
-                color="secondary"
+            <Button
+                variant="text"
+                sx={{ 
+                    fontSize: '2vh', 
+                    marginTop: '1.5vh',
+                    fontWeight: '900',
+                    color: "#F8A38B",
+                }}
             >
                 CHANGE AVATAR
             </Button>
+            <TextField 
+                id="outlined-basic" 
+                label="Change pseudo"
+                InputLabelProps={{
+                    style: { 
+                        color: '#7638C7', 
+                        fontSize: '1em' 
+                    }
+                }}
+                variant="outlined"
+                placeholder="TODO: get current pseudo"
+                sx={{
+                    color: '#9747FF',
+                    marginTop: '3vh',
+                    width: '35vw',
+                    minWidth: '200px',
+                    maxWidth: '300px',
+                    '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderRadius: '20px',
+                          border: '3px solid #9747FF',
+                        //   backgroundColor: "#F8A38B",
+                        },
+                        '&:hover fieldset': {
+                            border: '4px solid #7638C7'
+                        },
+                        '&.Mui-focused fieldset': {
+                            border: '4px solid #7638C7'
+                        },
+                    },
+                }}
+            />
         </div>
     )
 }
