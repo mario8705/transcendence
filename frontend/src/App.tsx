@@ -1,6 +1,6 @@
 //import { useState } from 'react'
-import { Component } from "react";
 import './App.css';
+import { useState } from "react";
 import Navigation from './components/Navigation/Navigation';
 
 interface InitialState {
@@ -15,38 +15,33 @@ const initialState: InitialState = {
   isSignedIn: true,
 };
 
-class App extends Component<Props, InitialState> {
-  constructor(props: Props) {
-    super(props);
-    this.state = initialState;
-  }
+const App: React.FC = () => {
 
-  onRouteChange = (route: string): void => {
+  const [initState, setInitialState] = useState(initialState);
+
+  const onRouteChange = (route: string): void => {
     if (route === 'signout') {
-      this.setState(initialState);
+      setInitialState(initialState);
     } else if (route === 'game' || route === 'profile' || route === 'chat' || route === 'pong') {
-      this.setState({isSignedIn: true});
+      setInitialState({...initState, isSignedIn: true});
     }
-    this.setState({route: route});
+    setInitialState({...initState, route: route});
   }
 
-  render() {
-    const { isSignedIn, route }: {isSignedIn: boolean; route: string } = this.state;
-    return (
-        <div className="App">
-          {
-            (route === 'game' || route === 'chat' || route === 'profile' || route === 'pong') 
-            ?
-              <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange}/>
-            : (
-              route === 'signin' 
-              ? '' /* <Signin onRouteChange={this.onRouteChange}/> */
-              : '' /* <Register={this.onRouteChange)/> */
-            )
-          }
-        </div>
-    );
-  }
+  return (
+    <div className="App">
+      {
+        (initState.route === 'game' || initState.route === 'chat' || initState.route === 'profile' || initState.route === 'pong') 
+        ?
+          <Navigation isSignedIn={initState.isSignedIn} onRouteChange={onRouteChange}/>
+        : (
+          initState.route === 'signin' 
+          ? '' /* <Signin onRouteChange={this.onRouteChange}/> */
+          : '' /* <Register={this.onRouteChange)/> */
+        )
+      }
+    </div>
+  );
 }
 
 export default App;
