@@ -8,7 +8,7 @@ interface Props {
 const MainButton: React.FC<Props> = ({buttonName}) => {
     return (
         <div className=''>
-            <button className='login' >{buttonName}</button>
+            <button className='mainBtn' >{buttonName}</button>
         </div>
     );
 };
