@@ -1,7 +1,7 @@
 //import { useState } from 'react'
 import { Component } from "react";
 import './App.css';
-import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Profile from "./components/Profile/Profile";
 
 interface InitialState {
@@ -40,11 +40,11 @@ class App extends Component<Props, InitialState> {
           (route === 'game' || route === 'chat' || route === 'profile' || route === 'pong') 
           ? ( 
             <div className="App">
-              <Router>
-                <Routes>
+              <Routes>
+                {/* <Route path='/' element={<Navigation />} > */}
                   <Route path='profile' element={<Profile onRouteChange={this.onRouteChange} />} />
-                </Routes>
-              </Router>
+                {/* </Route> */}
+              </Routes>
             </div>
           )
           : (
