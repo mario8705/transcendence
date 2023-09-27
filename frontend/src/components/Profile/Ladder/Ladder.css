@@ -1,3 +1,12 @@
 .ladder {
     margin-top: 50px;
 }
+
+.title {
+    font-family: 'Permanent Marker';
+    color: #9747FF;
+    font-weight: 900;
+    letter-spacing: 10px;
+    text-align: left;
+    text-shadow: 5px 4px 10px;
+}
