@@ -1,6 +1,9 @@
 import React from "react";
 import { Avatar, Button, TextField } from "@mui/material";
 import default_avatar from "../../assets/images/default_avatar.png";
+
+import Ladder from "./Ladder/Ladder";
+
 import './Profile.css';
 
 interface Props {
@@ -61,6 +64,7 @@ const Profile: React.FC<Props> = ({ onRouteChange }) => {
                     },
                 }}
             />
+            <Ladder />
         </div>
     )
 }
