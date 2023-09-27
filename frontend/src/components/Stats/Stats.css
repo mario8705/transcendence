@@ -1,0 +1,88 @@
+:root{
+    --color-yellow: rgb(251, 218, 86);
+    --color-purple: rgb(170, 156, 232);
+    --color-light-purple: rgb(191, 183, 229);
+    --color-blue: rgb(142, 212, 215);
+    --color-light-pink: rgb(248, 163, 139);
+}
+
+.icon {
+    position: absolute;
+    right: 8px;
+    font-size: 150%;
+    color: white;
+    top: 8%;
+}
+
+.parent {
+    display: flex;
+    justify-content: center;
+}
+
+.main {
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 30px rgb(0, 0, 0, .5);
+    display: flex;
+    overflow: hidden;
+    width: 40%;
+}
+
+.statt {
+    color: white;
+    position: relative;
+    width: 100%;
+    border-right: 2px solid white;
+    padding: 20px;
+}
+
+.statt:last-of-type {
+    border-right: none;
+}
+
+.title {
+    border-bottom: 2px solid white;
+    font-size: larger;
+    text-shadow: 0 0 4px var(--color-purple);
+}
+
+.statt div {
+    position: relative;
+    top: 20%;
+    padding-bottom: 6%;
+    margin-bottom: 10%;
+}
+
+.middle {
+    font-size: 300%;
+    text-shadow: 0 0 4px var(--color-light-pink);
+}
+
+.score {
+    display: flex;
+    justify-content: space-between;
+    text-shadow: 0 0 4px var(--color-yellow);
+}
+
+.score span {
+    text-shadow: 0 0 4px var(--color-blue);
+}
+
+.rank {
+    text-shadow: 0 0 4px var(--color-yellow);
+}
+
+.rank span {
+    text-shadow: 0 0 4px var(--color-blue);
+}
+  
+.win,
+.lose {
+display: inline-block;
+}
+
+.lose span {
+    text-shadow: 0 0 4px var(--color-light-pink);
+}
