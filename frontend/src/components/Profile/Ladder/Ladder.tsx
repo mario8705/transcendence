@@ -60,6 +60,7 @@ const Ladder: React.FC<undefined> = () => {
 
     return (
         <div className="ladder">
+            <h2 className='title'>Ladder</h2>
             <TableContainer 
                 sx={{
                     backgroundColor: '#D9D9D9',
@@ -124,3 +125,6 @@ export default Ladder;
 
 
 // TODO: 
+//  - Title to Table
+//  - Style text
+//  - Status component
