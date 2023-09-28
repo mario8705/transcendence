@@ -31,6 +31,22 @@ const Ladder: React.FC<undefined> = () => {
         mockData(6, 'nul5', 4, 5, 'Add'),
     ];
 
+    interface CellStyle {
+        color: string,
+        fontSize: string,
+        fontWeight: number,
+    }
+
+    const rankNumberStyles = (index: number): CellStyle => {
+        if (index === 0) {
+            return { color: 'silver', fontSize: '1.6em', fontWeight: 700 };
+          } else if (index === 1) {
+            return { color: '#CD7F32', fontSize: '1.4em', fontWeight: 500 };
+          } else {
+            return { color: 'black', fontSize: '1.1em', fontWeight: 300 };
+          }
+    };
+
     const tableBodyRef = useRef<HTMLTableSectionElement>(null);
     const firstRowRef = useRef<HTMLTableRowElement>(null);
 
@@ -71,7 +87,6 @@ const Ladder: React.FC<undefined> = () => {
                 }}
             >
                 <Table sx={{ minWidth: 300, maxWidth: 600 }} aria-label="simple table">
-                {/* <Scroll> */}
                     <TableHead>
                         <TableRow
                             sx={{
@@ -81,11 +96,48 @@ const Ladder: React.FC<undefined> = () => {
                             }}
                             ref={firstRowRef}
                         >
-                            <TableCell sx={{ borderBottom: '2px solid #F8A38B' }}>{rows[0].rank}</TableCell>
-                            <TableCell align="right" sx={{ borderBottom: '2px solid #F8A38B' }}>{rows[0].pseudo}</TableCell>
-                            <TableCell align="right" sx={{ borderBottom: '2px solid #F8A38B' }}>{rows[0].wins} wins</TableCell>
-                            <TableCell align="right" sx={{ borderBottom: '2px solid #F8A38B' }}>{rows[0].losses} losses</TableCell>
-                            <TableCell align="right" sx={{ borderBottom: '2px solid #F8A38B' }}>{rows[0].status}</TableCell>
+                            <TableCell
+                                sx={{ 
+                                    borderBottom: '2px solid #F8A38B', 
+                                    color: 'goldenrod',
+                                    fontSize: '1.8em',
+                                    fontWeight: '900',
+                                }}
+                            >
+                                {rows[0].rank}
+                            </TableCell>
+                            <TableCell 
+                                align="right" 
+                                sx={{ 
+                                    borderBottom: '2px solid #F8A38B' 
+                                }}
+                            >
+                                {rows[0].pseudo}
+                            </TableCell>
+                            <TableCell 
+                                align="right" 
+                                sx={{ 
+                                    borderBottom: '2px solid #F8A38B' 
+                                }}
+                            >
+                                {rows[0].wins} wins
+                            </TableCell>
+                            <TableCell 
+                                align="right" 
+                                sx={{ 
+                                    borderBottom: '2px solid #F8A38B' 
+                                }}
+                            >
+                                {rows[0].losses} losses
+                            </TableCell>
+                            <TableCell 
+                                align="right" 
+                                sx={{ 
+                                    borderBottom: '2px solid #F8A38B' 
+                                }}
+                            >
+                                {rows[0].status}
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody 
@@ -96,7 +148,7 @@ const Ladder: React.FC<undefined> = () => {
                         }}
                         ref={tableBodyRef}
                     >
-                            {rows.slice(1).map((row) => (
+                            {rows.slice(1).map((row, index) => (
                                 <TableRow
                                     key={row.pseudo}
                                     sx={{ 
@@ -106,7 +158,16 @@ const Ladder: React.FC<undefined> = () => {
                                         tableLayout: 'fixed',
                                     }}
                                 >
-                                    <TableCell sx={{ borderBottom: '2px solid #F8A38B' }}>{row.rank}</TableCell>
+                                    <TableCell 
+                                        sx={{ 
+                                            borderBottom: '2px solid #F8A38B',
+                                            color: rankNumberStyles(index).color,
+                                            fontSize: rankNumberStyles(index).fontSize,
+                                            fontWeight: rankNumberStyles(index).fontWeight
+                                        }}
+                                    >
+                                        {row.rank}
+                                    </TableCell>
                                     <TableCell align="right" sx={{ borderBottom: '2px solid #F8A38B' }}>{row.pseudo}</TableCell>
                                     <TableCell align="right" sx={{ borderBottom: '2px solid #F8A38B' }}>{row.wins} wins</TableCell>
                                     <TableCell align="right" sx={{ borderBottom: '2px solid #F8A38B' }}>{row.losses} losses</TableCell>
@@ -114,7 +175,6 @@ const Ladder: React.FC<undefined> = () => {
                                 </TableRow>
                             ))}
                     </TableBody>
-                    {/* </Scroll> */}
                 </Table>
             </TableContainer>
         </div>
