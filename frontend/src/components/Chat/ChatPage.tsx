@@ -1,6 +1,6 @@
 // import { useContext, useEffect, useState } from 'react';
 // import SocketContext from '../contexts/Socket/Context';
-import SocketChatComponent from '../SocketChatComponent'
+import SocketChatComponent from './SocketChatComponent'
 
 export const ChatPage = ()  => {
 	// const { SocketState } = useContext(SocketContext);

@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import SocketContext from "../contexts/Socket/Context";
+import SocketContext from "../Socket/Context/Context";
 
 export const ContactForm = () => {
 	
