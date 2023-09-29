@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { User } from 'src/modules/users/model/user.model';
-import { SocketService } from 'src/chatmodules/socket/socket.service';
+import { User } from '../../users/model/user.model';
+import { SocketService } from '../../socket/socket.service';
 import { Room } from '../model/room.model'
 
 @Injectable()

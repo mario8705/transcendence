@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { SocketService } from 'src/chatmodules/socket/socket.service';
+import { SocketService } from '../../socket/socket.service';
 import { User } from '../model/user.model';
 
 @Injectable()

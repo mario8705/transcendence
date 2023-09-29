@@ -1,10 +1,10 @@
 import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket } from '@nestjs/websockets';
-import { CreateMessageDto } from '../modules/messages/dto/create-message.dto';
+// import { CreateMessageDto } from '../modules/messages/dto/create-message.dto';
 import { Socket, Server } from 'socket.io';
-import { MessagesService } from '../modules/messages/services/messages.service'
+// import { MessagesService } from '../modules/messages/services/messages.service'
 import { SocketService } from './socket.service'
-import { UsersService } from '../modules/users/services/users.service';
-import { RoomService } from 'src/chatmodules/rooms/services/rooms.service';
+import { UsersService } from '../users/services/users.service';
+import { RoomService } from '../rooms/services/rooms.service';
 
 @WebSocketGateway({
 	cors: {
@@ -17,7 +17,7 @@ export class SocketGateway {
 	
 	constructor(
 		private readonly socketService: SocketService,
-		private readonly messagesService: MessagesService,
+		// private readonly messagesService: MessagesService,
 		private readonly usersService: UsersService,
 		private readonly roomService: RoomService
 		) {}
