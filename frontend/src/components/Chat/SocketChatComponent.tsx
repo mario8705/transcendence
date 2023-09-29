@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 // import { Socket } from "socket.io-client";
-import SocketContext from "./contexts/Socket/Context";
+import SocketContext from "../Socket/Context/Context";
 import Messages from "./Messages";
 
 

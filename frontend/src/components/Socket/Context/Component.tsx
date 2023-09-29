@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, useEffect, useReducer, useState } from 'react';
 // import { connect } from 'socket.io-client';
 // import { io } from 'socket.io-client';
-import { useSocket } from '../../hooks/useSocket';
+import { useSocket } from '../hooks/useSocket';
 import { defaultSocketContextState, SocketContextProvider, SocketReducer } from './Context';
 
 export interface ISocketContextComponentProps extends PropsWithChildren {}
@@ -12,7 +12,7 @@ const SocketContextComponent: React.FunctionComponent<ISocketContextComponentPro
 	const [SocketState, SocketDispatch] = useReducer(SocketReducer, defaultSocketContextState);
 	const [loading, setLoading] = useState(true);
 
-	const socket = useSocket('ws://localhost:3001', {
+	const socket = useSocket('ws://localhost:3333', {
 		reconnectionAttempts: 5,
 		reconnectionDelay: 5000,
 		autoConnect: false

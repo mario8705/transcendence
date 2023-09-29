@@ -1,4 +1,4 @@
-import { User } from "src/modules/users/model/user.model";
+import { User } from "../../users/model/user.model";
 
 export class Room {
 	name: string;
