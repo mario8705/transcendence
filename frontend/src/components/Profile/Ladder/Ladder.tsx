@@ -8,6 +8,8 @@ import {
     TableRow 
 } from '@mui/material';
 
+import AvatarOthers from '../../AvatarOthers/AvatarOthers';
+
 import './Ladder.css';
 
 const Ladder: React.FC<undefined> = () => {
@@ -23,11 +25,11 @@ const Ladder: React.FC<undefined> = () => {
     }
     
     const rows = [
-        mockData(1, 'ycurbill', 15, 0, ''),
+        mockData(1, 'ycurbill', 15, 0, 'Online'),
         mockData(2, 'nul1', 9, 2, 'Add'),
         mockData(3, 'nul2', 9, 3, 'Playing'),
         mockData(4, 'nul3', 5, 1, 'Online'),
-        mockData(5, 'nul4', 4, 5, 'Add'),
+        mockData(5, 'nul4', 4, 5, 'Offline'),
         mockData(6, 'nul5', 4, 5, 'Add'),
     ];
 
@@ -39,12 +41,14 @@ const Ladder: React.FC<undefined> = () => {
 
     const rankNumberStyles = (index: number): CellStyle => {
         if (index === 0) {
+            return { color: 'goldenrod', fontSize: '1.8em', fontWeight: 900 };
+        } else if (index === 1) {
             return { color: 'silver', fontSize: '1.6em', fontWeight: 700 };
-          } else if (index === 1) {
+        } else if (index === 2) {
             return { color: '#CD7F32', fontSize: '1.4em', fontWeight: 500 };
-          } else {
+        } else {
             return { color: 'black', fontSize: '1.1em', fontWeight: 300 };
-          }
+        }
     };
 
     const tableBodyRef = useRef<HTMLTableSectionElement>(null);
@@ -56,13 +60,12 @@ const Ladder: React.FC<undefined> = () => {
         const handleScroll = () => {
             console.log(currentDiv!.scrollTop)
             if (currentDiv!.scrollTop > 0) {
-                currentFirstRow!.style.borderBottom = "5px solid #F8A38B";
+                currentFirstRow!.style.borderBottom = "5px solid #9747FF";
             } else {
-                currentFirstRow!.style.borderBottom = "2px solid #F8A38B";
+                currentFirstRow!.style.borderBottom = "2px solid #9747FF";
             }
         };
 
-        
         if (currentDiv) {
             currentDiv.addEventListener("scroll", handleScroll);
         }
@@ -77,103 +80,48 @@ const Ladder: React.FC<undefined> = () => {
     return (
         <div className="ladder">
             <h2 className='title'>Ladder</h2>
-            <TableContainer 
-                sx={{
-                    backgroundColor: '#D9D9D9',
-                    borderRadius: '10px',
-                    borderLeft: '5px solid #9747FF',
-                    borderBottom: '5px solid #9747FF',
-                    boxShadow: '2px 1px 20px #9747FF',
-                }}
-            >
-                <Table sx={{ minWidth: 300, maxWidth: 600 }} aria-label="simple table">
+            <TableContainer id="table-container-l">
+                <Table id='table-l' aria-label="simple table">
                     <TableHead>
-                        <TableRow
-                            sx={{
-                                display: 'table',
-                                width: '100%',
-                                tableLayout: 'fixed',
-                            }}
-                            ref={firstRowRef}
-                        >
-                            <TableCell
-                                sx={{ 
-                                    borderBottom: '2px solid #F8A38B', 
-                                    color: 'goldenrod',
-                                    fontSize: '1.8em',
-                                    fontWeight: '900',
-                                }}
-                            >
-                                {rows[0].rank}
+                        <TableRow id="head-row-l" ref={firstRowRef}>
+                            <TableCell id="cell-head-rank-l"></TableCell>
+                            <TableCell id="cell-head-pseudo-l"></TableCell>
+                            <TableCell id="cell-head-wins-l">
+                                Wins
                             </TableCell>
-                            <TableCell 
-                                align="right" 
-                                sx={{ 
-                                    borderBottom: '2px solid #F8A38B' 
-                                }}
-                            >
-                                {rows[0].pseudo}
+                            <TableCell id="cell-head-losses-l">
+                                Losses
                             </TableCell>
-                            <TableCell 
-                                align="right" 
-                                sx={{ 
-                                    borderBottom: '2px solid #F8A38B' 
-                                }}
-                            >
-                                {rows[0].wins} wins
-                            </TableCell>
-                            <TableCell 
-                                align="right" 
-                                sx={{ 
-                                    borderBottom: '2px solid #F8A38B' 
-                                }}
-                            >
-                                {rows[0].losses} losses
-                            </TableCell>
-                            <TableCell 
-                                align="right" 
-                                sx={{ 
-                                    borderBottom: '2px solid #F8A38B' 
-                                }}
-                            >
-                                {rows[0].status}
-                            </TableCell>
+                            <TableCell id="cell-head-avatar-l"></TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody 
-                        sx={{
-                            display: 'block',
-                            maxHeight: '200px',
-                            overflowY: 'auto',
-                        }}
-                        ref={tableBodyRef}
-                    >
-                            {rows.slice(1).map((row, index) => (
-                                <TableRow
-                                    key={row.pseudo}
+                    <TableBody id='table-body-l' ref={tableBodyRef}>
+                        {rows.map((row, index) => (
+                            <TableRow key={row.pseudo} id="row-body-l">
+                                <TableCell 
                                     sx={{ 
-                                        '&:last-child td, &:last-child th': { border: 0 },
-                                        display: 'table',
-                                        width: '100%',
-                                        tableLayout: 'fixed',
+                                        borderBottom: '1px solid #F8A38B',
+                                        color: rankNumberStyles(index).color,
+                                        fontSize: rankNumberStyles(index).fontSize,
+                                        fontWeight: rankNumberStyles(index).fontWeight,
                                     }}
                                 >
-                                    <TableCell 
-                                        sx={{ 
-                                            borderBottom: '2px solid #F8A38B',
-                                            color: rankNumberStyles(index).color,
-                                            fontSize: rankNumberStyles(index).fontSize,
-                                            fontWeight: rankNumberStyles(index).fontWeight
-                                        }}
-                                    >
-                                        {row.rank}
-                                    </TableCell>
-                                    <TableCell align="right" sx={{ borderBottom: '2px solid #F8A38B' }}>{row.pseudo}</TableCell>
-                                    <TableCell align="right" sx={{ borderBottom: '2px solid #F8A38B' }}>{row.wins} wins</TableCell>
-                                    <TableCell align="right" sx={{ borderBottom: '2px solid #F8A38B' }}>{row.losses} losses</TableCell>
-                                    <TableCell align="right" sx={{ borderBottom: '2px solid #F8A38B' }}>{row.status}</TableCell>
-                                </TableRow>
-                            ))}
+                                    {row.rank}
+                                </TableCell>
+                                <TableCell id="cell-pseudo-l">
+                                    {row.pseudo}
+                                </TableCell>
+                                <TableCell id="cell-wins-l">
+                                    {row.wins}
+                                </TableCell>
+                                <TableCell id="cell-losses-l">
+                                    {row.losses}
+                                </TableCell>
+                                <TableCell id="cell-avatar-l">
+                                    <AvatarOthers status={row.status}/>
+                                </TableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>
@@ -182,9 +130,3 @@ const Ladder: React.FC<undefined> = () => {
 };
 
 export default Ladder;
-
-
-// TODO: 
-//  - Title to Table
-//  - Style text
-//  - Status component
