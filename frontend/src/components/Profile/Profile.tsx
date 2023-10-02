@@ -3,6 +3,7 @@ import { Avatar, Button, TextField } from "@mui/material";
 import default_avatar from "../../assets/images/default_avatar.png";
 
 import Ladder from "./Ladder/Ladder";
+import MatchHistory from "./MatchHistory/MatchHistory";
 
 import './Profile.css';
 
@@ -13,7 +14,7 @@ interface Props {
 const Profile: React.FC<Props> = ({ onRouteChange }) => {
     return (
         <div className="Profile">
-            <Avatar 
+            <Avatar
                 alt="Avatar" 
                 src={default_avatar}
                 sx={{ 
@@ -24,7 +25,7 @@ const Profile: React.FC<Props> = ({ onRouteChange }) => {
             <Button
                 variant="text"
                 sx={{ 
-                    fontSize: '2vh', 
+                    fontSize: '1em', 
                     marginTop: '1.5vh',
                     fontWeight: '900',
                     color: "#F8A38B",
@@ -38,7 +39,7 @@ const Profile: React.FC<Props> = ({ onRouteChange }) => {
                 InputLabelProps={{
                     style: { 
                         color: '#7638C7', 
-                        fontSize: '1em' 
+                        fontSize: '1em', 
                     }
                 }}
                 variant="outlined"
@@ -65,6 +66,7 @@ const Profile: React.FC<Props> = ({ onRouteChange }) => {
                 }}
             />
             <Ladder />
+            <MatchHistory />
         </div>
     )
 }

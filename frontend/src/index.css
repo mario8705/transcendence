@@ -8,8 +8,10 @@ body {
   place-items: center;
   background: linear-gradient(to bottom, #BF9CE8 10%, #FFEA95 100%);
   font-family: "Short Stack";
-  /*min-width: 320px;
-  min-height: 100vh;*/
+  /* min-width: 320px; 
+  min-height: 100vh; */
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 h1 {
