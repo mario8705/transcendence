@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { SocketService } from '../../socket/socket.service';
+import { ChatService } from 'src/chat/chat.service';
+// import { SocketService } from '../../socket/socket.service';
 import { User } from '../model/user.model';
 
 @Injectable()
-export class UsersService extends SocketService {
+export class UsersService {
 	private users : User[] = [];
 	
 	addUser(id: string, name: string) {

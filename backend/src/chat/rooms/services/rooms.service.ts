@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { ChatService } from 'src/chat/chat.service';
 import { User } from '../../users/model/user.model';
-import { SocketService } from '../../socket/socket.service';
 import { Room } from '../model/room.model'
 
 @Injectable()
-export class RoomService extends SocketService {
+export class RoomService {
 	private rooms : Room[] = [];
 
 	createRoom(name: string, user: User, option: {invite: boolean, key: boolean, value: string}) : Room {
