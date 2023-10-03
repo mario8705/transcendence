@@ -1,29 +1,59 @@
 import { Server, Socket } from "socket.io";
 import {
+	ConnectedSocket,
+	MessageBody,
 	OnGatewayConnection,
 	OnGatewayDisconnect,
+	OnGatewayInit,
+	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer
 } from "@nestjs/websockets";
 import { Injectable } from "@nestjs/common";
+import { GameService } from "src/game/game.service";
 
-@Injectable()
 @WebSocketGateway({
 	cors: {
 		origin: ["http://localhost:5173"],
 	},
-	transports: ["websocket"],
 })
-export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class SocketGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
+	gameHandler: GameService;
+	
 	@WebSocketServer()
 	server: Server;
 
-	async handleConnection(client: Socket, ...args: any[]) {
+	afterInit() {
+		this.gameHandler = new GameService(this.server);
+	}
+
+	handleConnection(client: Socket, ...args: any[]) {
 		console.log(`Client connected: ${client.id}`);
 	}
 
-	async handleDisconnect(client: Socket) {
+	handleDisconnect(client: Socket) {
 		console.log(`Client disconnected: ${client.id}`);
+	}
+
+	@SubscribeMessage("joinRandomMatch")
+	onRandomMatch(@ConnectedSocket() socket: Socket) {
+		this.gameHandler.joinRandomGame(socket.id);
+	}
+
+	@SubscribeMessage("keyUp")
+	onKeyUp(
+		@ConnectedSocket() socket: Socket,
+		@MessageBody() key: string)
+	{
+		this.gameHandler.keyUp(socket.id, key);
+	}
+
+	@SubscribeMessage("keyDown")
+	onKeyDown(
+		@ConnectedSocket() socket: Socket,
+		@MessageBody() key: string)
+	{
+		this.gameHandler.keyDown(socket.id, key);
 	}
 }
