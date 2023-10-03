@@ -30,8 +30,9 @@ export class ChatService {
 			console.log("Registering...");
 			const users = this.usersService.getUsers();
 			users.map((user) => {
-				this.socketGateway.sendToClient(user.id, 'usersConnected', {type: 'new', user: data});
-				this.socketGateway.sendToClient(client.id, 'usersConnected', {type: 'new', user: user.name});
+				this.socketGateway.server.to(user.id).emit('usersConnected', {type: 'new', user: data});
+				// this.socketGateway.sendToClient(user.id, 'usersConnected', {type: 'new', user: data});
+				// this.socketGateway.sendToClient(client.id, 'usersConnected', {type: 'new', user: user.name});
 			})
 			this.usersService.addUser(client.id, data);
 			client.broadcast.emit('newUser', {id: client.id, name: data});
@@ -80,17 +81,20 @@ export class ChatService {
 		console.log('ici');
 		const user = this.usersService.getUserbyId(client.id);
 		if (data.type === 'join') {
-		  this.roomService.joinRoom(user, data.roomname, data.option);
-		  console.log(this.roomService.getRooms());
+			if (this.roomService.joinRoom(user, data.roomname, data.option)) {
+				client.join(data.roomname);
+				this.socketGateway.server.to(data.roomname).emit('message', {from: 'server', to: 'moi', message: 'coucou tout le monde'});
+			}
+			console.log(this.roomService.getRooms());
 		}
 		else if(data.type === 'exit') {
 			if (this.roomService.roomExists(data.roomname)){
-				  if (this.roomService.isUserinRoom(user, data.roomname)) {
-					  this.roomService.removeUserfromRoom(user, data.roomname);
-					  console.log(this.roomService.getUsersfromRoom(data.roomname));
-				  }
-				  else
-					  this.socketGateway.sendToClient(client.id, 'error', {errmsg: "You are not in this room"});
+				if (this.roomService.isUserinRoom(user, data.roomname)) {
+					this.roomService.removeUserfromRoom(user, data.roomname);
+					console.log(this.roomService.getUsersfromRoom(data.roomname));
+				}
+				else
+					this.socketGateway.sendToClient(client.id, 'error', {errmsg: "You are not in this room"});
 			}
 			else this.socketGateway.sendToClient(client.id, 'error', {errmsg: "This room does not exist"});
 		}		

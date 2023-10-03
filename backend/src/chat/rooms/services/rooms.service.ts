@@ -18,7 +18,7 @@ export class RoomService {
 		return newRoom;
 	}
 
-	joinRoom(curruser: User, roomname: string, option: {invite: boolean, key: boolean, value: string}) : void {
+	joinRoom(curruser: User, roomname: string, option: {invite: boolean, key: boolean, value: string}) : boolean {
 		let room = this.rooms.find((room) => room.name === roomname);
 		if (room == undefined)	{
 			room = this.createRoom(roomname, curruser, option);
@@ -32,16 +32,17 @@ export class RoomService {
 			}
 			else if (room.password) {
 				if (option.value !== room.pwdValue)
-				return;	
+				return false;	
 			}
 			console.log("push");
 			room?.users.push(curruser);
 		}
 		else {
 			console.log(curruser.name, " is already in ", roomname);
-			return;
+			return false;
 		}
 		console.log(curruser.name, ' joined room: ', roomname);
+		return true;
 	}
 
 	roomExists(roomname: string) :boolean {
