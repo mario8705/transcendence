@@ -62,28 +62,26 @@ export class ChatService {
 			}
 		}
 		else if (data.type === 'room') {
-			console.log('coucou');
 			if (this.roomService.roomExists(data.to)) {
 				console.log('exists');
-				const usersfromRoom = this.roomService.getUsersfromRoom(data.to);
-				usersfromRoom.map((el) => { 
-					console.log(el.name);
-					this.socketGateway.server.to(el.id).emit('message', {from : user.name, to: data.to, message: data.message});
-				});
+				if (this.roomService.isUserinRoom(user, data.to)) {
+					this.socketGateway.server.to(data.to).emit('message', {from : user.name, to: data.to, message: data.message});
+					return;
+				}
+			this.socketGateway.server.to(client.id).emit('error', {errmsg: 'This room does not exists or you are not a memeber'});
 			}
 		}
 	}
 
 	chatRoom(
 		client: Socket,
-		data: {type: string, roomname: string, option: {invite: boolean, key: boolean, value: string}}
+		data: {type: string, roomname: string, option: any}
 	) {
-		console.log('ici');
 		const user = this.usersService.getUserbyId(client.id);
 		if (data.type === 'join') {
 			if (this.roomService.joinRoom(user, data.roomname, data.option)) {
 				client.join(data.roomname);
-				this.socketGateway.server.to(data.roomname).emit('message', {from: 'server', to: 'moi', message: 'coucou tout le monde'});
+				this.socketGateway.server.to(data.roomname).emit('message', {from: 'server', to: 'moi', message: user.name + ' has joined this room'});
 			}
 			console.log(this.roomService.getRooms());
 		}
@@ -91,13 +89,20 @@ export class ChatService {
 			if (this.roomService.roomExists(data.roomname)){
 				if (this.roomService.isUserinRoom(user, data.roomname)) {
 					this.roomService.removeUserfromRoom(user, data.roomname);
+					client.leave(data.roomname);
+					this.socketGateway.server.to(data.roomname).emit('message', {from: 'server', to: 'users', message: user.name + ' has left this room'});
 					console.log(this.roomService.getUsersfromRoom(data.roomname));
 				}
 				else
 					this.socketGateway.sendToClient(client.id, 'error', {errmsg: "You are not in this room"});
 			}
 			else this.socketGateway.sendToClient(client.id, 'error', {errmsg: "This room does not exist"});
-		}		
+		}
+		else if (data.type === 'manage') {
+			if (this.roomService.roomExists(data.roomname) && this.roomService.isRoomAdmin(user, data.roomname)) {
+				console.log('là je peux faire les manipulations qui reviennet aux administrateurs');
+			}
+		}	
 		else if (data.type === 'delete'){
 			if (this.roomService.roomExists(data.roomname))
 				this.roomService.clearUsersfromRoom(data.roomname);
@@ -112,22 +117,17 @@ export class ChatService {
 		data: {type: string, target: string, options: string}
 	) {
 		console.log("wants a new friend");
-		//Find the client user
 		const user = this.usersService.getUserbyId(client.id);
-		//add the friend to the friend lists
 		if (this.usersService.addFriend(user, this.usersService.getUserbyName(data.target)) === false) {
 			console.log('cannot become friends because the target does not exist on our database');
-			this.socketGateway.sendToClient(client.id, 'error', {errmsg: "Targeted friend does not exist"});
+			this.socketGateway.server.to(client.id).emit('error', {errmsg: 'Targeted friend does not exists'});
+			return;
 		}
-		//Send the information to the clients that they are friends //TODO inform the other client that he has a new friend
+		//TODO inform the other client that he has a new friend
 		// TODO also ask the other client if he wants to be friends
-		const list: string[] = this.usersService.getFriends(user);
 		const target = this.usersService.getUserbyName(data.target);
-		const target_list = this.usersService.getFriends(target);
-		this.socketGateway.sendToClient(client.id, 'friend', {type: 'new', from: user.name, friend: target.name, status: 'befriended'})
-		// this.server.to(target.id).emit('friend', {type: 'status', from: user.name, list: target_list, status: 'newfriend'});
-		this.socketGateway.sendToClient(target.id, 'friend', {type: 'new', from: user.name, friend: user.name, status: 'newfriend'})
+		this.socketGateway.server.to(client.id).emit('friend', {type: 'new', from: user.name, friend: target.name, status: 'befriended'});
+		this.socketGateway.server.to(target.id).emit('friend', {type: 'new', from: user.name, friend:user.name, status: 'newfriend'});
 		return;
 	}
-
 }

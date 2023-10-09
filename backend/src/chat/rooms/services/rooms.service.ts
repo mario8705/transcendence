@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { userInfo } from 'os';
 import { ChatService } from 'src/chat/chat.service';
 import { User } from '../../users/model/user.model';
 import { Room } from '../model/room.model'
@@ -9,7 +10,8 @@ export class RoomService {
 
 	createRoom(name: string, user: User, option: {invite: boolean, key: boolean, value: string}) : Room {
 		const newRoom = new Room(name);
-		newRoom.admin = user;
+		newRoom.owner = user;
+		newRoom.admin.push(user);
 		if (option.invite === true)
 			newRoom.inviteOnly = true;
 		if (option.key === true)
@@ -60,17 +62,24 @@ export class RoomService {
 		return false;
 	}
 
-	isUserAdmin(curruser: User, roomname: string) : boolean {
+	isRoomAdmin(curruser: User, roomname: string) : boolean {
 		const room = this.getRoom(roomname);
-		if (room.admin === curruser)
+		if (room.admin.find((user) => user === curruser))
 			return true;
 		return false;
 	}
 
+	isRoomOwner(curruser: User, roomname: string) : boolean {
+		const room = this.getRoom(roomname);
+		if (room?.owner === curruser)
+			return true;
+		return false;
+	}
+ 
 	changePassword(curruser: User, roomname: string, option: {invite: boolean, key: boolean, value: string}) : boolean {
 		let room = this.rooms.find((room) => room.name === roomname);
 		if (room !== undefined) {
-			if (room.admin === curruser) {
+			if (room.admin.find((user) => user === curruser)) {
 				if (option.key === true)
 					room.pwdValue = option.value;
 				else {
@@ -86,7 +95,7 @@ export class RoomService {
 	changeInviteOnly(curruser: User, roomname: string, option: {invite: boolean, key: boolean, value: string}) {
 		let room = this.rooms.find((room) => room.name === roomname);
 		if (room !== undefined) {
-			if (room.admin === curruser) {
+			if (room.admin.find((user) => user === curruser)) {
 				if (option.invite === true)
 					room.inviteOnly = true;
 				else
@@ -127,8 +136,8 @@ export class RoomService {
 	kick(roomname: string, curruser: User, target: User) {
 		if (this.roomExists(roomname)) {
 			let room = this.getRoom(roomname);
-			if (room.admin === curruser) {
-				if (this.isUserinRoom(target, roomname)) {
+			if (room.admin.find((user) => user === curruser)) {
+				if (this.isUserinRoom(target, roomname) && !this.isRoomOwner(target, roomname)) {
 					room.users.slice(room.users.indexOf(target), 1);
 					console.log(room.users);
 					console.log(target.name, ' has been successfully removed from the room');

@@ -11,7 +11,6 @@ import {
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { ChatService } from "src/chat/chat.service";
 
-// @Injectable()
 @WebSocketGateway({
 	cors: {
 		origin: 'http://localhost:5173',
@@ -64,7 +63,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage('room')
 	chatRoom(
-		@MessageBody('') data : {type: string, roomname: string, option: {invite: boolean, key: boolean, value: string}},
+		@MessageBody('') data : {type: string, roomname: string, option: any},
 		@ConnectedSocket()  client:Socket
 	) {
 		this.chatService.chatRoom(client, data);

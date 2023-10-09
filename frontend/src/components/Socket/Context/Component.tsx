@@ -1,6 +1,4 @@
 import React, { PropsWithChildren, useEffect, useReducer, useState } from 'react';
-// import { connect } from 'socket.io-client';
-// import { io } from 'socket.io-client';
 import { useSocket } from '../hooks/useSocket';
 import { defaultSocketContextState, SocketContextProvider, SocketReducer } from './Context';
 
