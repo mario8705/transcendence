@@ -17,7 +17,11 @@ import { GameService } from "src/game/game.service";
 		origin: ["http://localhost:5173"],
 	},
 })
-export class SocketGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+export class SocketGateway implements
+	OnGatewayInit,
+	OnGatewayConnection,
+	OnGatewayDisconnect
+{
 
 	gameHandler: GameService;
 	
@@ -26,6 +30,7 @@ export class SocketGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 	afterInit() {
 		this.gameHandler = new GameService(this.server);
+		console.log("Init socket Gateway")
 	}
 
 	handleConnection(client: Socket, ...args: any[]) {
@@ -38,7 +43,7 @@ export class SocketGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 	@SubscribeMessage("joinRandomMatch")
 	onRandomMatch(@ConnectedSocket() socket: Socket) {
-		this.gameHandler.joinRandomGame(socket.id);
+		this.gameHandler.joinRandomGame(socket);
 	}
 
 	@SubscribeMessage("keyUp")
@@ -55,5 +60,15 @@ export class SocketGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		@MessageBody() key: string)
 	{
 		this.gameHandler.keyDown(socket.id, key);
+	}
+
+	@SubscribeMessage('handshake')
+	handshake(
+		@ConnectedSocket() client: Socket)
+	{
+	  console.log("Received Handshake");
+	  return {}
+	//   this.server.emit('test', 'géééénial');
+	//   this.server.to(client.id).emit('handshake', 'coucou');
 	}
 }
