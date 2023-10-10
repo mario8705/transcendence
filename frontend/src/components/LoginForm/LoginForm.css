@@ -42,6 +42,7 @@ p a:hover {
     overflow: hidden;
     padding: 40px;
     top: 10vh;
+    margin-bottom: 4%;
 }
 
 .input-box {
