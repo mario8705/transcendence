@@ -6,7 +6,8 @@ body {
   margin: 0;
   /* display: flex; */
   place-items: center;
-  background: linear-gradient(to bottom, #BF9CE8 10%, #FFEA95 100%);
+  background: linear-gradient(to bottom, #BF9CE8 10%, #FFEA95 100%) no-repeat;
+  background-attachment: fixed;
   font-family: "Short Stack";
   /*min-width: 320px;
   min-height: 100vh;*/
