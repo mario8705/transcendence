@@ -1,12 +1,12 @@
 import './Game.css'
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useContext, useCallback } from 'react';
+import SocketContext from '../Socket/Context/Context';
 
 const BALL_SPEED_MOD = 250;
 const PADDLE_SPEED = 500;
 const BALL_DEFAULT_RADIUS = 15;
 const BALL_SPEED_Y = 5;
 const BALL_SPEED_X = 1.5;
-// const MAX_BALL_SPEED = ;
 
 const GAME_MAX_GOAL = 2;
 
@@ -44,10 +44,12 @@ interface keyState {
 //           GAME           //
 //////////////////////////////
 const Game: React.FC<gameProps> = (props) => {
+	const { SocketState } = useContext(SocketContext);
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
-	const leftPlayerKey: keyState = {};
-	const rightPlayerKey: keyState = {};
-	let   lastFrameTime: number | null = null
+	// const leftPlayerKey: keyState = {};
+	// const rightPlayerKey: keyState = {};
+	// let   lastFrameTime: number | null = null
+	let   gameEnd = false;
 	let   ball: ballElem = {
 		speed: {x: 1, y: 1},
 		speedModifyer:BALL_SPEED_MOD,
@@ -62,10 +64,10 @@ const Game: React.FC<gameProps> = (props) => {
 		y: Math.round(props.height / 2) - Math.round(props.width / 20),
 	};
 	let   rightPad: paddleElem = {
-		length: props.height,//Math.round(props.width / 10),
+		length: Math.round(props.width / 10),
 		width: 10,
-		x: props.width - 15,
-		y: 0,//Math.round(props.height / 2) - Math.round(props.width / 20),
+		x: props.width - 5 - 10,
+		y: Math.round(props.height / 2) - Math.round(props.width / 20),
 	};
 	let   score: scoreElem = {
 		leftPlayer: '0',
@@ -74,12 +76,14 @@ const Game: React.FC<gameProps> = (props) => {
 	
 	function handleKeyDown(event: KeyboardEvent) {
 		event.preventDefault();
-		leftPlayerKey[event.key] = true;
+		SocketState.socket?.emit("keyDown", event.key);
+		// leftPlayerKey[event.key] = true;
 	};
 	
 	function handleKeyUp(event: KeyboardEvent) {
-		event.preventDefault;
-		delete leftPlayerKey[event.key];
+		event.preventDefault();
+		SocketState.socket?.emit("keyUp", event.key);
+		// delete leftPlayerKey[event.key];
 	};
 	
 	function clearBackground(ctx: CanvasRenderingContext2D): void {
@@ -119,113 +123,146 @@ const Game: React.FC<gameProps> = (props) => {
 		}
 	};
 	
-	function resetGamePosition(): void {
+	// function resetGamePosition(): void {
 
-		while (Math.abs(ball.speed.y) <= 0.2 || Math.abs(ball.speed.y) >= 0.9) {
-			const heading = Math.random() * (2 * Math.PI - 0) + 0;
-			ball.speed = { x: BALL_SPEED_X, y: Math.sin(heading) }
-		}
+	// 	while (Math.abs(ball.speed.y) <= 0.2 || Math.abs(ball.speed.y) >= 0.9) {
+	// 		const heading = Math.random() * (2 * Math.PI - 0) + 0;
+	// 		ball.speed = { x: BALL_SPEED_X, y: Math.sin(heading) }
+	// 	}
 
-		ball.speedModifyer = BALL_SPEED_MOD;
-		ball.x = Math.round(props.width / 2);
-		ball.y = Math.round(props.height / 2);
+	// 	ball.speedModifyer = BALL_SPEED_MOD;
+	// 	ball.x = Math.round(props.width / 2);
+	// 	ball.y = Math.round(props.height / 2);
 
-		leftPad.y = Math.round(props.height / 2) - Math.round(props.width / 20)
-		rightPad.y = Math.round(props.height / 2) - Math.round(props.width / 20)
-	};
+	// 	leftPad.y = Math.round(props.height / 2) - Math.round(props.width / 20)
+	// 	rightPad.y = Math.round(props.height / 2) - Math.round(props.width / 20)
+	// };
 
-	function movePaddles(delta: number): void {
+	// function movePaddles(delta: number): void {
 
-		// LEFT PLAYER MOVEMENT
-		if (leftPlayerKey['ArrowUp']) {
-			leftPad.y -= PADDLE_SPEED * delta;
-		}
-		if (leftPlayerKey['ArrowDown']) {
-			leftPad.y += PADDLE_SPEED * delta;
-		}
-		leftPad.y = Math.max(0, leftPad.y);
-		leftPad.y = Math.min(props.height - leftPad.length, leftPad.y);
+	// 	// LEFT PLAYER MOVEMENT
+	// 	if (leftPlayerKey['ArrowUp']) {
+	// 		leftPad.y -= PADDLE_SPEED * delta;
+	// 	}
+	// 	if (leftPlayerKey['ArrowDown']) {
+	// 		leftPad.y += PADDLE_SPEED * delta;
+	// 	}
+	// 	leftPad.y = Math.max(0, leftPad.y);
+	// 	leftPad.y = Math.min(props.height - leftPad.length, leftPad.y);
 		
-		// RIGHT PLAYER MOVEMENT
-		if (rightPlayerKey['ArrowUp']) {
-			rightPad.y -= PADDLE_SPEED * delta;
-		}
-		if (rightPlayerKey['ArrowDown']) {
-			rightPad.y += PADDLE_SPEED * delta;
-		}
-		rightPad.y = Math.max(0, rightPad.y);
-		rightPad.y = Math.min(props.height - rightPad.length, rightPad.y);
-	};
+	// 	// RIGHT PLAYER MOVEMENT
+	// 	if (rightPlayerKey['ArrowUp']) {
+	// 		rightPad.y -= PADDLE_SPEED * delta;
+	// 	}
+	// 	if (rightPlayerKey['ArrowDown']) {
+	// 		rightPad.y += PADDLE_SPEED * delta;
+	// 	}
+	// 	rightPad.y = Math.max(0, rightPad.y);
+	// 	rightPad.y = Math.min(props.height - rightPad.length, rightPad.y);
+	// };
 
-	function checkGoal(): void {
-		if (ball.x - ball.radius <= 0) {
-			score.rightPlayer = (parseInt(score.rightPlayer) + 1).toString();
-			resetGamePosition();
-		}
-		else if (ball.x + ball.radius >= props.width) {
-			score.leftPlayer = (parseInt(score.leftPlayer) + 1).toString();
-			resetGamePosition();
-		}
-	}
+	// function checkGoal(): void {
+	// 	if (ball.x - ball.radius <= 0) {
+	// 		score.rightPlayer = (parseInt(score.rightPlayer) + 1).toString();
+	// 		resetGamePosition();
+	// 	}
+	// 	else if (ball.x + ball.radius >= props.width) {
+	// 		score.leftPlayer = (parseInt(score.leftPlayer) + 1).toString();
+	// 		resetGamePosition();
+	// 	}
+	// }
 
-	function moveBall(delta: number): void {
+	// function moveBall(delta: number): void {
 		
-		function checkWallCollision() {
-			if (ball.y - ball.radius <= 0 || ball.y + ball.radius >= props.height)
-			ball.speed.y *= -1;
-		}
+	// 	function checkWallCollision() {
+	// 		if (ball.y - ball.radius <= 0 && ball.speed.y < 0
+	// 			|| ball.y + ball.radius >= props.height && ball.speed.y > 0)
+	// 			ball.speed.y *= -1;
+	// 	}
 	
-		function checkPaddleCollision() {
+	// 	function checkPaddleCollision() {
 
-			function leftPaddleCollision(): boolean {
-				if (ball.x - ball.radius <= leftPad.x + leftPad.width
-					&& ball.y + ball.radius >= leftPad.y
-					&& ball.y - ball.radius <= leftPad.y + leftPad.length
-					) {
-					return true;
-				}
-				return false;
-			}
+	// 		function leftPaddleCollision(): boolean {
+	// 			if (ball.x - ball.radius <= leftPad.x + leftPad.width
+	// 				&& ball.y + ball.radius >= leftPad.y
+	// 				&& ball.y - ball.radius <= leftPad.y + leftPad.length
+	// 				) {
+	// 				return true;
+	// 			}
+	// 			return false;
+	// 		}
 
-			function rightPaddleCollision(): boolean {
-				if (ball.x + ball.radius >= rightPad.x
-					&& ball.y + ball.radius >= rightPad.y
-					&& ball.y - ball.radius <= rightPad.y + rightPad.length
-					) {
-						return true;
-				}
-				return false;
-			}
+	// 		function rightPaddleCollision(): boolean {
+	// 			if (ball.x + ball.radius >= rightPad.x
+	// 				&& ball.y + ball.radius >= rightPad.y
+	// 				&& ball.y - ball.radius <= rightPad.y + rightPad.length
+	// 				) {
+	// 					return true;
+	// 			}
+	// 			return false;
+	// 		}
 
-			if (leftPaddleCollision()) {
-				const relativeBallPos = ball.y - (leftPad.y + leftPad.length / 2);
-				ball.speed.x *= -1;
-				ball.speed.y = ball.speed.x * BALL_SPEED_Y * (relativeBallPos / leftPad.length / 2);
-			}
-			if (rightPaddleCollision()) {
-				const relativeBallPos = ball.y - (rightPad.y + rightPad.length / 2);
-				ball.speed.x *= -1;
-				ball.speed.y = ball.speed.x * (BALL_SPEED_Y * -1) * (relativeBallPos / rightPad.length / 2);
-			}
-		}
+	// 		if (leftPaddleCollision()) {
+	// 			const relativeBallPos = ball.y - (leftPad.y + leftPad.length / 2);
+	// 			ball.speed.x *= -1;
+	// 			ball.speed.y = ball.speed.x * BALL_SPEED_Y * (relativeBallPos / leftPad.length / 2);
+	// 		}
+	// 		if (rightPaddleCollision()) {
+	// 			const relativeBallPos = ball.y - (rightPad.y + rightPad.length / 2);
+	// 			ball.speed.x *= -1;
+	// 			ball.speed.y = ball.speed.x * (BALL_SPEED_Y * -1) * (relativeBallPos / rightPad.length / 2);
+	// 		}
+	// 	}
 
-		checkWallCollision();
-		checkPaddleCollision();
-		ball.x += ball.speed.x * ball.speedModifyer * delta;
-		ball.y += ball.speed.y * ball.speedModifyer * delta;
-	};
+	// 	checkWallCollision();
+	// 	checkPaddleCollision();
+	// 	ball.x += ball.speed.x * ball.speedModifyer * delta;
+	// 	ball.y += ball.speed.y * ball.speedModifyer * delta;
+	// };
 
-	function updateGame(delta: number): void {
-		checkGoal();
-		movePaddles(delta);
-		moveBall(delta);
-	};
+	// function updateGame(delta: number): void {
+	// 	checkGoal();
+	// 	movePaddles(delta);
+	// 	moveBall(delta);
+	// };
 
-	function checkWin(): boolean {
-		if (parseInt(score.leftPlayer) >= GAME_MAX_GOAL || parseInt(score.rightPlayer) >= GAME_MAX_GOAL)
-			return true;
-		return false;
-	}
+	// function checkWin(): boolean {
+	// 	if (parseInt(score.leftPlayer) >= GAME_MAX_GOAL || parseInt(score.rightPlayer) >= GAME_MAX_GOAL)
+	// 		return true;
+	// 	return false;
+	// }
+
+	const finishGame = useCallback(() => {
+		gameEnd = true;
+		console.log("finish game event");
+	}, []);
+
+	const updateScore = useCallback((newScore: {leftPlayer: string, rightPlayer: string}) => {
+		score.leftPlayer = newScore.leftPlayer.toString();
+		score.rightPlayer = newScore.rightPlayer.toString();
+		console.log("update score event");
+	}, []);
+
+	const updateGame = useCallback((newLeftPad: paddleElem, newRightPad: paddleElem, newBall: ballElem) => {
+		leftPad = newLeftPad;
+		rightPad = newRightPad;
+		ball = newBall;
+		console.log("update game event");
+	}, []);
+	
+
+	useEffect(() => {
+
+		SocketState.socket?.on("gameFinished", finishGame);
+		SocketState.socket?.on("updateScore", updateScore);
+		SocketState.socket?.on("updateGame", updateGame);
+		
+		return () => {
+			SocketState.socket?.off("gameFinished", finishGame);
+			SocketState.socket?.off("updateScore", updateScore);
+			SocketState.socket?.off("updateGame", updateGame);
+		};
+	}, [SocketState.socket]);
 
 	useEffect(() => {
 		const context = canvasRef.current?.getContext('2d');
@@ -235,22 +272,23 @@ const Game: React.FC<gameProps> = (props) => {
 		document.addEventListener('keyup', handleKeyUp);
 
 		// Init game
-		resetGamePosition();
+		// resetGamePosition();
 
 		// GAME LOOP
 		const gameLoop = (time: number) => {
-			// Update game state
-			if (lastFrameTime !== null) {
-				const delta = (time - lastFrameTime) / 1000
-				updateGame(delta);
-			}
 
-			// Clear canvas and Draw game elements
+			// if (lastFrameTime !== null) {
+			// 	const delta = (time - lastFrameTime) / 1000
+			// 	updateGame(delta);
+			// }
+
 			renderFrame(context);
 
-			// Request next frame if no winner
-			lastFrameTime = time;
-			if (!checkWin()) {
+			// lastFrameTime = time;
+			// if (!checkWin()) {
+			// 	window.requestAnimationFrame(gameLoop);
+			// }
+			if (!gameEnd) {
 				window.requestAnimationFrame(gameLoop);
 			}
 		};
