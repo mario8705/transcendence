@@ -14,7 +14,7 @@
 - `pnpm install @prisma/client`
 
 Launch back with `pnpm start:dev` inside `transcendence/backend`
-Acces is on http://localhost:3333
+Acces is on http://localhost:3000
 
  ### database
 
