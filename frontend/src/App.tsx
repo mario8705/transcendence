@@ -2,6 +2,8 @@
 import './App.css';
 import { useState } from "react";
 import Navigation from './components/Navigation/Navigation';
+import SocketContextComponent from './components/Socket/Context/Component';
+import Game from './components/Game/Game';
 
 interface InitialState {
   route: string;
@@ -30,16 +32,19 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      {
-        (initState.route === 'game' || initState.route === 'chat' || initState.route === 'profile' || initState.route === 'pong') 
-        ?
-          <Navigation isSignedIn={initState.isSignedIn} onRouteChange={onRouteChange}/>
-        : (
-          initState.route === 'signin' 
-          ? '' /* <Signin onRouteChange={this.onRouteChange}/> */
-          : '' /* <Register={this.onRouteChange)/> */
-        )
-      }
+      <SocketContextComponent>
+        {
+          (initState.route === 'game' || initState.route === 'chat' || initState.route === 'profile' || initState.route === 'pong') 
+          ?
+            <Navigation isSignedIn={initState.isSignedIn} onRouteChange={onRouteChange}/>
+          : (
+            initState.route === 'signin' 
+            ? '' /* <Signin onRouteChange={this.onRouteChange}/> */
+            : '' /* <Register={this.onRouteChange)/> */
+          )
+        }
+        <Game className="canvasGame" width={800} height={600} />
+      </SocketContextComponent>
     </div>
   );
 }
