@@ -4,6 +4,7 @@ import default_avatar from "../../assets/images/default_avatar.png";
 
 import Ladder from "./Ladder/Ladder";
 import MatchHistory from "./MatchHistory/MatchHistory";
+import Achievements from "./Achievements/Achievements";
 
 import './Profile.css';
 
@@ -67,6 +68,7 @@ const Profile: React.FC<Props> = ({ onRouteChange }) => {
             />
             <Ladder />
             <MatchHistory />
+            <Achievements />
         </div>
     )
 }

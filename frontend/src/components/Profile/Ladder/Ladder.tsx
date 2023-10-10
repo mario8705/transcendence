@@ -12,7 +12,7 @@ import AvatarOthers from '../../AvatarOthers/AvatarOthers';
 
 import './Ladder.css';
 
-const Ladder: React.FC<undefined> = () => {
+const Ladder: React.FC = () => {
 
     function mockData(
         rank: number,
@@ -101,6 +101,7 @@ const Ladder: React.FC<undefined> = () => {
                                 <TableCell 
                                     sx={{ 
                                         borderBottom: '1px solid #F8A38B',
+                                        textShadow: '1px 1px 2px #9747FF',
                                         color: rankNumberStyles(index).color,
                                         fontSize: rankNumberStyles(index).fontSize,
                                         fontWeight: rankNumberStyles(index).fontWeight,

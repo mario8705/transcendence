@@ -10,7 +10,7 @@ import './MatchHistory.css';
 
 import AvatarOthers from '../../AvatarOthers/AvatarOthers';
 
-const MatchHistory: React.FC<undefined> = () => {
+const MatchHistory: React.FC = () => {
 
     function mockData(
         scored: number,
