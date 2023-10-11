@@ -2,6 +2,8 @@
 import { Component } from "react";
 import './App.css';
 import Navigation from './components/Navigation/Navigation';
+import { Route, Routes } from "react-router-dom";
+import Profile from "./components/Profile/Profile";
 
 interface InitialState {
   route: string;
@@ -11,7 +13,7 @@ interface InitialState {
 interface Props {}
 
 const initialState: InitialState = {
-  route: 'game', // Change when signin is done
+  route: 'profile', // Change when signin is done
   isSignedIn: true,
 };
 
@@ -32,19 +34,27 @@ class App extends Component<Props, InitialState> {
 
   render() {
     const { isSignedIn, route }: {isSignedIn: boolean; route: string } = this.state;
+    
     return (
-        <div className="App">
-          {
-            (route === 'game' || route === 'chat' || route === 'profile' || route === 'pong') 
-            ?
-              <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange}/>
-            : (
-              route === 'signin' 
-              ? '' /* <Signin onRouteChange={this.onRouteChange}/> */
-              : '' /* <Register={this.onRouteChange)/> */
-            )
-          }
-        </div>
+      <>
+        {
+          (route === 'game' || route === 'chat' || route === 'profile' || route === 'pong') 
+          ? ( 
+            <div className="App">
+              <Routes>
+                {/* <Route path='/' element={<Navigation />} > */}
+                  <Route path='profile' element={<Profile onRouteChange={this.onRouteChange} />} />
+                {/* </Route> */}
+              </Routes>
+            </div>
+          )
+          : (
+            route === 'signin' 
+            ? '' /* <Signin onRouteChange={this.onRouteChange}/> */
+            : '' /* <Register={this.onRouteChange)/> */
+          )
+        }
+      </>
     );
   }
 }

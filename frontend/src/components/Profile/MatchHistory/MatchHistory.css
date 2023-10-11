@@ -1,0 +1,100 @@
+.matchHistory {
+    margin-top: 50px;
+}
+
+.title {
+    font-family: 'Permanent Marker';
+    color: #9747FF;
+    font-weight: 900;
+    letter-spacing: 10px;
+    text-align: left;
+    text-shadow: 5px 4px 10px;
+}
+
+#table-container-mh {
+    border-radius: 10px; 
+    border-left: 5px solid #A6D8DA; 
+    border-bottom: 5px solid #A6D8DA; 
+    box-shadow: 2px 1px 20px #A6D8DA;
+    min-width: 200px; 
+    max-width: 600px; 
+    color: #FFFFFF;
+}
+
+#table-mh {
+    min-width: 200px;
+    max-width: 600px;
+}
+
+#table-body-mh {
+    display: block;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#cell-scored-mh {
+    border-bottom: 1px solid #A6D8DA;
+    text-align: center; 
+    padding: 25px 1px; 
+    overflow-x: auto; 
+    font-weight: 700; 
+    width: 30px;
+}
+
+#cell-dash-mh {
+    border-bottom: 1px solid #A6D8DA;
+    text-align: center; 
+    padding: 25px 1px; 
+    overflow-x: auto; 
+    font-weight: 700; 
+    width: 10px;
+}
+
+#cell-conceded-mh {
+    border-bottom: 1px solid #A6D8DA; 
+    text-align: center; 
+    padding: 25px 1px; 
+    overflow-x: auto; 
+    font-weight: 700; 
+    width: 30px;
+}
+
+#cell-pseudo-mh {
+    border-bottom: 1px solid #A6D8DA;
+    text-align: center;
+    padding: 25px 1px;
+    overflow-x: auto;
+    font-weight: 600;
+    color: white;
+    letter-spacing: 1.1px;
+}
+
+#cell-status-mh {
+    border-bottom: 1px solid #A6D8DA;
+    text-align: center;
+    padding: 25px 1px;
+    overflow-x: auto;
+    overflow-y: visible;
+    position: relative;
+}
+
+.cell-status-div-mh {
+    position: absolute;
+    bottom: 15px;
+    right: 10px;
+}
+
+#cell-date-mh {
+    width: 12%;
+    border-bottom: 1px solid #A6D8DA;
+    padding: 25px 4px;
+    overflow-x: auto;
+    font-size: 0.5em;
+    position: relative;
+}
+
+.cell-date-div-mh {
+    position: absolute;
+    bottom: 3px;
+    right: 4px;
+}
