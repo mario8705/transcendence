@@ -32,9 +32,9 @@ p a:hover {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    padding: 40px;
+    padding: 20px 40px;
     top: 10vh;
-    margin-bottom: 4%;
+    margin-bottom: 8%;
 }
 
 .input-box {
@@ -86,7 +86,7 @@ p a:hover {
     position: absolute;
     bottom: 20%;
     left: 1%;
-    color: white;
+    color: var(--color-light-pink);
     border: none;
     outline: none;
     border-radius: 6px;
@@ -98,6 +98,10 @@ p a:hover {
     margin: -15px 0 15px;
     display: flex;
     justify-content: center;
+}
+
+.box-popup:last-child {
+    border-bottom: none;
 }
 
 .remember-forgot {
