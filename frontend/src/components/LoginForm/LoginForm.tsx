@@ -4,8 +4,11 @@ import MainButton from '../MainButton/MainButton'
 import { IoMailOutline } from "react-icons/io5";
 import { IoLockClosedOutline } from "react-icons/io5";
 
+interface Props {
+    onRouteChange: (route: string) => void;
+}
 
-const LoginForm: React.FC = () => {
+const LoginForm: React.FC<Props> = ({ onRouteChange }) => {
 	return (
 		<div className="box-parent">
 			<div className="box-popup">

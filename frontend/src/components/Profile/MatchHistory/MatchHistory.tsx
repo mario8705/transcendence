@@ -46,7 +46,7 @@ const MatchHistory: React.FC = () => {
 
     return (
         <div className="matchHistory">
-            <h2 className='title'>My Match History</h2>
+            <h2 className='title-mh'>My Match History</h2>
             <TableContainer id="table-container-mh">
                 <Table id="table-mh" aria-label="simple table">
                     <TableBody 

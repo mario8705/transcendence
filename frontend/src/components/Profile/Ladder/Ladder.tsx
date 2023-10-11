@@ -79,7 +79,7 @@ const Ladder: React.FC = () => {
 
     return (
         <div className="ladder">
-            <h2 className='title'>Ladder</h2>
+            <h2 className='title-l'>Ladder</h2>
             <TableContainer id="table-container-l">
                 <Table id='table-l' aria-label="simple table">
                     <TableHead>
