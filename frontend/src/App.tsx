@@ -1,6 +1,7 @@
 //import { useState } from 'react'
 import { Component } from "react";
 import './App.css';
+import Navigation from './components/Navigation/Navigation';
 import { Route, Routes } from "react-router-dom";
 import Profile from "./components/Profile/Profile";
 
