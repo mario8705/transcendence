@@ -18,3 +18,16 @@
 #cardContent {
     padding: 16px 0px;
 }
+
+#description-a {
+    font-family: 'Roboto';
+    text-align: left;
+    padding: 1px 10px; 
+    text-shadow: none; 
+    font-size: 0.7em;
+}
+
+#description-a p {
+    margin: 0;
+    padding: 0;
+}

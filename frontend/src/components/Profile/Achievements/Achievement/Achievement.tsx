@@ -42,7 +42,7 @@ const Achievement: React.FC<Props> = ({ achievementInfo }) => {
                     overflow="scroll"
                 >
                     {isHovering ? (
-                        <div style={{ fontFamily: 'Roboto', fontWeight: 'none', textAlign: 'left', padding: '10px', textShadow: 'none', fontSize: '0.7em' }}>
+                        <div id="description-a">
                             <p>Some description hfuezf f jgrhikgb zbf ejbgjrkg nrzbn rhbnr  nkj bguef nksj nvfkn ezfhne e fenf hnfeohf ohouehgfou hgohgf uefouejfoezhj oejfoejf oezf</p>
                         </div>
                     ) : (
