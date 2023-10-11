@@ -1,8 +1,24 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { VersioningType } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  await app.listen(3333);
+	const app = await NestFactory.create(AppModule);
+
+	const config = new DocumentBuilder()
+		.setTitle("Pong RestAPI")
+		.setDescription("Documentation about API routes")
+		.setVersion("1.0")
+		.build();
+
+	const document = SwaggerModule.createDocument(app, config);
+	SwaggerModule.setup("documentation", app, document);
+
+	app.setGlobalPrefix('api'); /* Starts every route with /api and then api version (eg. /api/v1/users/@me) */
+	app.enableVersioning({
+		type: VersioningType.URI,
+	});
+	await app.listen(3000);
 }
 bootstrap();
