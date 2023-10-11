@@ -1,62 +1,42 @@
-//import { useState } from 'react'
-import { Component } from "react";
-import './App.css';
+import { useState } from 'react';
+import { Route, Routes, useNavigate } from "react-router-dom";
+
 import Navigation from './components/Navigation/Navigation';
-import { Route, Routes } from "react-router-dom";
 import Profile from "./components/Profile/Profile";
+import LoginForm from './components/LoginForm/LoginForm';
 
-interface InitialState {
-  route: string;
-  isSignedIn: boolean;
-}
+import './App.css';
 
-interface Props {}
 
-const initialState: InitialState = {
-  route: 'profile', // Change when signin is done
-  isSignedIn: true,
-};
+const App = () => {
+  const [isSignedIn, setIsSignedIn] = useState(true);
+  const navigate = useNavigate();
 
-class App extends Component<Props, InitialState> {
-  constructor(props: Props) {
-    super(props);
-    this.state = initialState;
-  }
-
-  onRouteChange = (route: string): void => {
+  const onRouteChange = (route: string): void => {
     if (route === 'signout') {
-      this.setState(initialState);
-    } else if (route === 'game' || route === 'profile' || route === 'chat' || route === 'pong') {
-      this.setState({isSignedIn: true});
+      setIsSignedIn(false);
+      navigate('/signin');
+    } else if (route === 'game' || route === 'profile' || route === 'chat' || route === 'pong' || route === 'friends') {
+      setIsSignedIn(true);
+      navigate(`/${route}`);
+    } else if (route === 'signin') {
+      setIsSignedIn(false);
+      navigate(`/${route}`);
     }
-    this.setState({route: route});
   }
 
-  render() {
-    const { isSignedIn, route }: {isSignedIn: boolean; route: string } = this.state;
-    
-    return (
-      <>
-        {
-          (route === 'game' || route === 'chat' || route === 'profile' || route === 'pong') 
-          ? ( 
-            <div className="App">
-              <Routes>
-                {/* <Route path='/' element={<Navigation />} > */}
-                  <Route path='profile' element={<Profile onRouteChange={this.onRouteChange} />} />
-                {/* </Route> */}
-              </Routes>
-            </div>
-          )
-          : (
-            route === 'signin' 
-            ? '' /* <Signin onRouteChange={this.onRouteChange}/> */
-            : '' /* <Register={this.onRouteChange)/> */
-          )
-        }
-      </>
-    );
-  }
+  return (
+    <>
+      <div className="App">
+        <Navigation onRouteChange={onRouteChange} isSignedIn={isSignedIn} />
+        <Routes>
+            <Route path='/profile' element={<Profile onRouteChange={onRouteChange} />} />
+            <Route path='/friends' element={<Profile onRouteChange={onRouteChange} />} />
+            <Route path='/signin' element={<LoginForm onRouteChange={onRouteChange} />} />
+        </Routes>
+      </div>
+    </>
+  );
 }
 
 export default App;

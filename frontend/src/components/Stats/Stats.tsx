@@ -8,6 +8,7 @@ const Stats: React.FC = () => {
     return  (
 
         <div className='parent'>
+            <h2 className='title-s'>Statistics</h2>
             <div className='main'>
                 <div className='statt'>
                     <p className='title'>Level</p>

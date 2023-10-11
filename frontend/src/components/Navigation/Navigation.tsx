@@ -54,7 +54,7 @@ const Navigation: React.FC<Props> = ({ onRouteChange, isSignedIn }) => {
                 >
                     <List disablePadding>
                         <ListItem disablePadding>
-                            <ListItemButton>
+                            <ListItemButton onClick={() => onRouteChange('profile')}>
                                 <ListItemText primary="Profile"/>
                             </ListItemButton>
                         </ListItem>
@@ -62,15 +62,15 @@ const Navigation: React.FC<Props> = ({ onRouteChange, isSignedIn }) => {
                         <Divider />
 
                         <ListItem disablePadding>
-                            <ListItemButton>
-                                <ListItemText primary="Friends" />
+                            <ListItemButton onClick={() => onRouteChange('signin')}>
+                                <ListItemText primary="Friends (tempo login)" />
                             </ListItemButton>
                         </ListItem>
 
                         <Divider />
 
                         <ListItem disablePadding>
-                            <ListItemButton>
+                            <ListItemButton onClick={() => onRouteChange('chat')}>
                                 <ListItemText primary="Chat" />
                             </ListItemButton>
                         </ListItem>

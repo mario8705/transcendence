@@ -15,8 +15,16 @@
 }
 
 .parent {
-    display: flex;
-    justify-content: center;
+    margin-top: 50px;
+}
+
+.title-s {
+    font-family: 'Permanent Marker';
+    color: #9747FF;
+    font-weight: 900;
+    letter-spacing: 10px;
+    text-align: left;
+    text-shadow: 5px 4px 10px;
 }
 
 .main {
@@ -26,8 +34,8 @@
     backdrop-filter: blur(20px);
     box-shadow: 0 0 30px rgb(0, 0, 0, .5);
     display: flex;
-    overflow: hidden;
-    width: 40%;
+    /* overflow: hidden;
+    width: 40%; */
 }
 
 .statt {

@@ -2,6 +2,7 @@ import React from "react";
 import { Avatar, Button, TextField } from "@mui/material";
 import default_avatar from "../../assets/images/default_avatar.png";
 
+import Stats from "../Stats/Stats";
 import Ladder from "./Ladder/Ladder";
 import MatchHistory from "./MatchHistory/MatchHistory";
 import Achievements from "./Achievements/Achievements";
@@ -67,6 +68,7 @@ const Profile: React.FC<Props> = ({ onRouteChange }) => {
                 }}
             />
             <Ladder />
+            <Stats />
             <MatchHistory />
             <Achievements />
         </div>
