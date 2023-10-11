@@ -1,0 +1,20 @@
+#achievement {
+    background-color: rgba(151, 71, 255, 0.1);
+    border: 1px solid white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    margin-top: 20px;
+    border-radius: 20px;
+    text-shadow: 0px 0px 4px rgb(142, 212, 215);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#cardContent:last-child {
+    padding-bottom: 16px;
+}
+
+#cardContent {
+    padding: 16px 0px;
+}
