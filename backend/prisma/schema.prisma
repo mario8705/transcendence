@@ -17,8 +17,84 @@ model User {
   email         String  @unique
   emailVerified Boolean @default(false)
 
+  experience Int @default(0)
+
+  befriendedBy Friends[] @relation("users")
+  friends      Friends[] @relation("friends")
+  messages     Message[]
+
+  channelMemberships ChannelMembership[]
+
+  // gameResults   GameResult[] @relation("players")
+
+  ownedChannels Channel[] @relation("ownedChannels")
+
   ftUser FortyTwoUser?
 }
+
+model Friends {
+  userId    Int
+  friendId  Int
+  createdAt DateTime @default(now())
+  user      User     @relation("users", fields: [userId], references: [id])
+  friend    User     @relation("friends", fields: [friendId], references: [id])
+
+  @@id([userId, friendId])
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  authorId  Int
+  author    User     @relation(fields: [authorId], references: [id])
+}
+
+// enum ChannelVisibility {
+// Private
+// Public
+// InvitationOnly
+// }
+
+model Channel {
+  id         Int      @id @default(autoincrement())
+  ownerId    Int?
+  createdAt  DateTime @default(now())
+  password   String?
+  visibility String   @default("private")
+  // visibility ChannelVisibility @default(Private)
+
+  memberships ChannelMembership[]
+
+  owner User? @relation("ownedChannels", fields: [ownerId], references: [id])
+}
+
+model ChannelMembership {
+  userId         Int
+  channelId      Int
+  joinedAt       DateTime @default(now())
+  permissionMask Int
+
+  user    User    @relation(fields: [userId], references: [id])
+  channel Channel @relation(fields: [channelId], references: [id])
+
+  @@id([userId, channelId])
+}
+
+// enum PlayerSide {
+// Left
+// Right
+// }
+
+// model GameResult {
+//   id Int @default(autoincrement()) @id
+//   createdAt DateTime @default(now())
+
+//   score Int
+//   playerId Int
+//   playerSide String // Either "left" or "right"
+
+// }
 
 model FortyTwoUser {
   id          Int    @id
