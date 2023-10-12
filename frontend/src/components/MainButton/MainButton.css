@@ -8,8 +8,12 @@
     font-size: 1.2em;
     width: 100%;
     font-family: "Short Stack";
+    text-decoration: none;
+    display: inline-block;
+    box-sizing: border-box;
+    cursor: pointer;
 }
-    
+   
 .mainBtn:hover {
     background-color: var(--color-light-purple);
     transform: translate(-5px,5px);
