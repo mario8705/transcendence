@@ -1,14 +1,21 @@
 import React from 'react';
 import './MainButton.css';
 
-interface Props {
+export type MainButtonProps = {
     buttonName: string;
-}
+    as?: string;
+    [k: string]: any;
+};
 
-const MainButton: React.FC<Props> = ({buttonName}) => {
+const MainButton: React.FC<MainButtonProps> = ({ buttonName, as = "button", ...props }) => {
     return (
-        <div className=''>
-            <button className='mainBtn' >{buttonName}</button>
+        <div>
+            {
+                React.createElement(as, {
+                    ...props,
+                    className: 'mainBtn',
+                }, buttonName)
+            }
         </div>
     );
 };
