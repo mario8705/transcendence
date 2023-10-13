@@ -1,14 +1,20 @@
 import React from 'react';
-import './LoginForm.css';
 import MainButton from '../MainButton/MainButton'
-import { IoMailOutline } from "react-icons/io5";
-import { IoLockClosedOutline } from "react-icons/io5";
+import { IoMailOutline, IoLockClosedOutline } from 'react-icons/io5';
+import './LoginForm.css';
 
-interface Props {
-    onRouteChange: (route: string) => void;
-}
+const LoginForm: React.FC = () => {
+	const authorizeUrl = React.useMemo(() => {
+		const url = new URL('https://api.intra.42.fr/oauth/authorize');
+		const { searchParams } = url;
 
-const LoginForm: React.FC<Props> = ({ onRouteChange }) => {
+		searchParams.append('client_id', 'u-s4t2ud-8d978e732262281f66a1efd2053be66c07e8f1ec16d7ca8e7c73c5c058f01068');
+		searchParams.append('redirect_uri', 'http://localhost:5173/auth/callback');
+		searchParams.append('response_type', 'code');
+
+		return url.href;
+	}, []);
+
 	return (
 		<div className="box-parent">
 			<div className="box-popup">
@@ -35,13 +41,13 @@ const LoginForm: React.FC<Props> = ({ onRouteChange }) => {
 						<IoLockClosedOutline className="icon"/>
 					</div>
 					<div className="remember-forgot">
-						<input type="checkbox"/>Remember me
+						<input type="checkbox" name="remember_me" />Remember me
 						<a href="#">Forgot Password?</a>
 					</div>
 					<MainButton buttonName='Login'/>
 					<div className="input-box">
-						<p>or</p>
-					<MainButton buttonName='42 Account'/>
+					<p>or</p>
+					<MainButton as="a" href={authorizeUrl} buttonName='42 Account' />
 					</div>
 					<p>Don't have an account ? <a href="#" className="register-link">Register</a></p>
 				</form>
