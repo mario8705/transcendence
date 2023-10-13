@@ -81,4 +81,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.server.to(clientId).emit(type, data);
 	}
 
+	@SubscribeMessage('reset')
+	resetAll(
+		@ConnectedSocket() client: Socket
+	) {
+			this.chatService.resetAll(client);
+	}
+
 }

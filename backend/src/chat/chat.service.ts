@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { UsersService } from './users/services/users.service';
 import { RoomService } from './rooms/services/rooms.service';
-import { SocketGateway } from '../socket/socket.gateway' 
+import { SocketGateway } from '../socket/socket.gateway'
 
 @Injectable()
 export class ChatService {
@@ -82,6 +82,7 @@ export class ChatService {
 			if (this.roomService.joinRoom(user, data.roomname, data.option)) {
 				client.join(data.roomname);
 				this.socketGateway.server.to(data.roomname).emit('message', {from: 'server', to: 'moi', message: user.name + ' has joined this room'});
+				this.socketGateway.server.to('server').emit('roomupdate', {type: 'add', room: data.roomname});
 			}
 			console.log(this.roomService.getRooms());
 		}
@@ -99,9 +100,90 @@ export class ChatService {
 			else this.socketGateway.sendToClient(client.id, 'error', {errmsg: "This room does not exist"});
 		}
 		else if (data.type === 'manage') {
-			if (this.roomService.roomExists(data.roomname) && this.roomService.isRoomAdmin(user, data.roomname)) {
-				console.log('là je peux faire les manipulations qui reviennet aux administrateurs');
+			//! Options for owner: addadmin, kickAdmin, changePwd, addPwd, rmPwd, addInvite, rmInvite
+			//? invite, owners or administrators?
+			//! Options for administrators: kick, ban and mute (expcept for the owner, and temporally)
+			if (this.roomService.roomExists(data.roomname)) {
+				if (data.option.type === 'invite') {
+					const target = this.usersService.getUserbyName(data.option.target);
+					if (target && !this.roomService.isUserinRoom(target, data.roomname)) {
+						this.socketGateway.server.to(target.id).emit('room', {type: 'invite', roomname: data.roomname});
+					}
+				}
+				if (this.roomService.isRoomAdmin(user, data.roomname)) {
+					switch (data.option.type) {
+						case 'kick': {
+							const result = this.roomService.kickUser(user, data.roomname, data.option.target);
+							if (result.status === false)
+								this.socketGateway.server.to(client.id).emit('error', result.msg);
+							break;
+						}
+						case 'ban': {
+							const result = this.roomService.banUser(user, data.roomname, data.option.target);
+							if (result.status === false)
+								this.socketGateway.server.to(client.id).emit('error', result.msg);
+							break;
+						}
+						case 'mute': {
+							const result = this.roomService.muteUser(user, data.roomname, data.option.target);
+							if (result.status === false)
+								this.socketGateway.server.to(client.id).emit('error', result.msg);
+							break;
+						}
+						default: 
+							break;
+					}
+					if (this.roomService.isRoomOwner(user, data.roomname)) {
+						switch (data.option.type) { //? Est ce que seulement le owner peut inviter ou tous les administrateurs?
+							case 'addAdmin': {
+								const result = this.roomService.addAdmin(data.roomname, data.option.target);
+								if (result.status === false)
+								this.socketGateway.server.to(client.id).emit('error', result.msg);
+								break;
+							}
+							case 'kickAdmin': {
+								const result = this.roomService.kickAdmin(data.roomname, data.option.target);
+								if (result.status === false)
+								this.socketGateway.server.to(client.id).emit('error', result.msg);
+								break;
+							}
+							case 'addPwd': {
+								const result = this.roomService.addPwd(data.roomname, data.option.target);
+								if (result.status === false)
+								this.socketGateway.server.to(client.id).emit('error', result.msg);
+								break;
+							}
+							case 'rmPwd' : {
+								const result = this.roomService.rmPwd(data.roomname);
+								if (result.status === false)
+								this.socketGateway.server.to(client.id).emit('error', result.msg);
+								break;
+							}
+							case 'changePwd' : {
+								const result = this.roomService.addPwd(data.roomname, data.option.target);
+								if (result.status === false)
+								this.socketGateway.server.to(client.id).emit('error', result.msg);
+								break;
+							}
+							case 'addInvite' : {
+								const result = this.roomService.addInvite(data.roomname);
+								if (result.status === false)
+								this.socketGateway.server.to(client.id).emit('error', result.msg);
+								break;
+							}
+							case 'rmInvite' : {
+								const result = this.roomService.rmInvite(data.roomname);
+								if (result.status === false)
+								this.socketGateway.server.to(client.id).emit('error', result.msg);
+								break;
+							}
+							default: 
+								break;
+						}
+					}
+				}
 			}
+			
 		}	
 		else if (data.type === 'delete'){
 			if (this.roomService.roomExists(data.roomname))
@@ -114,20 +196,40 @@ export class ChatService {
 
 	chatFriend(
 		client: Socket,
-		data: {type: string, target: string, options: string}
+		data: {type: string, target: string, options: any}
 	) {
-		console.log("wants a new friend");
 		const user = this.usersService.getUserbyId(client.id);
-		if (this.usersService.addFriend(user, this.usersService.getUserbyName(data.target)) === false) {
-			console.log('cannot become friends because the target does not exist on our database');
-			this.socketGateway.server.to(client.id).emit('error', {errmsg: 'Targeted friend does not exists'});
-			return;
-		}
-		//TODO inform the other client that he has a new friend
-		// TODO also ask the other client if he wants to be friends
 		const target = this.usersService.getUserbyName(data.target);
-		this.socketGateway.server.to(client.id).emit('friend', {type: 'new', from: user.name, friend: target.name, status: 'befriended'});
-		this.socketGateway.server.to(target.id).emit('friend', {type: 'new', from: user.name, friend:user.name, status: 'newfriend'});
+		if (target) {
+			if (data.type === 'befriend') {
+				if (target) {
+					this.socketGateway.server.to(target.id).emit('friend', {type: 'request', from: user.name})
+				}
+			}
+			else if (data.type === 'requestresponse') {
+				if (data.options.response === true) {
+					this.usersService.addFriend(user, target);
+				}
+				else {
+					this.socketGateway.server.to(target.id).emit('error', {errmsg: user.name + " doesn't want to be your friend"});
+					return;
+				}
+			}
+			else if (data.type === 'unfriend') {
+				//TODO est ce que c'est possible ? 
+			}
+		}
+		else 
+			this.socketGateway.server.to(client.id).emit('error', {errmsg: data.target + ': unknown user'});
+	}
+
+	resetAll(client: Socket) {
+		this.roomService.clearRooms();
+		console.log(this.roomService.getRooms());
+		console.log("rooms cleaned");
+		this.socketGateway.server.to(client.id).emit('cleaned', 'rooms');
 		return;
 	}
+
+
 }

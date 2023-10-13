@@ -59,10 +59,10 @@ export class UsersService {
 	}
 
 	addFriend(currUser: User, friend: User): boolean {
-		if (this.users.find((user) => user === friend) == undefined) {
-			console.log('existe pas');
-			return false;
-		}
+		// if (this.users.find((user) => user === friend) == undefined) {
+		// 	console.log('existe pas');
+		// 	return false;
+		// }
 		if (!this.areFriends(currUser, friend)) {
 			currUser.friends.push(friend);
 			friend.friends.push(currUser);

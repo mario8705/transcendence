@@ -3,6 +3,7 @@ import { User } from "../../users/model/user.model";
 export class Room {
 	name: string;
 	admin: User[];
+	banned: User[];
 	owner: User;
 	users: User[];
 	password: boolean;
@@ -12,6 +13,7 @@ export class Room {
 
 	constructor(name: string) {
 		this.name = name;
+		this.banned = [];
 		this.users = [];
 		this.admin = [];
 		this.password = false;

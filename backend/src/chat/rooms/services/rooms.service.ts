@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import { truncateSync } from 'fs';
 import { userInfo } from 'os';
 import { ChatService } from 'src/chat/chat.service';
+import { UsersService } from 'src/chat/users/services/users.service';
 import { User } from '../../users/model/user.model';
 import { Room } from '../model/room.model'
 
 @Injectable()
 export class RoomService {
+
 	private rooms : Room[] = [];
 
 	createRoom(name: string, user: User, option: {invite: boolean, key: boolean, value: string}) : Room {
@@ -122,7 +125,8 @@ export class RoomService {
 	}
 
 	getUsersfromRoom(roomname: string) {
-		return this.rooms.find((room) => room.name === roomname).users;
+		console.log(roomname);
+		return this.rooms.find((room) => room.name === roomname)?.users;
 	}
 
 	getRooms() : Room[] {
@@ -133,12 +137,12 @@ export class RoomService {
 		return this.rooms.find((room) => room.name === roomname);
 	}
 
-	kick(roomname: string, curruser: User, target: User) {
+	kickUser(curruser: User, roomname: string, target: User) : {status: boolean, msg: string} {
 		if (this.roomExists(roomname)) {
 			let room = this.getRoom(roomname);
 			if (room.admin.find((user) => user === curruser)) {
 				if (this.isUserinRoom(target, roomname) && !this.isRoomOwner(target, roomname)) {
-					room.users.slice(room.users.indexOf(target), 1);
+					room.users.splice(room.users.indexOf(target), 1);
 					console.log(room.users);
 					console.log(target.name, ' has been successfully removed from the room');
 				}
@@ -151,6 +155,103 @@ export class RoomService {
 		}
 		else
 			return;
+	}
+
+	banUser(curruser: User, roomname: string, target: string) : {status: boolean, msg: string} {
+		let room = this.rooms.find((room) => room.name === roomname);
+		if (room) {
+			let usertarget = room.users.find((user) => user.name === target);
+			if (usertarget) {
+				room.users.splice(room.users.indexOf(usertarget), 1);
+				return ({status: true, msg: ''});
+			}
+			else
+				return {status: false, msg: "user not in room"};
+		}
+		else
+			return ({status: false, msg: "no such room"});
+		
+	}
+
+	muteUser(curruser: User, roomname: string, target: string) : {status: boolean, msg: string} {
+		let room = this.rooms.find((room) => room.name === roomname);
+		if (room) {
+			//comment je fais pour mute quelqu'un ? Il faut que je trouve un solution. C'est un peu compliqué
+		}
+		return ({status: false, msg: "room doesn't exist"});
+	}
+
+	
+	addAdmin(roomname: string, name: string): {status: boolean, msg: string} {
+		let room = this.rooms.find((room) => room.name == roomname);
+		if (room) {
+			const target = room.users.find((user) => user.name === name);
+			if (target) {
+				room.admin.push(target);
+				return {status: true, msg: ''};
+			}
+			else
+				return {status: false, msg: name + ': is not in this room'};
+		}
+		return {status: false, msg: roomname + ': no such channel'};
+	}
+
+	kickAdmin(roomname: string, name: string) : {status: boolean, msg: string} {
+		let room = this.rooms.find((room) => room.name === roomname);
+		if (room) {
+			const target = room.users.find((user) => user.name === name);
+			if (target && room.admin.find((user) => user === target) != undefined) {
+				room.admin.splice(room.admin.indexOf(target), 1);
+				return ({status: true, msg: ''});
+			}
+			else
+				return ({status: false, msg: name + ': target not in the room OR not an admin'});
+				
+			}
+		else
+			return {status: false, msg: roomname + ' no such room'};
+	}
+
+	addPwd(roomname: string, pwd: string) : {status: boolean, msg: string} {
+		let room = this.getRoom(roomname);
+		if (room) {
+			if (room.password === false)
+				room.password = true;
+			room.pwdValue = pwd;
+			return {status: true, msg: ''};
+		}
+		else
+			return {status: false, msg : roomname + ': no such room'};
+	}
+
+	rmPwd(roomname: string) : {status: boolean, msg : string} {
+		let room = this.getRoom(roomname);
+		if (room) {
+			if (room.password === true)
+				room.password = false;
+			room.pwdValue = '';
+			return {status: true, msg: ''};
+		}
+		else
+			return {status: false, msg: roomname + ': no such room'};
+	}
+
+	addInvite(roomname: string) : {status: boolean, msg: string} {
+		let room = this.getRoom(roomname);
+		if (room) {
+			room.inviteOnly = true;
+			return {status: true, msg: ''};
+		}
+		return {status: false, msg: roomname + ': no such room'};
+	}
+
+	rmInvite(roomname: string) : {status: boolean, msg: string} {
+		let room = this.getRoom(roomname);
+		if (room) {
+			room.inviteOnly = false;
+			return {status: true, msg: ''};
+		}
+		return {status: false, msg: roomname + ': no such room'};
 	}
 
 	clearRooms() : void {

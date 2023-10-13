@@ -7,7 +7,8 @@ import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
-	SocketModule
+	SocketModule,
+	ChatModule,
 ],
 })
 export class AppModule {}
