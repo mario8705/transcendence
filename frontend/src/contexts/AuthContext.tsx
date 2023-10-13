@@ -107,13 +107,16 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
     initialized.current = true;
 
-    if (getAuthenticationToken() !== null) {
+    if (true || getAuthenticationToken() !== null) {
       try {
-        const userProfile = await fetchUserProfile('@me');
+        // const userProfile = await fetchUserProfile('@me');
         dispatch({
           type: HANDLERS.INITIALIZE,
           payload: {
-            ...userProfile.data,
+            firstName: 'Test',
+            lastName: 'Test2',
+            avatar: 'bolosse',
+            // ...userProfile.data,
           },
         });
         return ;
