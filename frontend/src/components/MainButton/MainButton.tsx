@@ -1,7 +1,7 @@
 import React from 'react';
 import './MainButton.css';
 
-interface Props {
+export type MainButtonProps = {
     buttonName: string;
     mode?: number;
     onClick?: (newMode: number) => void;
