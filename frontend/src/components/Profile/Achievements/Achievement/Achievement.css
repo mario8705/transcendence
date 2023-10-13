@@ -1,3 +1,64 @@
+.achievement {
+    width: 250px;
+    height: 60px;
+    background-color: rgba(151, 71, 255, 0.1);
+    border: 1px solid white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    text-shadow: 0px 0px 4px rgb(142, 212, 215);
+    color: white;
+    display: flex;
+    padding: 0 1em;
+    position: relative;
+}
+
+h2 + .achievement {
+    margin-top: 2em;
+}
+
+.achievement:not(:last-child) {
+    margin-bottom: 1.5em;
+}
+
+.achievement-details {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.achievement-description {
+    opacity: 0;
+    font-family: 'Roboto', sans-serif;
+    text-align: left;
+    text-shadow: none; 
+    height: 100%;
+    font-size: 0.7em;
+    overflow-y: auto;
+    position: absolute;
+    padding: 0 1em;
+    transition: all .4s;
+    inset: 0;
+}
+
+.achievement-description::-webkit-scrollbar {
+    background-color: transparent;
+}
+
+.achievement-description p {
+    padding: 10px 0;
+    margin: 0;
+}
+
+.achievement:hover .achievement-description {
+    display: block;
+    opacity: 1;
+}
+
+.achievement:hover .achievement-details {
+    display: none;
+}
+
 #achievement {
     background-color: rgba(151, 71, 255, 0.1);
     border: 1px solid white;
@@ -9,6 +70,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 80px;
+
 }
 
 #cardContent:last-child {
@@ -16,15 +79,19 @@
 }
 
 #cardContent {
-    padding: 16px 0px;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 #description-a {
     font-family: 'Roboto';
     text-align: left;
-    padding: 1px 10px; 
     text-shadow: none; 
-    font-size: 0.7em;
+    height: 100%;
+    /* font-size: 0.7em; */
+    overflow-y: auto;
 }
 
 #description-a p {

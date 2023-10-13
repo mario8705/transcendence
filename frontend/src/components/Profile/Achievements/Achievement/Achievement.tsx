@@ -13,51 +13,22 @@ interface Props {
     description: string,
     difficulty: number,
     isHidden: boolean,
-    achievementInfo: {
-        name: string,
-        description: string,
-        difficulty: number,
-        isHidden: boolean,
-    }
 }
 
-const Achievement: React.FC<Props> = ({ achievementInfo }) => {
-    const [isHovering, setIsHovering] = useState(false);
-
+const Achievement: React.FC<Props> = ({ name, description, difficulty, isHidden }) => {
     return (
-        <Card 
-            id="achievement" 
-            sx={{ width: 200, height: 80 }}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-        >
-            <CardContent id="cardContent" >
-                <Box display="flex"
-                    flexDirection="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    padding="0px 10px"
-                    width="200px"
-                    height="90px"
-                    overflow="scroll"
-                >
-                    {isHovering ? (
-                        <div id="description-a">
-                            <p>Some description hfuezf f jgrhikgb zbf ejbgjrkg nrzbn rhbnr  nkj bguef nksj nvfkn ezfhne e fenf hnfeohf ohouehgfou hgohgf uefouejfoezhj oejfoejf oezf</p>
-                        </div>
-                    ) : (
-                        <>
-                            <div style={{ padding: '5px', }}>
-                                {achievementInfo.name}
-                            </div>
-                            <div style={{ padding: '5px', }}>
-                                <Difficulty difficultyLevel={achievementInfo.difficulty} />
-                            </div>
-                        </>
-                    )}
-                </Box>
-            </CardContent>
-        </Card>
+        <div class="achievement">
+            <div className="achievement-details">
+                <h2>{name}</h2>
+                <Difficulty difficultyLevel={difficulty} />
+            </div>
+            <div className="achievement-description">
+                <p>
+                    Some description hfuezf f jgrhikgb zbf ejbgjrkg nrzbn rhbnr  nkj bguef nksj
+                    nvfkn ezfhne e fenf hnfeohf ohouehgfou hgohgf uefouejfoezhj oejfoejf oezf Some description hfuezf f jgrhikgb zbf ejbgjrkg nrzbn rhbnr  nkj bguef nksj nvfkn ezfhne e fenf hnfeohf ohouehgfou hgohgf uefouejfoezhj oejfoejf oezf
+                </p>
+            </div>
+        </div>
     );
 };
 

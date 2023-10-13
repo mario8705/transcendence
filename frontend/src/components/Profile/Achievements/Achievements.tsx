@@ -25,7 +25,7 @@ const Achievements: React.FC = () => {
         <div className="achievements">
             <h2 className='title-a'>Achievements</h2>
             {rows.map((achievementInfo) => (
-                <Achievement achievementInfo={achievementInfo} />
+                <Achievement {...achievementInfo} />
             ))}
         </div>
     );
