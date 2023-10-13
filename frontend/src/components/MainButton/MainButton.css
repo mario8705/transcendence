@@ -20,3 +20,17 @@
     transition: transform 0.5s ease-out;
     box-shadow: 0 0 0 0 var(--color-yellow)
 }
+
+.icon:first-child {
+    padding-right: 15px;
+    font-size: 1em;
+    color: white;
+
+}
+
+.icon:last-child {
+    padding-left: 15px;
+    font-size: 1em;
+    color: white;
+
+}

@@ -3,19 +3,15 @@ import './MainButton.css';
 
 export type MainButtonProps = {
     buttonName: string;
-    as?: string;
-    [k: string]: any;
-};
+    mode?: number;
+    onClick?: (newMode: number) => void;
+    icon?: React.ReactNode;
+}
 
-const MainButton: React.FC<MainButtonProps> = ({ buttonName, as = "button", ...props }) => {
+const MainButton: React.FC<Props> = ({buttonName, mode, onClick, icon}) => {
     return (
-        <div>
-            {
-                React.createElement(as, {
-                    ...props,
-                    className: 'mainBtn',
-                }, buttonName)
-            }
+        <div className=''>
+            <button className='mainBtn' onClick={() => onClick && onClick(mode || 0)} > {icon} {buttonName} {icon}</button>
         </div>
     );
 };
