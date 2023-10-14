@@ -1,0 +1,108 @@
+h2 {
+    color: white;
+}
+
+.h2bis {
+    color: white;
+    margin-bottom: 5%;
+}
+
+p {
+    font-size: 1em;
+    color: white;
+}
+
+.pbis {
+    font-size: 1em;
+    color: white;
+    margin-top: 10%;
+}
+
+.box-parent {
+    display: flex;
+    justify-content: center;
+}
+
+.box-popup {
+    position: relative;
+    background: linear-gradient(to top, #BF9CE8 10%, #FFEA95 100%) no-repeat;
+    /* background: transparent; */
+    border: 2px solid white;
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 30px rgb(0, 0, 0, .5);
+    /* display: flex; */
+    /* justify-content: center; */
+    /* justify-content: space-between;  */
+    /* align-items: center; */
+    overflow: hidden;
+    padding: 40px;
+    top: 10vh;
+    margin-bottom: 4%;
+}
+
+/* .input-box {
+    position: relative;
+    width: 100%;
+} */
+
+.input-box {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+}
+
+.input-box > *:not(:last-child) {
+    margin-right: 20px;
+}
+
+
+/* .remember-forgot {
+    font-size: .9em;
+    color: white;
+    font-weight: 500;
+    margin: -15px 0 15px;
+    display: flex;
+}
+
+.remember-forgot a {
+    color: white;
+    text-decoration: none;
+    margin-left: 30px;
+}
+
+.remember-forgot a:hover {
+    text-decoration: underline;
+    text-shadow: 0 0 6px var(--color-yellow);
+}
+
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+} */
+
+/* .input-box input {
+    background: transparent;
+    border: 2px solid white;
+    backdrop-filter: blur(20px);
+    outline: none;
+    font-size: 2em;
+    color: white;
+            text-shadow: 0 0 4px var(--color-yellow);
+    text-align: center;
+    padding: 3%;
+}
+
+.icon-close {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    color: white;
+    cursor: pointer;
+    z-index: 1;
+} */
