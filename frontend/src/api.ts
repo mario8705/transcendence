@@ -29,13 +29,13 @@ function injectAuthorizationHeader(headers: RawAxiosRequestHeaders = {}): RawAxi
         ...authorizationHeader,
     };
 }
-
+/*
 function authorizedPost<P = any>(url: string, data: any, config: AxiosRequestConfig = {}) {
     return client.post<P>(url, data, {
         ...config,
         headers: injectAuthorizationHeader(config.headers ?? {}),
     });
-}
+}*/
 
 function authorizedGet<P = any>(url: string, config: AxiosRequestConfig = {}) {
     return client.get<P>(url, {

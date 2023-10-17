@@ -1,19 +1,14 @@
-import React from "react";
 import { Avatar, Button, TextField } from "@mui/material";
+import React from "react";
 import default_avatar from "../../assets/images/default_avatar.png";
 
 import Stats from "../Stats/Stats";
+import Achievements from "./Achievements/Achievements";
 import Ladder from "./Ladder/Ladder";
 import MatchHistory from "./MatchHistory/MatchHistory";
-import Achievements from "./Achievements/Achievements";
-
 import './Profile.css';
 
-interface Props {
-    onRouteChange: (route: string) => void;
-}
-
-const Profile: React.FC<Props> = ({ onRouteChange }) => {
+const Profile: React.FC = () => {
     return (
         <div className="Profile">
             <Avatar

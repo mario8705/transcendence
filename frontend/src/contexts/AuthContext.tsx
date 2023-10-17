@@ -1,6 +1,5 @@
 import React, { PropsWithChildren } from 'react';
 import { getAuthenticationToken } from '../storage';
-import { fetchUserProfile } from '../api';
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE' as const,

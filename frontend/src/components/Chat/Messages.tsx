@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react';
 import SocketContext from '../Socket/Context/Context';
 
 export default function Messages ({messages, from}: {messages:string[], from: string}) {

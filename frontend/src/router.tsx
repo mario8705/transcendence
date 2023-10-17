@@ -20,11 +20,11 @@ export const router = createBrowserRouter([
         children: [
             {
                 path: '/profile',
-                element: <Profile onRouteChange={() => void 0} />,
+                element: <Profile />,
             },
             {
                 path: '/friends',
-                element: <Profile onRouteChange={() => void 0} />,
+                element: <Profile />,
             },
             {
                 path: '/game',

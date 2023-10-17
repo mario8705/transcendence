@@ -1,8 +1,4 @@
 import * as React from 'react';
-import { useState } from 'react';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Box from '@mui/material/Box';
 
 import Difficulty from './Difficulty/Difficulty';
 
@@ -15,9 +11,9 @@ interface Props {
     isHidden: boolean,
 }
 
-const Achievement: React.FC<Props> = ({ name, description, difficulty, isHidden }) => {
+const Achievement: React.FC<Props> = ({ name, difficulty }) => {
     return (
-        <div class="achievement">
+        <div className="achievement">
             <div className="achievement-details">
                 <h2>{name}</h2>
                 <Difficulty difficultyLevel={difficulty} />

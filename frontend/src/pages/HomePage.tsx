@@ -4,7 +4,7 @@ export const HomePage = () => {
     const { user } = useAuthContext();
     
     return (
-        <p>Hello {user.firstName} !</p>
+        <p>Hello {user?.firstName} !</p>
     );
 };
 

@@ -3,12 +3,12 @@ import SocketContext from '../Socket/Context/Context';
 import { useRef, useEffect, useContext, useCallback } from 'react';
 
 const BALL_SPEED_MOD = 250;
-const PADDLE_SPEED = 500;
+// const PADDLE_SPEED = 500;
 const BALL_DEFAULT_RADIUS = 15;
-const BALL_SPEED_Y = 5;
-const BALL_SPEED_X = 1.5;
+// const BALL_SPEED_Y = 5;
+// const BALL_SPEED_X = 1.5;
 
-const GAME_MAX_GOAL = 2;
+// const GAME_MAX_GOAL = 2;
 
 interface scoreElem {
 	leftPlayer: string,
@@ -34,10 +34,6 @@ interface ballElem {
 	x: number,
 	y: number,
 	radius: number,
-}
-
-interface keyState {
-	[key: string]: boolean,
 }
 
 //////////////////////////////
@@ -275,7 +271,7 @@ const Game: React.FC<gameProps> = (props) => {
 		// resetGamePosition();
 
 		// GAME LOOP
-		const gameLoop = (time: number) => {
+		const gameLoop = () => {
 
 			// if (lastFrameTime !== null) {
 			// 	const delta = (time - lastFrameTime) / 1000
