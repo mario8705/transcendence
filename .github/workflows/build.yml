@@ -58,6 +58,10 @@ jobs:
     - name: Install dependencies
       working-directory: backend/
       run: pnpm i --frozen-lockfile
+    
+    - name: Generate Prisma client schema
+      working-directory: backend
+      run: npx prisma generate
 
     - name: Build
       working-directory: backend/
@@ -68,3 +72,7 @@ jobs:
       with:
         name: backend-data
         path: backend/dist
+
+    - name: Build the Docker image
+      working-directory: backend/
+      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
