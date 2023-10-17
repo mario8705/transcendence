@@ -28,3 +28,9 @@ jobs:
       run: |
         pnpm i --frozen-lockfile
         pnpm run build
+
+    - name: Upload artifact for deployment job
+      uses: actions/upload-artifact@v3
+      with:
+        name: node-app
+        path: dist
