@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build_frontend:
     runs-on: ubuntu-latest
 
     steps:
@@ -37,3 +37,34 @@ jobs:
       with:
         name: frontend-data
         path: frontend/dist
+        
+  build_backend:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: pnpm/action-setup@v2
+      with:
+        version: 8
+
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        cache: 'pnpm'
+        cache-dependency-path: backend/pnpm-lock.yaml
+        node-version: 18.x
+
+    - name: Install dependencies
+      working-directory: backend/
+      run: pnpm i --frozen-lockfile
+
+    - name: Build
+      working-directory: backend/
+      run: pnpm run build
+
+    - name: Upload artifact for deployment job
+      uses: actions/upload-artifact@v3
+      with:
+        name: backend-data
+        path: backend/dist
