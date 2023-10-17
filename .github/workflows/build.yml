@@ -1,0 +1,30 @@
+name: Build frontend
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+
+    - name: Install PNPM
+      working-directory: frontend/
+      run: |
+        npm i -g pnpm
+
+    - name: Build
+      working-directory: frontend/
+      run: |
+        pnpm i --frozen-lockfile
+        pnpm run build
