@@ -1,0 +1,42 @@
+h2 {
+    color: white;
+    margin: 3%;
+    text-shadow: 0 0 4px var(--color-yellow);
+}
+
+.parent {
+    display: flex;
+    justify-content: center;
+    height: 400px;
+}
+
+.box {
+    /* background: linear-gradient(to top, #BF9CE8 10%, #FFEA95 100%) no-repeat; */
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 30px rgb(0, 0, 0, .5);
+    overflow-y: scroll;
+}
+
+.box::-webkit-scrollbar {
+    width: 5px;
+}
+
+.box::-webkit-scrollbar-track {
+    background: white;
+    border-radius: 20px;
+    padding: 10px 0;
+}
+
+.box::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 20px;
+    padding: 10px 0;
+}
+
+.box::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    border-radius: 20px;
+}
