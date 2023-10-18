@@ -2,6 +2,9 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { RouterProvider } from 'react-router-dom';
 import { AuthConsumer, AuthProvider } from './contexts/AuthContext';
 import { router } from './router';
+
+import Navigation from './components/Navigation/Navigation';
+
 import './App.css';
 
 const queryClient = new QueryClient({
