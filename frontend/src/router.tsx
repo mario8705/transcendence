@@ -4,6 +4,7 @@ import { AuthCallbackPage } from './pages/AuthCallbackPage';
 import { LoginPage } from './pages/LoginPage';
 import Profile from './components/Profile/Profile';
 import Game from './components/Game/Game';
+import FriendList from './components/FriendList/FriendList';
 
 export const router = createBrowserRouter([
     {
@@ -24,7 +25,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/friends',
-                element: <Profile onRouteChange={() => void 0} />,
+                element: <FriendList />,
             },
             {
                 path: '/game',
