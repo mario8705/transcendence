@@ -73,6 +73,12 @@ jobs:
         name: backend-data
         path: backend/dist
 
+    - name: Authenticate To Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: 'projects/799723412304/locations/global/workloadIdentityPools/github-gcr'
+        service_account: 'github-gcr-service-account@magnetic-lore-402317.iam.gserviceaccount.com"
+
     - name: Build the Docker image
       working-directory: backend/
       run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
