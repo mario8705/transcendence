@@ -5,14 +5,15 @@ import { ChatService } from 'src/chat/chat.service';
 import { UsersService } from 'src/chat/users/services/users.service';
 import { User } from '../../users/model/user.model';
 import { Room } from '../model/room.model'
-
+import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class RoomService {
 
 	private rooms : Room[] = [];
 
 	createRoom(name: string, user: User, option: {invite: boolean, key: boolean, value: string}) : Room {
-		const newRoom = new Room(name);
+		const id = uuidv4(); // prévoir de rajouter cet id dans la membership database
+		const newRoom = new Room(name, id);
 		newRoom.owner = user;
 		newRoom.admin.push(user);
 		if (option.invite === true)
@@ -35,7 +36,7 @@ export class RoomService {
 				console.log('inviteOnly');
 				//return si il n'a pas été invité.
 			}
-			else if (room.password) {
+			else if (room.pwdValue === undefined) {//! Attention est ce qu'il faut faire cette vérification ? On peut rentrer quoi qu'il arrive si il y a pas besoin de mdp 
 				if (option.value !== room.pwdValue)
 				return false;	
 			}
@@ -86,8 +87,7 @@ export class RoomService {
 				if (option.key === true)
 					room.pwdValue = option.value;
 				else {
-					room.password = false;
-					room.pwdValue = '';
+					room.pwdValue = undefined;
 				}
 				return true;
 			}
@@ -215,8 +215,6 @@ export class RoomService {
 	addPwd(roomname: string, pwd: string) : {status: boolean, msg: string} {
 		let room = this.getRoom(roomname);
 		if (room) {
-			if (room.password === false)
-				room.password = true;
 			room.pwdValue = pwd;
 			return {status: true, msg: ''};
 		}
@@ -227,9 +225,7 @@ export class RoomService {
 	rmPwd(roomname: string) : {status: boolean, msg : string} {
 		let room = this.getRoom(roomname);
 		if (room) {
-			if (room.password === true)
-				room.password = false;
-			room.pwdValue = '';
+			room.pwdValue = undefined;
 			return {status: true, msg: ''};
 		}
 		else

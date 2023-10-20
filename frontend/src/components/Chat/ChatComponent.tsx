@@ -19,6 +19,10 @@ function ChatComponent() {
 	const [messages, setMessages] = useState<string[]>([]);
 	const [selected, setSelected] = useState(''); 
 
+	// const getUsers = async () => {
+	// 	await fetch('http://locahost:3333', {method: 'GET', })
+	// }
+
 
 	const setName = () => {
 		SocketState.uid = userId;

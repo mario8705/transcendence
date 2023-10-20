@@ -8,8 +8,8 @@ import { User } from '../model/user.model';
 export class UsersService {
 	private users : User[] = [];
 	
-	addUser(id: string, name: string) {
-		const newUser = new User(id, name);
+	addUser(id: string, uSocket: Socket, name: string) {
+		const newUser = new User(id, uSocket, name);
 		console.log(this.users.push(newUser));
 		return 'coucou';
 	}
@@ -31,10 +31,17 @@ export class UsersService {
 	}
 
 
-	updateSocket(name: string, id: string) {
+	updateSocketid(name: string, id: string) {
 		const user : User = this.users.find((user) => user.name === name);
 		user.id = id;
 		console.log([...this.users]);
+	}
+
+	updateSocket(name: string, newSocket: Socket) :void {
+		const user : User = this.users.find((user) => user.name === name);
+		if (user != undefined) {
+			user.socket = newSocket;
+		}
 	}
 
 	updateName(name: string, id: string) {

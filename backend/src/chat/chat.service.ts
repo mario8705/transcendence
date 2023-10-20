@@ -3,6 +3,9 @@ import { Socket } from 'socket.io';
 import { UsersService } from './users/services/users.service';
 import { RoomService } from './rooms/services/rooms.service';
 import { SocketGateway } from '../socket/socket.gateway'
+import { v4 as uuidv4 } from 'uuid';
+// import { PrismaClient } from '@prisma/client';
+
 
 @Injectable()
 export class ChatService {
@@ -10,7 +13,8 @@ export class ChatService {
 		private readonly usersService: UsersService,
 		private readonly roomService: RoomService,
 		@Inject(forwardRef(() => SocketGateway))
-		private readonly socketGateway: SocketGateway
+		private readonly socketGateway: SocketGateway,
+		// private readonly prismaService : PrismaClient
 		) {}
 
 	chatUser(
@@ -20,7 +24,8 @@ export class ChatService {
 		console.log('userid in user: ', data);
 		if(this.usersService.alreadyRegisterdByName(data) != undefined) {
 			console.log("already registerd, updating socket...");
-			this.usersService.updateSocket(data, client.id);
+			this.usersService.updateSocketid(data, client.id);
+			this.usersService.updateSocket(data, client);
 		}
 		else if (this.usersService.alreadyRegisterdById(data) != undefined) {
 			console.log("already registered, updating name...");
@@ -34,7 +39,7 @@ export class ChatService {
 				// this.socketGateway.sendToClient(user.id, 'usersConnected', {type: 'new', user: data});
 				// this.socketGateway.sendToClient(client.id, 'usersConnected', {type: 'new', user: user.name});
 			})
-			this.usersService.addUser(client.id, data);
+			this.usersService.addUser(client.id, client, data);
 			client.broadcast.emit('newUser', {id: client.id, name: data});
 		}
 		console.log(data);
@@ -45,14 +50,27 @@ export class ChatService {
 		data: {type: string, to: string, message: string, options: string}
 	) {
 		console.log(this.usersService.getUsers());
-		console.log('received', data.message);
+		console.log('received', data.message, ' ', data.type);
 		const user = this.usersService.getUserbyId(client.id);
 		if (data.type === 'priv') {
 			if (data.to != user?.name && data.to != '') {
-				console.log("pas à moi");
 				const dest = this.usersService.getUserbyName(data.to);
-				if (dest != undefined)
-					this.socketGateway.server.to(dest.id).emit('message', {from : user.name, to: data.to, message: data.message});
+				if (dest != undefined) {	
+					if (user.conversations.find((conv) => conv.with === dest) === undefined) {
+						const id = uuidv4();
+						client.join(id);
+						dest.socket.join(id);
+						user.conversations.push({with: dest, id: id});
+						dest.conversations.push({with: user, id: id});
+						console.log('creating conversation');
+						this.socketGateway.server.to(id).emit('message', {from : user.name, to: data.to, message: data.message});
+					}
+					else{
+						console.log('existing conversation')
+						const conversation = user.conversations.find((conv) => conv.with === dest);
+						this.socketGateway.server.to(conversation.id).emit('message', {from : user.name, to: data.to, message: data.message});
+					}
+				}
 				else 
 					this.socketGateway.server.to(client.id).emit('message', "No such connected user");
 			}
@@ -65,8 +83,11 @@ export class ChatService {
 			if (this.roomService.roomExists(data.to)) {
 				console.log('exists');
 				if (this.roomService.isUserinRoom(user, data.to)) {
-					this.socketGateway.server.to(data.to).emit('message', {from : user.name, to: data.to, message: data.message});
-					return;
+					const room = this.roomService.getRoom(data.to);
+					if (room !== undefined) {
+						this.socketGateway.server.to(room.id).emit('message', {from : user.name, to: data.to, message: data.message});
+						return;
+					}
 				}
 			this.socketGateway.server.to(client.id).emit('error', {errmsg: 'This room does not exists or you are not a memeber'});
 			}

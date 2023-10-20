@@ -1,23 +1,25 @@
 import { User } from "../../users/model/user.model";
 
 export class Room {
+	id: string;
 	name: string;
 	admin: User[];
 	banned: User[];
-	owner: User;
+	owner: User | undefined;
 	users: User[];
-	password: boolean;
-	pwdValue: string;
+	pwdValue: string | undefined;
 	inviteOnly: boolean;
+	visibility: string;
 
 
-	constructor(name: string) {
+	constructor(name: string, id : string) {
+		this.id = id;
 		this.name = name;
 		this.banned = [];
 		this.users = [];
 		this.admin = [];
-		this.password = false;
-		this.pwdValue = '';
+		this.pwdValue = undefined;
 		this.inviteOnly = false;
+		this.visibility = 'pivate';
 	}
 }
