@@ -9,7 +9,6 @@ import {
 	WebSocketGateway,
 	WebSocketServer
 } from "@nestjs/websockets";
-import { Injectable } from "@nestjs/common";
 import { GameService } from "src/game/game.service";
 
 @WebSocketGateway({
@@ -30,6 +29,7 @@ export class SocketGateway implements
 
 	afterInit() {
 		this.gameHandler = new GameService(this.server);
+		this.gameHandler.tick();
 		console.log("Init socket Gateway")
 	}
 
@@ -42,8 +42,11 @@ export class SocketGateway implements
 	}
 
 	@SubscribeMessage("joinRandomMatch")
-	onRandomMatch(@ConnectedSocket() socket: Socket) {
-		this.gameHandler.joinRandomGame(socket);
+	onRandomMatch(
+		@ConnectedSocket() socket: Socket,
+		@MessageBody() body: number)
+	{
+		this.gameHandler.joinRandomMatch(socket, body);
 	}
 
 	@SubscribeMessage("keyUp")
