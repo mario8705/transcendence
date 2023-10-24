@@ -1,27 +1,27 @@
-h2 {
+.login-form h2 {
     color: white;
 }
 
-p {
+.login-form p {
     font-size: 1em;
     color: white;
     margin-top: 60px;
 }
 
-p a {
+.login-form p a {
     color: var(--color-purple);
 }
 
-p a:hover {
+.login-form p a:hover {
     color: var(--color-light-purple);
 }
 
-.box-parent {
+.login-form .box-parent {
     display: flex;
     justify-content: center;
 }
 
-.box-popup {
+.login-form .box-popup {
     position: relative;
     background: transparent;
     border: 2px solid white;
@@ -37,7 +37,7 @@ p a:hover {
     margin-bottom: 4%;
 }
 
-.input-box {
+.login-form .input-box {
     position: relative;
     width: 100%;
     height: 50px;
@@ -45,11 +45,11 @@ p a:hover {
     margin: 30px 0;
 }
 
-.input-box:last-of-type {
+.login-form .input-box:last-of-type {
     border-bottom: none;
 }
 
-.input-box label{
+.login-form .input-box label{
     position: absolute;
     top: 0;
     left: 5px;
@@ -60,7 +60,7 @@ p a:hover {
     transition: top 0.3s ease;
 }
 
-.input-box input {
+.login-form .input-box input {
     width: 100%;
     height: 130%;
     background: transparent;
@@ -73,7 +73,7 @@ p a:hover {
     padding: 0 35px 0 5px;
 }
 
-.input-box .icon {
+.login-form .input-box .icon {
     position: absolute;
     right: 8px;
     top: 15px;
@@ -82,7 +82,7 @@ p a:hover {
     line-height: 57px;
 }
 
-.input-box .element {
+.login-form .input-box .element {
     position: absolute;
     bottom: 20%;
     left: 1%;
@@ -92,7 +92,7 @@ p a:hover {
     border-radius: 6px;
 }
 
-.input-box p {
+.login-form .input-box p {
     font-size: 1em;
     color: white;
     margin: -15px 0 15px;
@@ -100,7 +100,7 @@ p a:hover {
     justify-content: center;
 }
 
-.remember-forgot {
+.login-form .remember-forgot {
     font-size: .9em;
     color: white;
     font-weight: 500;
@@ -108,13 +108,13 @@ p a:hover {
     display: flex;
 }
 
-.remember-forgot a {
+.login-form .remember-forgot a {
     color: white;
     text-decoration: none;
     margin-left: 30px;
 }
 
-.remember-forgot a:hover {
+.login-form .remember-forgot a:hover {
     text-decoration: underline;
     text-shadow: 0 0 6px var(--color-yellow);
 }

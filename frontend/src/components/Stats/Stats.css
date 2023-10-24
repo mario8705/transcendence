@@ -6,7 +6,7 @@
     --color-light-pink: rgb(248, 163, 139);
 }
 
-.icon {
+.stats .icon {
     position: absolute;
     right: 8px;
     font-size: 150%;
