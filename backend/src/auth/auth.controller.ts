@@ -1,6 +1,9 @@
-import { Controller, Post, Body, UsePipes, ValidationPipe, BadRequestException } from '@nestjs/common';
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { Controller, Post, Body, UsePipes, ValidationPipe, BadRequestException, UnauthorizedException, UseGuards, Request, ForbiddenException } from '@nestjs/common';
+import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsNumberString, IsString, Length } from 'class-validator';
 import { AuthService } from './auth.service';
+import { TicketGuard } from './ticket.guard';
+import { Request as ExpressRequest } from 'express';
+import { TicketPayload } from './ticket.service';
 
 export enum AuthorizationProviderType {
     FortyTwo = 'ft',
@@ -13,6 +16,39 @@ export class AuthorizeCodeDto {
 
     @IsEnum(AuthorizationProviderType)
     provider: AuthorizationProviderType;
+}
+
+export class PasswordLoginDto {
+    @IsEmail()
+    @IsNotEmpty()
+    email: string;
+
+    @IsString()
+    @IsNotEmpty()
+    password: string;
+}
+
+export class VerifyOtpDto {
+    @IsString()
+    ticket: string;
+
+    @Length(6, 6)
+    @IsNumberString()
+    code: string;
+}
+
+export class VerifyEmailDto {
+    @IsString()
+    ticket: string;
+
+    @Length(6, 6)
+    @IsNumberString()
+    code: string;
+}
+
+export class SendVerificationMailDto {
+    @IsString()
+    ticket: string;
 }
 
 @Controller({
@@ -30,10 +66,53 @@ export class AuthController {
     async authorizeCode(@Body() { provider, code }: AuthorizeCodeDto) {
         if (provider !== 'ft')
             throw new BadRequestException();
-        const token = await this.authService.authorizeCodeFortyTwo(code);
+        return await this.authService.authorizeCodeFortyTwo(code);
+    }
 
-        return {
-            token,
-        };
+    @Post('/login')
+    async loginWithPassword(@Body() { email, password }: PasswordLoginDto) {
+        try {
+            return await this.authService.loginWithPassword(email, password);
+        } catch {
+            throw new UnauthorizedException();
+        }
+    }
+
+    @UseGuards(TicketGuard)
+    @Post('/mfa/otp')
+    async verifyOtp(@Body() { code }: VerifyOtpDto, @Request() req: ExpressRequest) {
+        try {
+            return await this.authService.verifyOtpCode(req.ticket!, code);
+        } catch {
+            throw new UnauthorizedException();
+        }
+    }
+
+    @UseGuards(TicketGuard)
+    @Post('/mfa/email')
+    async verifyEmail(@Body() { code }: VerifyEmailDto, @Request() req: ExpressRequest) {
+        try {
+            return await this.authService.verifyEmailCode(req.ticket!, parseInt(code, 10));
+        } catch {
+            throw new UnauthorizedException();
+        }
+    }
+
+    @UseGuards(TicketGuard)
+    @Post('/mfa/email/send')
+    async sendVerificationMail(@Body() {}: SendVerificationMailDto, @Request() req: ExpressRequest) {
+        try {
+            return await this.authService.sendEmailVerification(req.ticket!);
+        } catch {
+            throw new UnauthorizedException();
+        }
+    }
+}
+
+declare global {
+    namespace Express {
+        export interface Request {
+            ticket?: TicketPayload;
+        }
     }
 }
