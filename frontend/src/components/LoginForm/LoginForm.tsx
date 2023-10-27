@@ -16,7 +16,7 @@ const LoginForm: React.FC = () => {
 	}, []);
 
 	return (
-		<div className="box-parent">
+		<div className="LoginForm-wrapper">
 			<div className="box-popup">
 				<form action="#">
 					<h2>Login</h2>
