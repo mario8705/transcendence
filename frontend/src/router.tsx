@@ -5,6 +5,7 @@ import { LoginPage } from './pages/LoginPage';
 import Profile from './components/Profile/Profile';
 import Game from './components/Game/Game';
 import FriendList from './components/FriendList/FriendList';
+import Chat from './components/Chat/Chat';
 
 export const router = createBrowserRouter([
     {
@@ -30,6 +31,10 @@ export const router = createBrowserRouter([
             {
                 path: '/game',
                 element: <Game className="gameCanvas" width={800} height={600} />,
+            },
+            {
+                path: '/chat',
+                element: <Chat />
             },
         ],
     },
