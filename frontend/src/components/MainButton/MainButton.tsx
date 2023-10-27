@@ -6,12 +6,17 @@ export type MainButtonProps = {
     mode?: number;
     onClick?: (newMode: number) => void;
     icon?: React.ReactNode;
+    onlyIcon?: boolean;
 }
 
-const MainButton: React.FC<Props> = ({buttonName, mode, onClick, icon}) => {
+const MainButton: React.FC<MainButtonProps> = ({buttonName, mode, onClick, icon, onlyIcon=false}) => {
     return (
         <div className=''>
-            <button className='mainBtn' onClick={() => onClick && onClick(mode || 0)} > {icon} {buttonName} {icon}</button>
+            {
+                onlyIcon
+                ? <button className='mainBtn' onClick={() => onClick && onClick(mode || 0)} > {icon}</button>
+                : <button className='mainBtn' onClick={() => onClick && onClick(mode || 0)} > {icon} {buttonName} {icon}</button>
+            }
         </div>
     );
 };
