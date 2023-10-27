@@ -1,16 +1,16 @@
-h2 {
+.FriendList-wrapper h2 {
     color: white;
     margin: 3%;
     text-shadow: 0 0 4px var(--color-yellow);
 }
 
-.parent {
+.FriendList-wrapper {
     display: flex;
     justify-content: center;
     height: 400px;
 }
 
-.box {
+.FriendList-wrapper .box {
     /* background: linear-gradient(to top, #BF9CE8 10%, #FFEA95 100%) no-repeat; */
     background: transparent;
     border: 2px solid white;
@@ -20,23 +20,23 @@ h2 {
     overflow-y: scroll;
 }
 
-.box::-webkit-scrollbar {
+.FriendList-wrapper .box::-webkit-scrollbar {
     width: 5px;
 }
 
-.box::-webkit-scrollbar-track {
+.FriendList-wrapper .box::-webkit-scrollbar-track {
     background: white;
     border-radius: 20px;
     padding: 10px 0;
 }
 
-.box::-webkit-scrollbar-thumb {
+.FriendList-wrapper .box::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 20px;
     padding: 10px 0;
 }
 
-.box::-webkit-scrollbar-thumb:hover {
+.FriendList-wrapper .box::-webkit-scrollbar-thumb:hover {
     background: #555;
     border-radius: 20px;
 }
