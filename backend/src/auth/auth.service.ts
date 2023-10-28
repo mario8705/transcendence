@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Prisma } from '@prisma/client';
@@ -37,6 +38,7 @@ export class AuthService {
                 accessToken: credentials.access_token,
                 user: {
                     create: {
+                        pseudo: 'nopseudo',
                         email: 'noemail@example.com',
                     }
                 }

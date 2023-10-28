@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { User } from '../../users/model/user.model';
 import { SocketService } from '../../socket/socket.service';

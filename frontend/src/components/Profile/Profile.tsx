@@ -1,4 +1,6 @@
 import React from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Avatar, Button, TextField } from "@mui/material";
 import default_avatar from "../../assets/images/default_avatar.png";
 
@@ -14,14 +16,41 @@ interface Props {
 }
 
 const Profile: React.FC<Props> = ({ onRouteChange }) => {
+    const [profileInfos, setProfileInfos] = useState(null);
+    //const [avatar, setAvatar] = useState<string | undefined>(undefined);
+    const { pseudo } = useParams();
+
+    useEffect(() => {
+        fetch(`http://localhost:3000/api/profile/${pseudo}`)
+        .then(response => response.json())
+        .then(data => setProfileInfos(data))
+    }, [pseudo]);
+
+    const handleUploadAvatar = (e) => {
+        e.preventDefault();
+
+        const file = e.target.files[0]
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const requestOptions = {
+            method: 'POST',
+            body: formData
+        }
+
+        fetch(`http://localhost:3000/api/profile/${pseudo}`, requestOptions)
+            .then(response => response.json())
+            .then(data => console.log("1", data))
+    }
+
     return (
         <div className="Profile">
             <Avatar
-                alt="Avatar" 
-                src={default_avatar}
-                sx={{ 
-                    width: '6vh', 
-                    height: '6vh' 
+                alt="Avatar"
+                src={/*avatar ||*/ default_avatar}
+                sx={{
+                    width: '6vh',
+                    height: '6vh'
                 }}
             />
             <Button
@@ -32,9 +61,16 @@ const Profile: React.FC<Props> = ({ onRouteChange }) => {
                     fontWeight: '900',
                     color: "#F8A38B",
                 }}
+                onClick={() => (document.getElementById('fileInput') as HTMLElement).click()}
             >
-                CHANGE AVATAR
+                CHANGE AVATAR 
             </Button>
+            <input
+                type="file"
+                id="fileInput"
+                style={{ display: 'none' }}
+                onChange={handleUploadAvatar}
+            />
             <TextField 
                 id="outlined-basic" 
                 label="Change pseudo"

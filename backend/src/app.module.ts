@@ -5,9 +5,10 @@ import { SocketModule } from './chat/socket/socket.module';
 import { UsersModule } from './chat/users/users.module';
 import { RoomsModule } from './chat/rooms/rooms.module';
 import { TestModule } from './users/users.module';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
-  imports: [ AuthModule, GameModule, SocketModule, UsersModule, RoomsModule, TestModule ],
+  imports: [ AuthModule, GameModule, SocketModule, UsersModule, RoomsModule, TestModule, ProfileModule ],
   controllers: [],
   providers: [],
 })

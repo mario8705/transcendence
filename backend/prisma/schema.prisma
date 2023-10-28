@@ -14,6 +14,7 @@ datasource db {
 model User {
   id Int @id @default(autoincrement())
 
+  pseudo        String  @unique
   email         String  @unique
   emailVerified Boolean @default(false)
 
@@ -30,6 +31,26 @@ model User {
   ownedChannels Channel[] @relation("ownedChannels")
 
   ftUser FortyTwoUser?
+
+  achievements UserAchievements[]
+}
+
+model Achievement {
+  id Int @id @default(autoincrement())
+  name String
+  description String
+  users UserAchievements[]
+}
+
+model UserAchievements {
+  userId Int
+  achievementId Int
+  createdAt    DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id])
+  achievement Achievement @relation(fields: [achievementId], references: [id])
+
+  @@id([userId, achievementId])
 }
 
 model Friends {
