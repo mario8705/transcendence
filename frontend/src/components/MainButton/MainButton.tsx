@@ -4,7 +4,7 @@ import './MainButton.css';
 export type MainButtonProps = {
     buttonName: string;
     mode?: number;
-    onClick?: (newMode: number) => void;
+    onClick?: ((whichButton: string) => void) | ((newMode: number) => void);
     icon?: React.ReactNode;
     onlyIcon?: boolean;
 }
