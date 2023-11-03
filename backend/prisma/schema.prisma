@@ -17,6 +17,7 @@ model User {
   pseudo        String  @unique
   email         String  @unique
   emailVerified Boolean @default(false)
+  avatar        String  @default("./frontend/src/assets/images/default_avatar.png")
 
   experience Int @default(0)
 
@@ -26,7 +27,8 @@ model User {
 
   channelMemberships ChannelMembership[]
 
-  // gameResults   GameResult[] @relation("players")
+  //gameResults   GameResult[] @relation("players")
+  gameParticipations GameParticipation[]
 
   ownedChannels Channel[] @relation("ownedChannels")
 
@@ -107,15 +109,25 @@ model ChannelMembership {
 // Right
 // }
 
-// model GameResult {
-//   id Int @default(autoincrement()) @id
-//   createdAt DateTime @default(now())
+model GameParticipation {
+  id          Int    @id @default(autoincrement())
+  userId      Int
+  gameResultId Int
+  user        User   @relation(fields: [userId], references: [id])
+  gameResult  GameResult @relation(fields: [gameResultId], references: [id])
+}
 
-//   score Int
-//   playerId Int
-//   playerSide String // Either "left" or "right"
+model GameResult {
+  id Int @default(autoincrement()) @id
+  createdAt DateTime @default(now())
 
-// }
+  scored Int
+  conceded Int
+  gameParticipations GameParticipation[]
+  //playerId Int
+  // playerSide String // Either "left" or "right"
+
+}
 
 model FortyTwoUser {
   id          Int    @id
