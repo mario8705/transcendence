@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 import { 
     Table, 
     TableBody, 
@@ -12,7 +12,12 @@ import AvatarOthers from '../../AvatarOthers/AvatarOthers';
 
 import './Ladder.css';
 
-const Ladder: React.FC = () => {
+const Ladder: React.FC = ({ profileInfos }) => {
+
+    // I need to get all users 
+    // const rankedUsers = useMemo(() => {
+    //     return [...users].sort((a, b) => b.wins - a.wins);
+    //   }, [users]);
 
     function mockData(
         rank: number,

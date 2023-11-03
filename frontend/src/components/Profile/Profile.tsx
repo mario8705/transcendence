@@ -1,8 +1,9 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { Avatar, Button, TextField } from "@mui/material";
 import default_avatar from "../../assets/images/default_avatar.png";
+import { AvatarContext } from "../../contexts/AvatarContext";
 
 import Stats from "../Stats/Stats";
 import Ladder from "./Ladder/Ladder";
@@ -15,16 +16,28 @@ interface Props {
     onRouteChange: (route: string) => void;
 }
 
+interface AvatarContextType {
+    avatar: string;
+    setAvatar: (avatar: string) => void;
+}
+
 const Profile: React.FC<Props> = ({ onRouteChange }) => {
     const [profileInfos, setProfileInfos] = useState(null);
-    //const [avatar, setAvatar] = useState<string | undefined>(undefined);
-    const { pseudo } = useParams();
+    //const [avatar, setAvatar] = useState<string | undefined>();
+    const { userId } = useParams();
+
+    const { avatar, setAvatar } = useContext(AvatarContext) as AvatarContextType;
 
     useEffect(() => {
-        fetch(`http://localhost:3000/api/profile/${pseudo}`)
-        .then(response => response.json())
-        .then(data => setProfileInfos(data))
-    }, [pseudo]);
+        fetch(`http://localhost:3000/api/profile/${userId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.avatar) {
+                    setAvatar(`http://localhost:3000/static/${data.avatar}`);
+                }
+                setProfileInfos(data);
+            })
+    }, [userId]);
 
     const handleUploadAvatar = (e) => {
         e.preventDefault();
@@ -38,16 +51,16 @@ const Profile: React.FC<Props> = ({ onRouteChange }) => {
             body: formData
         }
 
-        fetch(`http://localhost:3000/api/profile/${pseudo}`, requestOptions)
+        fetch(`http://localhost:3000/api/profile/${userId}`, requestOptions)
             .then(response => response.json())
-            .then(data => console.log("1", data))
+            .then(data => setAvatar(`http://localhost:3000/static/${data.avatar}`))
     }
 
     return (
         <div className="Profile">
             <Avatar
                 alt="Avatar"
-                src={/*avatar ||*/ default_avatar}
+                src={avatar || default_avatar}
                 sx={{
                     width: '6vh',
                     height: '6vh'
@@ -81,7 +94,7 @@ const Profile: React.FC<Props> = ({ onRouteChange }) => {
                     }
                 }}
                 variant="outlined"
-                placeholder="TODO: get current pseudo"
+                placeholder={`${profileInfos?.pseudo ?? ''}`}
                 sx={{
                     color: '#9747FF',
                     marginTop: '3vh',
@@ -103,7 +116,7 @@ const Profile: React.FC<Props> = ({ onRouteChange }) => {
                     },
                 }}
             />
-            <Ladder />
+            <Ladder profileInfos={profileInfos} />
             <Stats />
             <MatchHistory />
             <Achievements />

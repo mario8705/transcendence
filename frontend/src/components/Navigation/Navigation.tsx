@@ -1,7 +1,9 @@
-import React, { MouseEvent } from "react";
+import React, { MouseEvent, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Stack, Popover, List, ListItem, ListItemButton, ListItemText, Divider } from "@mui/material";
 import default_avatar from "../../assets/images/default_avatar.png";
+import { AvatarContext } from "../../contexts/AvatarContext";
+
 import './Navigation.css';
 
 interface Props {
@@ -9,9 +11,16 @@ interface Props {
     isSignedIn: boolean;
 }
 
+interface AvatarContextType {
+    avatar: string;
+    setAvatar: (avatar: string) => void;
+}
+
 const Navigation: React.FC<Props> = ({ /*onRouteChange,*/ isSignedIn }) => {
     const navigate = useNavigate();
     const [avatarEl, setAvatarEl] = React.useState<HTMLDivElement | null>(null);
+
+    const { avatar } = useContext(AvatarContext) as AvatarContextType;
 
     const handleAvatarClick = (e: MouseEvent<HTMLDivElement>) => {
         setAvatarEl(e.currentTarget);
@@ -33,7 +42,7 @@ const Navigation: React.FC<Props> = ({ /*onRouteChange,*/ isSignedIn }) => {
                     <p onClick={() => navigate('/pong')} className="logo">
                         PONG
                     </p>
-                    <Avatar aria-describedby={id} alt="Avatar" onClick={handleAvatarClick} src={default_avatar} style={{margin: '5px 10px'}}/>
+                    <Avatar aria-describedby={id} alt="Avatar" onClick={handleAvatarClick} src={avatar || default_avatar} style={{margin: '5px 10px'}}/>
                 </Stack>
 
                 <Popover
