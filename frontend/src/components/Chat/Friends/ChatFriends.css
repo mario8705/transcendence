@@ -1,0 +1,37 @@
+.chat-friends {
+	display: flex;
+	flex-direction: column;
+	border: 2px solid blue;
+	width: 20%;
+}
+
+.chat-friends h3 {
+	border-bottom: 2px solid black;
+}
+
+.chat-friends li {
+	list-style-type: none;
+	border-bottom: 1px solid black;
+}
+
+.chat-friends .display-friends {
+	/* border: 4px solid green; */
+	height: 85%;
+}
+
+.chat-friends .add-friend {
+	/* border: 4px solid orange; */
+	height: 15%;
+}
+
+.chat-friends .add-friend input {
+	text-align: center;
+	height: 40%;
+	max-height: 40%;
+	width: 100%;
+}
+.chat-friends .add-friend button {
+	display: block;
+	max-height: 20%;
+	width: 100%;
+}
