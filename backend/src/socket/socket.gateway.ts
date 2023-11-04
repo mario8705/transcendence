@@ -45,6 +45,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('message')
+	// @UseGuards(AuthGuard)
 	chatMessage(
 		@MessageBody('') data: {type: string, to: string, message: string, options: string},
 		@ConnectedSocket() client : Socket
@@ -53,15 +54,16 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('handshake')
+	// @UseGuards(AuthGuard)
 	chatHandshake(
 		@ConnectedSocket()  client:Socket
 	) {
 		console.log("Received Handshake");
 		return {}
-		this.server.to(client.id).emit('handshake', 'coucou');  
 	}
 
 	@SubscribeMessage('room')
+	// @UseGuards(AuthGuard)
 	chatRoom(
 		@MessageBody('') data : {type: string, roomname: string, option: any},
 		@ConnectedSocket()  client:Socket
@@ -70,6 +72,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('friend')
+	// @UseGuards(AuthGuard)
 	chatFriend(
 		@MessageBody('') data: {type: string, target: string, options: string},
 		@ConnectedSocket() client: Socket

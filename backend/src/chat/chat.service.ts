@@ -4,7 +4,12 @@ import { UsersService } from './users/services/users.service';
 import { RoomService } from './rooms/services/rooms.service';
 import { SocketGateway } from '../socket/socket.gateway'
 import { v4 as uuidv4 } from 'uuid';
-// import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+
+/**
+ * TODO Recoder les fonctions avec prisma
+ * TODO Les messages purée
+ */
 
 
 @Injectable()
@@ -14,17 +19,19 @@ export class ChatService {
 		private readonly roomService: RoomService,
 		@Inject(forwardRef(() => SocketGateway))
 		private readonly socketGateway: SocketGateway,
-		// private readonly prismaService : PrismaClient
+		private readonly prismaService : PrismaClient
 		) {}
 
 	chatUser(
 		client: Socket, 
 		data : string
 		) {
+		//TODO: enelever tout ce qui relève de l'authentification, mais plus tard
+		//TODO: gérer block
 		console.log('userid in user: ', data);
 		if(this.usersService.alreadyRegisterdByName(data) != undefined) {
 			console.log("already registerd, updating socket...");
-			this.usersService.updateSocketid(data, client.id);
+			this.usersService.updateSocketId(data, client.id);
 			this.usersService.updateSocket(data, client);
 		}
 		else if (this.usersService.alreadyRegisterdById(data) != undefined) {
@@ -33,17 +40,30 @@ export class ChatService {
 		}
 		else {
 			console.log("Registering...");
-			const users = this.usersService.getUsers();
-			users.map((user) => {
-				this.socketGateway.server.to(user.id).emit('usersConnected', {type: 'new', user: data});
-				// this.socketGateway.sendToClient(user.id, 'usersConnected', {type: 'new', user: data});
-				// this.socketGateway.sendToClient(client.id, 'usersConnected', {type: 'new', user: user.name});
-			})
+			this.socketGateway.server.to('server').emit('usersConnected', {type: 'new', user: data});
+			client.join('server');
 			this.usersService.addUser(client.id, client, data);
 			client.broadcast.emit('newUser', {id: client.id, name: data});
 		}
 		console.log(data);
 	}
+
+	// chatMessage(
+	// 	client: Socket,
+	// 	data: {type: string, to: string, message: string, options: string}
+	// ) {
+	// 	const user = this.usersService.getUserbyId(client.id);
+	// 	if (user === null)
+	// 		return;
+	// 	if (data.type === "private") {
+	// 		if(data.to !== user?.name && data.to !== '') {
+	// 			const dest = this.usersService.getUserbyName(data.to);
+	// 			if (dest === null)
+	// 				return;
+	// 			if ()
+	// 		}
+	// 	}
+	// }
 
 	chatMessage(
 		client: Socket,
@@ -74,7 +94,7 @@ export class ChatService {
 				else 
 					this.socketGateway.server.to(client.id).emit('message', "No such connected user");
 			}
-			else {
+			else { //the freak is that about ? 
 				const essai = 'le broadcast';
 				this.socketGateway.server.emit('message', {from: user.name, to: '', message: data.message});
 			}
@@ -96,7 +116,7 @@ export class ChatService {
 
 	chatRoom(
 		client: Socket,
-		data: {type: string, roomname: string, option: any}
+		data: {type: string, roomname: string, option: any},
 	) {
 		const user = this.usersService.getUserbyId(client.id);
 		if (data.type === 'join') {
@@ -119,6 +139,18 @@ export class ChatService {
 					this.socketGateway.sendToClient(client.id, 'error', {errmsg: "You are not in this room"});
 			}
 			else this.socketGateway.sendToClient(client.id, 'error', {errmsg: "This room does not exist"});
+		}
+		else if (data.type === 'invited') {
+			if (this.roomService.roomExists(data.roomname)) {
+				//il faut que je regarde: si la room existe, si il ne fait pas déjà partie de la room
+				if (this.roomService.isUserinRoom(user, data.roomname)) {
+					return 'already in room';
+				}
+				else {
+					//inscrire dans la database qu'il a été invité dans une room, et du coup envoyer l'information au front
+					this.socketGateway.server.to(client.id).emit('invite', {type: 'invited', roomname: data.roomname}); // revoir comment je rtansmets l'information
+				}
+			}
 		}
 		else if (data.type === 'manage') {
 			//! Options for owner: addadmin, kickAdmin, changePwd, addPwd, rmPwd, addInvite, rmInvite
@@ -159,44 +191,50 @@ export class ChatService {
 							case 'addAdmin': {
 								const result = this.roomService.addAdmin(data.roomname, data.option.target);
 								if (result.status === false)
-								this.socketGateway.server.to(client.id).emit('error', result.msg);
+									this.socketGateway.server.to(client.id).emit('error', result.msg);
 								break;
 							}
 							case 'kickAdmin': {
 								const result = this.roomService.kickAdmin(data.roomname, data.option.target);
 								if (result.status === false)
-								this.socketGateway.server.to(client.id).emit('error', result.msg);
+									this.socketGateway.server.to(client.id).emit('error', result.msg);
 								break;
 							}
 							case 'addPwd': {
 								const result = this.roomService.addPwd(data.roomname, data.option.target);
 								if (result.status === false)
-								this.socketGateway.server.to(client.id).emit('error', result.msg);
+									this.socketGateway.server.to(client.id).emit('error', result.msg);
 								break;
 							}
 							case 'rmPwd' : {
 								const result = this.roomService.rmPwd(data.roomname);
 								if (result.status === false)
-								this.socketGateway.server.to(client.id).emit('error', result.msg);
+									this.socketGateway.server.to(client.id).emit('error', result.msg);
 								break;
 							}
 							case 'changePwd' : {
 								const result = this.roomService.addPwd(data.roomname, data.option.target);
 								if (result.status === false)
-								this.socketGateway.server.to(client.id).emit('error', result.msg);
+									this.socketGateway.server.to(client.id).emit('error', result.msg);
 								break;
 							}
 							case 'addInvite' : {
 								const result = this.roomService.addInvite(data.roomname);
 								if (result.status === false)
-								this.socketGateway.server.to(client.id).emit('error', result.msg);
+									this.socketGateway.server.to(client.id).emit('error', result.msg);
 								break;
 							}
 							case 'rmInvite' : {
 								const result = this.roomService.rmInvite(data.roomname);
 								if (result.status === false)
-								this.socketGateway.server.to(client.id).emit('error', result.msg);
+									this.socketGateway.server.to(client.id).emit('error', result.msg);
 								break;
+							}
+							case 'delete' : {
+								this.roomService.clearUsersfromRoom(data.roomname);
+								const result = this.roomService.deleteRoom(data.roomname);
+								if (result.status === false)
+									this.socketGateway.server.to(client.id).emit('error', result.msg);
 							}
 							default: 
 								break;
@@ -205,11 +243,6 @@ export class ChatService {
 				}
 			}
 			
-		}	
-		else if (data.type === 'delete'){
-			if (this.roomService.roomExists(data.roomname))
-				this.roomService.clearUsersfromRoom(data.roomname);
-				this.roomService.deleteRoom(data.roomname);
 		}
 		else
 			console.log("room does not exist");
@@ -219,6 +252,7 @@ export class ChatService {
 		client: Socket,
 		data: {type: string, target: string, options: any}
 	) {
+		//rajouter block
 		const user = this.usersService.getUserbyId(client.id);
 		const target = this.usersService.getUserbyName(data.target);
 		if (target) {
@@ -236,8 +270,29 @@ export class ChatService {
 					return;
 				}
 			}
-			else if (data.type === 'unfriend') {
-				//TODO est ce que c'est possible ? 
+			else if (data.type === 'unfriendRequest') {
+				//Il faut supprimer l'amitié dans le profil du user
+				//Envoyer la notification à l'autre qu'il faut unfriend aussi	
+				if (user.friends.find((user) => user.name === data.options.target) !== undefined) {
+					const target = user.friends.find((user) => user.name === data.options.target);
+					user.friends.splice(user.friends.indexOf(target), 1);
+					this.socketGateway.server.to(target.socket.id).emit('unfriend', {from: user.name}); //vérifier le format de la communication.
+					console.log(user.friends);
+				}
+				else {
+					this.socketGateway.server.to(client.id).emit('error', 'This user does not exists');
+				}
+			}
+			else if (data.type === 'unfriended') {
+				if (user.friends.find((user) => user.name === data.options.target) !== undefined) {
+					const target = user.friends.find((user) => user.name === data.options.target);
+					user.friends.splice(user.friends.indexOf(target), 1);
+					this.socketGateway.server.to(user.socket.id).emit('unfriended', 'You are no longer friends with ' + target.name);
+					console.log(user.friends);
+				}
+				else {
+					this.socketGateway.server.to(client.id).emit('error', 'You are not friend with ' + data.options.target);
+				}
 			}
 		}
 		else 

@@ -1,15 +1,38 @@
 import { Injectable } from '@nestjs/common';
-import { truncateSync } from 'fs';
-import { userInfo } from 'os';
 import { ChatService } from 'src/chat/chat.service';
 import { UsersService } from 'src/chat/users/services/users.service';
 import { User } from '../../users/model/user.model';
 import { Room } from '../model/room.model'
 import { v4 as uuidv4 } from 'uuid';
+import { PrismaClient } from '@prisma/client';
+
+
+/**
+ * TODO Mettre le masque des permissions quand création ou join de channel
+ */
+
 @Injectable()
 export class RoomService {
 
 	private rooms : Room[] = [];
+	
+	constructor(
+		private readonly prismaService : PrismaClient
+		) {}
+
+	// async createRoom(name: string, user: User, option: {invite: boolean, key: boolean, value: string}): Promise<any> {
+	// 	//! Il faut aussi ajouter au User qu'il est owner d'une room ++ au niveau du user est ce que je l'ai récupéré au préalable dans la db ?
+	// 	this.prismaService.channel.create({
+	// 		data: {
+	// 			name: name,
+	// 			ownerId: user.id,
+	// 			createdAt: Date.now(),
+	// 			password: option.value
+	// 			//?Comment je vais pour la visibility ?
+	// 		}
+	// 	}); //* AAAAAH c'est trop compliqué, je ne suis pas contente.
+		//TODO doit retourner l'ID de la room
+	// }
 
 	createRoom(name: string, user: User, option: {invite: boolean, key: boolean, value: string}) : Room {
 		const id = uuidv4(); // prévoir de rajouter cet id dans la membership database
@@ -24,6 +47,41 @@ export class RoomService {
 		return newRoom;
 	}
 
+	//TODO finir cette fonction
+	async joinRoom(curruser: User, roomname: string, option : {invite: boolean, key: boolean, value: string}): Promise<any> {
+		let room = this.prismaService.channel.findUnique({
+			where: {
+				name: roomname ///weird, what is the problem exactly ???
+		}});
+		if (room === null) {
+			const id = this.createRoom(roomname, curruser, option);
+			if (id !== undefined) {
+				const channelMembership = this.prismaService.channelMembership.create({
+				data: {
+					userId : curruser.id,
+					channelId: id,
+					joinedAt: Date(),
+					permissionMask: 4
+					}
+				});
+				return channelMembership;
+			}
+			return undefined;
+		}
+		else if (room !== null && this.prismaService.channelMembership.findUnique({where: {channelId : channelId, userId: curruser.id}}) === null) {
+			const id = this.prismaService.channel.findUnique({where : {name: roomname}}); //Je ne comprends rien purée. //!Il faut récupérer l'id de la room
+			const channelMembership = this.prismaService.channelMembership.create({
+				data: {
+					userId: curruser.id,
+					channelId: id,
+					joinedAt: Date(),
+					permissionMask: 1
+				}
+			});
+			return channelMembership;
+		}
+	}
+
 	joinRoom(curruser: User, roomname: string, option: {invite: boolean, key: boolean, value: string}) : boolean {
 		let room = this.rooms.find((room) => room.name === roomname);
 		if (room == undefined)	{
@@ -31,7 +89,7 @@ export class RoomService {
 			console.log("create room");
 		}
 		//ici faire les vérifications de mot de passe et d'invite only.
-		if (room.users.find((user) => user.name === curruser.name) === undefined) {
+		else if (room.users.find((user) => user.name === curruser.name) === undefined) {
 			if (room.inviteOnly)  /* trouver si il a été invité */ {
 				console.log('inviteOnly');
 				//return si il n'a pas été invité.
@@ -51,11 +109,19 @@ export class RoomService {
 		return true;
 	}
 
+	// async roomExists(roomname: string) : Promise<any> {
+	// 	return this.prismaService.channel.findUnique({where:{name: roomname}});
+	// }
+
 	roomExists(roomname: string) :boolean {
 		if (this.rooms.find((room) => room.name === roomname) != undefined)
 			return true;
 		return false;
 	}
+
+	// async isUserinRoom(currUser: User, roomname: string) : Promise<any> {
+	// 	return this.prismaService.channel.findUnique({where: {name : roomname, /*Ici il faut trouver le moyen de retrouver l'utilisateur */}});
+	// }
 
 	isUserinRoom(currUser: User, roomname: string) : boolean {
 		let room = this.rooms.find((room) => room.name === roomname);
@@ -66,6 +132,15 @@ export class RoomService {
 		return false;
 	}
 
+	// async isRoomAdmin(curruser: User, roomname: string) : Promise<any> {
+	// 	return this.prismaService.channel.findUnique({
+	// 		where: {
+	// 			name: roomname,
+	// 			//regarder dans les admin si le user est admin
+	// 		}
+	// 	});
+	// }
+
 	isRoomAdmin(curruser: User, roomname: string) : boolean {
 		const room = this.getRoom(roomname);
 		if (room.admin.find((user) => user === curruser))
@@ -73,12 +148,32 @@ export class RoomService {
 		return false;
 	}
 
+	// async isRoomOwner(curruser: User, roomname: string) : Promise<any> {
+	// 	return this.prismaService.channel.findUnique({
+	// 		where: {
+	// 			name: roomname,
+	// 			//regarder dans les admin si le user est owner ou alors regarder la propriété du user.
+	// 		}
+	// 	});
+	// }
+
 	isRoomOwner(curruser: User, roomname: string) : boolean {
 		const room = this.getRoom(roomname);
 		if (room?.owner === curruser)
 			return true;
 		return false;
 	}
+
+	// async changePassword(curruser: User, roomname: string, option : {invite: boolean, key: boolean, value: string}) : Promise<any> {
+	// 	return this.prismaService.channel.update({
+	// 		where: {
+	// 			name : roomname
+	// 		},
+	// 		data : {
+	// 			password : option.value
+	// 		}
+	// 	});
+	// }
  
 	changePassword(curruser: User, roomname: string, option: {invite: boolean, key: boolean, value: string}) : boolean {
 		let room = this.rooms.find((room) => room.name === roomname);
@@ -95,6 +190,21 @@ export class RoomService {
 		return false;
 	}
 
+	// async changeInviteOnly(curruser, roomname, option: {invite: boolean, key: boolean, value: string}) : Promise<any> {
+	// 	if (option.invite === true) {
+	// 				return this.prismaService.channel.update({
+	// 		where: {
+	// 			name: roomname
+	// 		},
+	// 		data: {
+	// 			visibility: "private"
+	// 		}
+	// 	});
+	// 	}
+	// 	else
+	// 		return this.prismaService.channel.update({where: {name: roomname}, data: {visibility: "public"}});
+	// }
+
 	changeInviteOnly(curruser: User, roomname: string, option: {invite: boolean, key: boolean, value: string}) {
 		let room = this.rooms.find((room) => room.name === roomname);
 		if (room !== undefined) {
@@ -109,14 +219,26 @@ export class RoomService {
 		return false;
 	}
 
-	removeUserfromRoom(curUser: User, roomname: string) : void {
+	// async removeUserfromRoom(curruser: User, roomname: string): Promise<any> {
+	// 	return this.prismaService.channelMembership.delete({where: {userId: curruser.id}});
+	// }
+
+	removeUserfromRoom(curruser: User, roomname: string) : void {
 		let room = this.rooms.find((room) => room.name === roomname);
 		if (room != undefined) {
-			var index = room.users.indexOf(curUser);
+			var index = room.users.indexOf(curruser);
 			if (index > -1)
 				room.users.splice(index, 1);
 		}
 	}
+
+	// async clearUsersfromRoom(roomname: string): Promise<any> {
+	// 	return this.prismaService.channelMembership.deleteMany({
+	// 		where: {
+	// 			name: roomname //regarder comment on reconnait une room sans le nom
+	// 		}
+	// 	});
+	// }
 
 	clearUsersfromRoom(roomname: string) : void {
 		let room = this.rooms.find((room) => room.name === roomname);
@@ -124,18 +246,51 @@ export class RoomService {
 			room.users = [];
 	}
 
+	// async getUsersfromRoom(roomname: string) : Promise<any> {
+	// 	const channelId = this.prismaService.channel.findUnique({where : {name: roomname}})?.id; //? Cette ligne n'a pas l'air d'être très contente.
+	// 	return this.prismaService.channelMembership.findMany({
+	// 		where: {
+	// 			channelId: channelId
+	// 		}
+	// 	});
+	// }
+
 	getUsersfromRoom(roomname: string) {
 		console.log(roomname);
 		return this.rooms.find((room) => room.name === roomname)?.users;
 	}
+	
+	// async getRooms() : Promise<any> {
+	// 	return this.prismaService.channel.findMany();
+	// }
 
 	getRooms() : Room[] {
 		return [...this.rooms];
 	}
 
+	// async getRoom(roomname: string) : Promise<any> {
+	// 	return this.prismaService.channel.findUnique({where: {name : roomname}});
+	// }
+
 	getRoom(roomname: string) : Room {
 		return this.rooms.find((room) => room.name === roomname);
 	}
+
+
+	//! Il y a surement d'autres endroits où il faut que j'enlève la personne right? Genre regarder si il est pas amdin ou owner. Oh lala la catastrophe.
+	// async kickUser(curruser: User, roomname: string, target: User) : Promise<any> {
+	// 	if (this.prismaService.channelMembership.findUnique({where: {name: roomname, userId: curruser.id}}) !== null) {
+			
+	// 		return this.prismaService.channelMembership.delete({
+	// 			where: {
+	// 				name: roomname, userId: curruser.id,
+	// 				//comment je fais pour vérifier qu'il n'est pas owner ou administrateur ? 
+	// 			}
+	// 		});
+	// 	}
+	// 	else
+	// 		console.log('user not in the room');
+	// }
 
 	kickUser(curruser: User, roomname: string, target: User) : {status: boolean, msg: string} {
 		if (this.roomExists(roomname)) {
@@ -241,6 +396,8 @@ export class RoomService {
 		return {status: false, msg: roomname + ': no such room'};
 	}
 
+
+
 	rmInvite(roomname: string) : {status: boolean, msg: string} {
 		let room = this.getRoom(roomname);
 		if (room) {
@@ -250,13 +407,31 @@ export class RoomService {
 		return {status: false, msg: roomname + ': no such room'};
 	}
 
+	// async clearRooms() : Promise<any> {
+	// 	return this.prismaService.channel.deleteMany({});
+	// }
+
 	clearRooms() : void {
 		this.rooms = [];
 	}
+ 
+	// async deleteRoom(roomname: string) : Promise<any> {// mais il faut supprimer d'autres choses avant, genre les channel membership.
+		
+	// 	this.clearUsersfromRoom(roomname);
+	// 	return this.prismaService.channel.delete({
+	// 		where: {
+	// 			name: roomname
+	// 		}
+	// 	});
+	// }
 
-	deleteRoom(roomname: string) : void {
+	deleteRoom(roomname: string) : {status: boolean, msg: string} {
 		var room = this.getRoom(roomname);
-		const index = this.rooms.indexOf(room);
-		this.rooms.slice(index, 1);
+		if (room !== undefined) {
+			const index = this.rooms.indexOf(room);
+			this.rooms.slice(index, 1);
+			return {status: true, msg:''};
+		}
+		return {status: false, msg: roomname + ': no such room'};
 	}
 }

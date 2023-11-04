@@ -1,5 +1,6 @@
 // import { useContext, useEffect, useState } from 'react';
 // import SocketContext from '../contexts/Socket/Context';
+import Chat from './Chat'
 import ChatComponent from './ChatComponent'
 
 export const ChatPage = ()  => {
@@ -31,6 +32,7 @@ export const ChatPage = ()  => {
 			))}
 		</div> */}
 			<ChatComponent />
+			{/* <Chat /> */}
 		</div>
 	)
 }
