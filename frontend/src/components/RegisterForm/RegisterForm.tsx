@@ -11,7 +11,7 @@ import { HiOutlineUserCircle } from "react-icons/hi2";
 
 const RegisterForm: React.FC = () => {
 	return (
-		<div className="box-parent">
+		<div className="register-wrapper">
 			<div className="box-popup">
 				<form action="#">
 					<h2>Register</h2>

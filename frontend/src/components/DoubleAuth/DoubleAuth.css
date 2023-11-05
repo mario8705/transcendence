@@ -1,29 +1,29 @@
-h2 {
+.DoubleAuth-wrapper h2 {
     color: white;
 }
 
-.h2bis {
+.DoubleAuth-wrapper .h2bis {
     color: white;
     margin-bottom: 5%;
 }
 
-p {
+.DoubleAuth-wrapper p {
     font-size: 1em;
     color: white;
 }
 
-.pbis {
+.DoubleAuth-wrapper .pbis {
     font-size: 1em;
     color: white;
     margin-top: 10%;
 }
 
-.box-parent {
+.DoubleAuth-wrapper {
     display: flex;
     justify-content: center;
 }
 
-.box-popup {
+.DoubleAuth-wrapper .box-popup {
     position: relative;
     background: transparent;
     border: 2px solid white;
@@ -39,12 +39,12 @@ p {
     margin-bottom: 4%;
 }
 
-.input-box {
+.DoubleAuth-wrapper .input-box {
     position: relative;
     width: 100%;
 }
 
-.remember-forgot {
+.DoubleAuth-wrapper .remember-forgot {
     font-size: .9em;
     color: white;
     font-weight: 500;
@@ -52,22 +52,22 @@ p {
     display: flex;
 }
 
-.remember-forgot a {
+.DoubleAuth-wrapper .remember-forgot a {
     color: white;
     text-decoration: none;
     margin-left: 30px;
 }
 
-.remember-forgot a:hover {
+.DoubleAuth-wrapper .remember-forgot a:hover {
     text-decoration: underline;
     text-shadow: 0 0 6px var(--color-yellow);
 }
 
-input::-webkit-inner-spin-button {
+.DoubleAuth-wrapper input::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
 
-.input-box input {
+.DoubleAuth-wrapper .input-box input {
     background: transparent;
     border: 2px solid white;
     border-radius: 20px;
@@ -81,7 +81,8 @@ input::-webkit-inner-spin-button {
     margin: 1%;
 }
 
-.icon-close {
+
+.DoubleAuth-wrapper .icon-close {
     position: absolute;
     top: 0;
     left: 0;
