@@ -6,6 +6,8 @@ import Profile from './components/Profile/Profile';
 import Game from './components/Game/Game';
 import FriendList from './components/FriendList/FriendList';
 import Chat from './components/Chat/Chat';
+import HomePage from './pages/HomePage';
+import PlayPage from './pages/PlayPage';
 
 export const router = createBrowserRouter([
     {
@@ -36,6 +38,13 @@ export const router = createBrowserRouter([
                 path: '/chat',
                 element: <Chat />
             },
+                path: '/pong',
+                element: <HomePage />
+            },
+            {
+                path: '/play',
+                element: <PlayPage />
+            }
         ],
     },
 ]);

@@ -69,7 +69,7 @@ const DoubleAuth: React.FC = () => {
     if(mode === NO_MODE)
 	{
 		return (
-			<div className="box-parent">
+			<div className="DoubleAuth-wrapper">
 				<div className="box-popup">
 					<form action="#">
 						<h2>{msgh2}</h2>
@@ -95,7 +95,7 @@ const DoubleAuth: React.FC = () => {
 	}
 	else {
         return (
-			<div className="box-parent">
+			<div className="DoubleAuth-wrapper">
 				<div className="box-popup">
 				<span className="icon-close"><HiOutlineArrowCircleLeft/></span>
 					<form action="#">

@@ -12,6 +12,7 @@
     display: inline-block;
     box-sizing: border-box;
     cursor: pointer;
+    margin: 10px 0px;
 }
    
 .mainBtn:hover {
@@ -21,16 +22,16 @@
     box-shadow: 0 0 0 0 var(--color-yellow)
 }
 
-.icon:first-child {
+/* .mainBtn .icon:first-child {
     padding-right: 15px;
     font-size: 1em;
     color: white;
 
 }
 
-.icon:last-child {
+.mainBtn .icon:last-child {
     padding-left: 15px;
     font-size: 1em;
     color: white;
 
-}
+} */
