@@ -1,11 +1,11 @@
 import React from 'react';
 import './Chat.css';
-import MSGS from './msgs/MSGS';
+import ChatConv from './ChatConv/ChatConv';
 
 const Chat: React.FC = () => {
 	return (
 		<div className='chat-wrapper' >
-			<MSGS/>
+			<ChatConv/>
 		</div>
 	)
 }

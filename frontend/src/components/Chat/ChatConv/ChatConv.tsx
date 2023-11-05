@@ -1,11 +1,8 @@
-// import React from 'react';
 import React, { useState, useEffect } from 'react';
-import './MSGS.css';
-import MainButton from '../../MainButton/MainButton';
+import './ChatConv.css';
 import { AiOutlineSend } from 'react-icons/ai';
 import { GiPingPongBat } from 'react-icons/gi';
 import { HiOutlineUserCircle } from "react-icons/hi2";
-import { Avatar } from '@mui/material';
 import AvatarOthers from '../../AvatarOthers/AvatarOthers';
 
 const CHAT: React.FC = () => {
@@ -38,79 +35,60 @@ const CHAT: React.FC = () => {
 				Lorem ipsum phasmatos 🔥, consectetur ada totam, assumenda totalejnf
 				Lorem ipsum phasmatos ❤️ , consectetur ada totam, assumenda totalejnf
 				</div>
-				{/* <div className='conv-user'>
-				Lorem ipsum phasmatos 🔥, consectetur ada totam, assumenda totalejnf
-				Lorem ipsum phasmatos ❤️ , consectetur ada totam, assumenda totalejnf
-				</div> */}
 			</div>
 		</div>
 	)
 }
-
-
-
-
 
 function ChatInput() {
  const [maxLength, setMaxLength] = useState(0);
 
- useEffect(() => {
-   const inputElement = document.querySelector('.chat-input') as HTMLInputElement;
-   const inputWidth = inputElement.offsetWidth;
-   const newMaxLength = Math.round(inputWidth / 8);
-   setMaxLength(newMaxLength);
- }, []);
+	useEffect(() => {
+	const inputElement = document.querySelector('.chat-input') as HTMLInputElement;
+	const inputWidth = inputElement.offsetWidth;
+	const newMaxLength = Math.round(inputWidth / 8);
+	setMaxLength(newMaxLength);
+	}, []);
 
- return (
-   <input
-     type="text"
-     maxLength={maxLength}
-     className='chat-input'
-   />
- );
+	return (
+	<input
+		type="text"
+		maxLength={maxLength}
+		className='chat-input'
+	/>
+	);
 }
 
-// export default ChatInput;
-
-
-const MSGS: React.FC = () => {
+const ChatConv: React.FC = () => {
 	return (
 		<div className='chat-msgs'>
 			<div className='small-box'>
-				{/* <div className='nana'> */}
-					<div className='nav-info'>
-						<AvatarOthers status='Online'/>
-					</div>
-					<div className='nav-info'>
-						Friend Name
-					</div>
-					<div className='nav-info'>
-						11 win / 3 loose
-					</div>
-					<div className='nav-info'>
-						<GiPingPongBat className="icon-button"/>
-					</div>
-					<div className='nav-info'>
-						<HiOutlineUserCircle className="icon-button"/>
-					</div>
-					<div className='nav-info'>
-						<p className="icon-button">Block</p>
-					</div>
-				{/* </div> */}
+				<div className='nav-info'>
+					<AvatarOthers status='Online'/>
+				</div>
+				<div className='nav-info'>
+					Friend Name
+				</div>
+				<div className='nav-info'>
+					11 win / 3 loose
+				</div>
+				<div className='nav-info'>
+					<GiPingPongBat className="icon-button"/>
+				</div>
+				<div className='nav-info'>
+					<HiOutlineUserCircle className="icon-button"/>
+				</div>
+				<div className='nav-info'>
+					<p className="icon-button">Block</p>
+				</div>
 			</div>
 			<CHAT/>
 			<div className='small-box'>
 				<ChatInput/>
-				{/* <input
-					type="text"
-					maxLength={70}
-					className='chat-input'
-					/> */}
 				<AiOutlineSend className="icon-send"/>
-				{/* <MainButton buttonName='' onlyIcon={true} icon={<AiOutlineSend className="icon"/>}/> */}
 			</div>
 		</div>
 	)
 }
 
-export default MSGS;
+export default ChatConv;
