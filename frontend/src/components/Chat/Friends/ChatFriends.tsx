@@ -1,6 +1,5 @@
 import "./ChatFriends.css";
-import { useCallback, useContext, useEffect, useState } from "react";
-import SocketContext from "../../Socket/Context/Context";
+import { useEffect, useState } from "react";
 
 const AddFriend: React.FC = () => {
 	const [friendName, setFriendName] = useState<string>("");
@@ -8,22 +7,7 @@ const AddFriend: React.FC = () => {
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
 
-		const response = await fetch("https://my-backend.com/api/data", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				friendName,
-			}),
-		});
-
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-
-		const data = await response.json();
-		// DO something if good or not
+		// POST REQUEST to join channel
 	};
 
 	return (
@@ -58,41 +42,17 @@ const DisplayFriends: React.FC<friendsProp> = ({ friends }) => {
 }
 
 const ChatFriends: React.FC = () => {
-	const [friends, setFriends] = useState<string[] | null>(null);
-	const { SocketState } = useContext(SocketContext);
+
+	const friends = ["friendA", "Cha", "Yvanx"];
 
 	useEffect(() => {
-		fetch('https://my-backend.com/api/channels/my-channel') // UPDATE
-			.then((response) => {
-				if (!response.ok) {
-
-					throw new Error(`HTTP error! status: ${response.status}`);
-				}
-				return response.json(); //PROCESS json to get only channel names list
-			})
-			.then((data) => setFriends(data))
-			.catch((error) => {
-				console.error('Error:', error);
-			});
-	}, []);
-
-	useEffect(() => {
-		SocketState.socket?.on("updateFriends", updateFriends);
-
-		return () => {
-			SocketState.socket?.off("updateFriends", updateFriends);
-		};
-	}, [SocketState.socket]);
-
-	const updateFriends = useCallback((newFriends: string[]) => {
-		setFriends(newFriends);
+		// GET request for channels of the user
 	}, []);
 
 	return (
 		<div className="chat-friends">
 			<h3>Friends</h3>
-			{friends && <DisplayFriends friends={friends} />}
-			{!friends && <DisplayFriends friends={[]} />}
+			<DisplayFriends friends={friends} />
 			<AddFriend />
 		</div>
 	);
