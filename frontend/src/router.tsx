@@ -30,8 +30,12 @@ export const router = createBrowserRouter([
                 element: <FriendList />,
             },
             {
-                path: '/game',
-                element: <Game className="gameCanvas" width={800} height={600} />,
+                path: '/game-normal',
+                element: <Game className="gameCanvas" width={800} height={600} specialMode={false} />,
+            },
+            {
+                path: '/game-special',
+                element: <Game className="gameCanvas" width={800} height={600} specialMode={true} />,
             },
             {
                 path: '/pong',

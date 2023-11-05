@@ -41,12 +41,27 @@ export class SocketGateway implements
 		console.log(`Client disconnected: ${client.id}`);
 	}
 
-	@SubscribeMessage("joinRandomMatch")
-	onRandomMatch(
-		@ConnectedSocket() socket: Socket,
-		@MessageBody() body: number)
+	// GAME EVENTS
+
+	@SubscribeMessage("joinRandomNormal")
+	onRandomNormal(
+		@ConnectedSocket() socket: Socket)
 	{
-		this.gameHandler.joinRandomMatch(socket, body);
+		this.gameHandler.joinRandomMatch(socket, 0);
+	}
+	
+	@SubscribeMessage("joinRandomSpecial")
+	onRandomSpecial(
+		@ConnectedSocket() socket: Socket)
+	{
+			this.gameHandler.joinRandomMatch(socket, 1);
+	}
+
+	@SubscribeMessage('cancelGameSearch')
+	onCancelSearch(
+		@ConnectedSocket() socket: Socket)
+	{
+		this.gameHandler.removeFromGame(socket);
 	}
 
 	@SubscribeMessage("keyUp")
@@ -67,11 +82,10 @@ export class SocketGateway implements
 
 	@SubscribeMessage('handshake')
 	handshake(
-		@ConnectedSocket() client: Socket)
+		@ConnectedSocket() client: Socket )
 	{
-	  console.log("Received Handshake");
-	  return {}
-	//   this.server.emit('test', 'géééénial');
-	//   this.server.to(client.id).emit('handshake', 'coucou');
+		console.log("Received Handshake");
+		return {};
 	}
+
 }

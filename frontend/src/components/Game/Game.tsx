@@ -13,6 +13,7 @@ interface gameProps {
 	width: number,
 	height: number,
 	className: string,
+	specialMode?: boolean,
 }
 
 interface paddleElem {
@@ -39,6 +40,7 @@ const Game: React.FC<gameProps> = (props) => {
 	const { SocketState } = useContext(SocketContext);
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	let   gameEnd = false;
+
 	let   ball: ballElem = {
 		speed: {x: 1, y: 1},
 		x: Math.round(props.width / 2),
@@ -148,6 +150,7 @@ const Game: React.FC<gameProps> = (props) => {
 			SocketState.socket?.off("gameFinished", finishGame);
 			SocketState.socket?.off("updateScore", updateScore);
 			SocketState.socket?.off("updateGame", updateGame);
+			SocketState.socket?.off("shield", activateShield);
 		};
 	}, [SocketState.socket]);
 
@@ -178,6 +181,4 @@ const Game: React.FC<gameProps> = (props) => {
 	return <canvas ref={canvasRef} {...props}/>;
 }
 
-// This is how you can add this component
-{/* <Game className="canvasGame" width={1000} height={550} /> */}
 export default Game

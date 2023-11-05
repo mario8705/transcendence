@@ -504,8 +504,8 @@ class GameEnginePlus {
 
 }
 
-const BASIC_MODE = 0;
-const PLUS_MODE = 1;
+const NORMAL_MODE = 0;
+const SPECIAL_MODE = 1;
 
 interface gameList {
 	roomName: string,
@@ -534,17 +534,49 @@ export class GameService {
 	tick() {
 		const interval = setInterval(() => {
 			for (let i = 0; i < this.randomGameList.length; i++) {
-				const currentGame = this.randomGameList[i];
+				const currGame = this.randomGameList[i];
 
-				if (currentGame.game.gameFinished()) {
-					currentGame.socketA.leave(currentGame.roomName);
-					currentGame.socketB.leave(currentGame.roomName);
+				if (currGame.full && !currGame.running) {
+					if (currGame.mode == NORMAL_MODE)
+						this.server.to(currGame.roomName).emit("launchRandomNormal");
+					if (currGame.mode == SPECIAL_MODE)
+						this.server.to(currGame.roomName).emit("launchRandomSpecial");
+					console.log("launch game");
+					currGame.running = true;
+				}
+
+				if (currGame.game.gameFinished()) {
+					if (currGame.socketA)
+						currGame.socketA.leave(currGame.roomName);
+					if (currGame.socketB)
+						currGame.socketB.leave(currGame.roomName);
 					this.randomGameList.splice(i, 1);
-				} else if (currentGame.running) {
-					currentGame.game.updateGame();
+				} else if (currGame.running) {
+					currGame.game.updateGame();
 				}
 			}
 		}, REFRESH_RATE);
+	}
+	
+	removeFromGame(socket: Socket) {
+		for (let i = 0; i < this.randomGameList.length; i++) {
+			const currGame = this.randomGameList[i];
+
+			if (currGame.socketA.id === socket.id) {
+				currGame.socketA.leave(currGame.roomName);
+				currGame.socketA = null;
+				currGame.full = false;
+			}
+			
+			if (currGame.socketB && currGame.socketB.id === socket.id) {
+				currGame.socketB.leave(currGame.roomName);
+				currGame.socketB = null;
+				currGame.full = false;
+			}
+			if (!currGame.socketA && !currGame.socketB)
+				this.randomGameList.splice(i, 1);
+		}
+		// check in friendsGameList TO !!!!!
 	}
 	
 	joinRandomMatch(socket: Socket, gameMode: number) {
@@ -571,14 +603,14 @@ export class GameService {
 					socket.join(currentGame.roomName);
 					currentGame.game.addPlayerSocket(socket.id);
 					currentGame.full = true;
-					currentGame.running = true;
+					currentGame.running = false;
 					return;
 				}
 			}
 		}
 		const roomName: string = uuidv4();
 		socket.join(roomName);
-		if (gameMode === BASIC_MODE) {
+		if (gameMode === NORMAL_MODE) {
 			this.randomGameList.push({
 				roomName: roomName,
 				full: false,
@@ -589,7 +621,7 @@ export class GameService {
 				game: new GameEngine(this.server, socket.id, roomName)
 			});
 		}
-		else if (gameMode === PLUS_MODE) {
+		else if (gameMode === SPECIAL_MODE) {
 			this.randomGameList.push({
 				roomName: roomName,
 				full: false,

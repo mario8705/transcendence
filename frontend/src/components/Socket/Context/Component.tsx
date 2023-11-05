@@ -7,12 +7,12 @@ import { defaultSocketContextState, SocketContextProvider, SocketReducer } from 
 export interface ISocketContextComponentProps extends PropsWithChildren {}
 
 const SocketContextComponent: React.FunctionComponent<ISocketContextComponentProps> = ({ children }) => {
-	return children;
 
+	// return children;
 	const [SocketState, SocketDispatch] = useReducer(SocketReducer, defaultSocketContextState);
 	const [loading, setLoading] = useState(true);
 
-	const socket = useSocket('ws://localhost:3333', {
+	const socket = useSocket('ws://localhost:3000', {
 		reconnectionAttempts: 5,
 		reconnectionDelay: 5000,
 		autoConnect: false

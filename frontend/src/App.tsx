@@ -6,6 +6,7 @@ import { router } from './router';
 import Navigation from './components/Navigation/Navigation';
 
 import './App.css';
+import SocketContextComponent from './components/Socket/Context/Component';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,15 +19,15 @@ const queryClient = new QueryClient({
 const App: React.FC = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <div className="App">
-        <AuthConsumer>
-          {
-            auth => auth.isLoading ?
-              <p>Loading...</p> :
-              <RouterProvider router={router} />
-          }
-        </AuthConsumer>
-      </div>
+        <div className="App">
+          <AuthConsumer>
+            {
+              auth => auth.isLoading ?
+                <p>Loading...</p> :
+                <RouterProvider router={router} />
+            }
+          </AuthConsumer>
+        </div>
     </AuthProvider>
   </QueryClientProvider>
 );
