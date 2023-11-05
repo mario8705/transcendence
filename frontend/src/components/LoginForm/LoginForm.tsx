@@ -26,7 +26,7 @@ const LoginForm: React.FC = () => {
 						id="email"
 						name="email"
 						type="email"
-						autoComplete="email"
+						// autoComplete="email"
 						required
 						/>
 						<IoMailOutline className="icon"/>

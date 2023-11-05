@@ -39,7 +39,7 @@ const FriendItem: React.FC<Props> = ({friendName}) => {
 	if(mode === BLOCK_MODE)
 	{
 		return (
-			<div className="box-parent">
+			<div className="FriendItem-wrapper">
 				<div className="box-popup">
 					<div className="input-box">
 						<AvatarOthers status='Offline'/>
