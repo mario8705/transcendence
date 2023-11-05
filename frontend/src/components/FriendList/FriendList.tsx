@@ -5,7 +5,7 @@ import FriendItem from '../FriendItem/FriendItem';
 const FriendList: React.FC = () => {
 
 	return (
-		<div className="parent">
+		<div className="FriendList-wrapper">
 			<div className="box">
 				<h2>Friends</h2>
 					<FriendItem friendName='Maximilien'/>
