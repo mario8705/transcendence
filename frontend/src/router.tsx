@@ -7,6 +7,7 @@ import Game from './components/Game/Game';
 import FriendList from './components/FriendList/FriendList';
 import HomePage from './pages/HomePage';
 import PlayPage from './pages/PlayPage';
+import RegisterForm from './components/RegisterForm/RegisterForm';
 
 export const router = createBrowserRouter([
     {
@@ -39,12 +40,8 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/pong',
-                element: <HomePage />
-            },
-            {
-                path: '/play',
                 element: <PlayPage />
-            }
+            },
         ],
     },
 ]);

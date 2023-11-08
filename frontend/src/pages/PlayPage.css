@@ -6,8 +6,12 @@
 	height: 40vw;
 }
 
+.game-modes button {
+	max-width: 70%;
+}
+
 .game-modes h3 {
-	padding: 10px;
+	padding: 15px;
 }
 
 .normal-mode {

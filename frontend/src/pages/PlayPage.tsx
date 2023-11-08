@@ -4,7 +4,25 @@ import { useNavigate } from "react-router-dom";
 import { useCallback, useContext, useEffect, useState } from "react";
 import SocketContext from "../components/Socket/Context/Context";
 
-const PlayPage = () => {
+const SelectFriend: React.FC = () => {
+    // GET USERS FRIENDS LIST (online or not ?, in game or not ?)
+    // const { data, isError, isLoading, isSuccess } = useQuery('friendList', ....);
+    const availableFriends = ["Charline", "Yvan", "Alexis", "Heloise"];
+    let friendList = availableFriends.map((friend) => 
+		<option value="text" key={ friend }>
+			{ friend }
+		</option>
+	);
+    
+    return (
+        <select placeholder="Select friend" name="friendList" className="friendList" >
+            <option value="text" key="placeholder">Select a friend</option>
+            { friendList }
+        </select>
+    );
+}
+
+const PlayPage: React.FC = () => {
     //const { user } = useAuthContext();
     const { SocketState } = useContext(SocketContext);
     const [waiting, setWaiting] = useState<boolean>(false);
@@ -13,7 +31,6 @@ const PlayPage = () => {
     const handleClick = (whichButton: string) => {
         if (whichButton === "random-normal") {
             SocketState.socket?.emit("joinRandomNormal");
-console.log("TRY NORMAL RANDOM", SocketState);
             setWaiting(true);
             return ;
         }
@@ -24,7 +41,6 @@ console.log("TRY NORMAL RANDOM", SocketState);
         }
         else if (whichButton === "random-special") {
             SocketState.socket?.emit("joinRandomSpecial");
-console.log("TRY SPECIAL RANDOM");
             setWaiting(true);
             return ;
         }
@@ -37,17 +53,14 @@ console.log("TRY SPECIAL RANDOM");
 
     const handleCancel = () => {
         SocketState.socket?.emit("cancelGameSearch");
-console.log("cancel search");
         setWaiting(false);
     };
 
     const launchRandomNormal = useCallback(() => {
-console.log("laucnh NORMAL game");
         navigate('/game-normal');
     }, []);
 
     const launchRandomSpecial = useCallback(() => {
-console.log("launch SPECIAL game");
         navigate('/game-special');
     }, []);
 
@@ -63,9 +76,6 @@ console.log("launch SPECIAL game");
         };
     }, [SocketState.socket]);
 
-    // GET USERS FRIENDS LIST (online or not ?, in game or not ?)
-    // const { data, isError, isLoading, isSuccess } = useQuery('friendList', ....);
-    // const data = ["Charline", "Yvan", "Alexis", "Heloise"];
 
 
     return (
@@ -74,14 +84,16 @@ console.log("launch SPECIAL game");
                 <h3>Normal</h3>
                 { !waiting && <MainButton buttonName="Random" mode={0} onClick={() => { handleClick("random-normal") }}/> }
                 { !waiting && <MainButton buttonName="Friend" mode={0} onClick={() => { handleClick("friend-normal") }}/> }
-                { waiting && <MainButton buttonName="X" mode={0} onClick={() => { handleCancel() }} />}
+                { !waiting && <SelectFriend></SelectFriend>}
+                { waiting && <MainButton buttonName="X" mode={0} onClick={() => { handleCancel() }}/>}
                 {/* { isSuccess && <MainButton buttonName="Friend" mode={0} onClick={() => { handleClick("friend-normal") }}/> } */}
             </div>
             <div className="special-mode">
                 <h3>Special</h3>
                 { !waiting && <MainButton buttonName="Random" mode={0} onClick={() => { handleClick("random-special") }}/> }
                 { !waiting && <MainButton buttonName="Friend" mode={0} onClick={() => { handleClick("friend-special") }}/> }
-                { waiting && <MainButton buttonName="X" mode={0} onClick={() => { handleCancel() }} />}
+                { !waiting && <SelectFriend></SelectFriend>}
+                { waiting && <MainButton buttonName="X" mode={0} onClick={() => { handleCancel() }}/>}
                 {/* { isSuccess && <MainButton buttonName="Friend" mode={0} onClick={() => { handleClick("friend-special") }}/> } */}
             </div>
         </div>
