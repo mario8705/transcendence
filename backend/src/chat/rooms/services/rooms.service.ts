@@ -16,9 +16,9 @@ export class RoomService {
 
 	private rooms : Room[] = [];
 	
-	constructor(
-		private readonly prismaService : PrismaClient
-		) {}
+	// constructor(
+	// 	private readonly prismaService : PrismaClient
+	// 	) {}
 
 	// async createRoom(name: string, user: User, option: {invite: boolean, key: boolean, value: string}): Promise<any> {
 	// 	//! Il faut aussi ajouter au User qu'il est owner d'une room ++ au niveau du user est ce que je l'ai récupéré au préalable dans la db ?
@@ -48,39 +48,39 @@ export class RoomService {
 	}
 
 	//TODO finir cette fonction
-	async joinRoom(curruser: User, roomname: string, option : {invite: boolean, key: boolean, value: string}): Promise<any> {
-		let room = this.prismaService.channel.findUnique({
-			where: {
-				name: roomname ///weird, what is the problem exactly ???
-		}});
-		if (room === null) {
-			const id = this.createRoom(roomname, curruser, option);
-			if (id !== undefined) {
-				const channelMembership = this.prismaService.channelMembership.create({
-				data: {
-					userId : curruser.id,
-					channelId: id,
-					joinedAt: Date(),
-					permissionMask: 4
-					}
-				});
-				return channelMembership;
-			}
-			return undefined;
-		}
-		else if (room !== null && this.prismaService.channelMembership.findUnique({where: {channelId : channelId, userId: curruser.id}}) === null) {
-			const id = this.prismaService.channel.findUnique({where : {name: roomname}}); //Je ne comprends rien purée. //!Il faut récupérer l'id de la room
-			const channelMembership = this.prismaService.channelMembership.create({
-				data: {
-					userId: curruser.id,
-					channelId: id,
-					joinedAt: Date(),
-					permissionMask: 1
-				}
-			});
-			return channelMembership;
-		}
-	}
+	// async joinRoom(curruser: User, roomname: string, option : {invite: boolean, key: boolean, value: string}): Promise<any> {
+	// 	let room = this.prismaService.channel.findUnique({
+	// 		where: {
+	// 			name: roomname ///weird, what is the problem exactly ???
+	// 	}});
+	// 	if (room === null) {
+	// 		const id = this.createRoom(roomname, curruser, option);
+	// 		if (id !== undefined) {
+	// 			const channelMembership = this.prismaService.channelMembership.create({
+	// 			data: {
+	// 				userId : curruser.id,
+	// 				channelId: id,
+	// 				joinedAt: Date(),
+	// 				permissionMask: 4
+	// 				}
+	// 			});
+	// 			return channelMembership;
+	// 		}
+	// 		return undefined;
+	// 	}
+	// 	else if (room !== null && this.prismaService.channelMembership.findUnique({where: {channelId : channelId, userId: curruser.id}}) === null) {
+	// 		const id = this.prismaService.channel.findUnique({where : {name: roomname}}); //Je ne comprends rien purée. //!Il faut récupérer l'id de la room
+	// 		const channelMembership = this.prismaService.channelMembership.create({
+	// 			data: {
+	// 				userId: curruser.id,
+	// 				channelId: id,
+	// 				joinedAt: Date(),
+	// 				permissionMask: 1
+	// 			}
+	// 		});
+	// 		return channelMembership;
+	// 	}
+	// }
 
 	joinRoom(curruser: User, roomname: string, option: {invite: boolean, key: boolean, value: string}) : boolean {
 		let room = this.rooms.find((room) => room.name === roomname);

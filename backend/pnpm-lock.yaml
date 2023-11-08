@@ -35,6 +35,12 @@ dependencies:
   socket.io:
     specifier: ^4.7.2
     version: 4.7.2
+  uuid:
+    specifier: ^9.0.1
+    version: 9.0.1
+  websockets:
+    specifier: ^0.2.0
+    version: 0.2.0
 
 devDependencies:
   '@nestjs/cli':
@@ -53,7 +59,7 @@ devDependencies:
     specifier: ^29.5.2
     version: 29.5.4
   '@types/node':
-    specifier: ^20.3.1
+    specifier: ^20.5.9
     version: 20.5.9
   '@types/supertest':
     specifier: ^2.0.12
@@ -101,7 +107,7 @@ devDependencies:
     specifier: ^4.2.0
     version: 4.2.0
   typescript:
-    specifier: ^5.1.3
+    specifier: ^5.2.2
     version: 5.2.2
 
 packages:
@@ -5224,6 +5230,11 @@ packages:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
 
+  /uuid@9.0.1:
+    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    hasBin: true
+    dev: false
+
   /v8-compile-cache-lib@3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
     dev: true
@@ -5313,6 +5324,11 @@ packages:
       - esbuild
       - uglify-js
     dev: true
+
+  /websockets@0.2.0:
+    resolution: {integrity: sha512-GjhUvj0PfZMpsRI7BdyyM7wsaGDkDd3uMrFThWNyb3lQy8BxmLWxtE22W7pQpI7z703xht8j1fqVOjRkZIulUw==}
+    engines: {node: '>=0.4.10'}
+    dev: false
 
   /whatwg-url@5.0.0:
     resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==}

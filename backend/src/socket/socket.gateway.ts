@@ -29,6 +29,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	async handleConnection(client: Socket, ...args: any[]) {
 		console.log(`Client connected: ${client.id}`);
+		//TODO rajouter socket pour chaque user, utiliser le token, trouver le moyen de le passe dans le header
 		client.join('server');
 	}
 

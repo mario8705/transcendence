@@ -109,7 +109,7 @@ export class ChatService {
 						return;
 					}
 				}
-			this.socketGateway.server.to(client.id).emit('error', {errmsg: 'This room does not exists or you are not a memeber'});
+			this.socketGateway.server.to(client.id).emit('error', {errmsg: 'This room does not exists or you are not a member'});
 			}
 		}
 	}

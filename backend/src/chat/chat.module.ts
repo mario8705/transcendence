@@ -12,7 +12,7 @@ import { UsersService } from './users/services/users.service';
 // import { UsersModule } from './users/users.module';
 
 @Module({
-  providers: [ChatService, RoomService, UsersService, SocketGateway, PrismaClient],
+  providers: [ChatService, RoomService, UsersService, SocketGateway], //PrismaClient
   imports: [SocketModule, RoomsModule],
 })
 export class ChatModule {}

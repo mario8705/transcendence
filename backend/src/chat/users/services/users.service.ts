@@ -13,9 +13,9 @@ import { User } from '../model/user.model';
 @Injectable()
 export class UsersService {
 
-	constructor(
-		private readonly prismaService : PrismaClient
-		) {}
+	// constructor(
+	// 	private readonly prismaService : PrismaClient
+	// 	) {}
 
 	private users : User[] = [];
 
