@@ -1,6 +1,7 @@
 // import { useContext, useEffect, useState } from 'react';
 // import SocketContext from '../contexts/Socket/Context';
-import SocketChatComponent from './SocketChatComponent'
+import Chat from './Chat'
+import ChatComponent from './ChatComponent'
 
 export const ChatPage = ()  => {
 	// const { SocketState } = useContext(SocketContext);
@@ -30,7 +31,8 @@ export const ChatPage = ()  => {
 				<div key={index}>{index}</div>
 			))}
 		</div> */}
-			<SocketChatComponent />
+			<ChatComponent />
+			{/* <Chat /> */}
 		</div>
 	)
 }

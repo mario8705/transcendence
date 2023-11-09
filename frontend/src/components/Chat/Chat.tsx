@@ -9,7 +9,7 @@ const Chat: React.FC = () => {
 		<div className='chat-wrapper' >
 			<ChatChannels />
 			<ChatConv/>
-      <ChatFriends />
+            <ChatFriends />
 		</div>
 	)
 }
