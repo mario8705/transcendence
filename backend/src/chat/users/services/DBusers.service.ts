@@ -2,7 +2,6 @@
 // import { PrismaClient } from '@prisma/client';
 // import { Socket } from 'socket.io';
 // import { ChatService } from 'src/chat/chat.service';
-// // import { SocketService } from '../../socket/socket.service';
 // import { User } from '../model/user.model';
 
 
