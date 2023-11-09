@@ -1,0 +1,88 @@
+.Stats-wrapper .icon {
+    position: absolute;
+    right: 8px;
+    font-size: 150%;
+    color: white;
+    top: 8%;
+}
+
+.Stats-wrapper {
+    margin-top: 50px;
+}
+
+.Stats-wrapper .title-s {
+    font-family: 'Permanent Marker';
+    color: #9747FF;
+    font-weight: 900;
+    letter-spacing: 10px;
+    text-align: left;
+    text-shadow: 5px 4px 10px;
+}
+
+.Stats-wrapper .main {
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 30px rgb(0, 0, 0, .5);
+    display: flex;
+    /* overflow: hidden;
+    width: 40%; */
+}
+
+.Stats-wrapper .statt {
+    color: white;
+    position: relative;
+    width: 100%;
+    border-right: 2px solid white;
+    padding: 20px;
+}
+
+.Stats-wrapper .statt:last-of-type {
+    border-right: none;
+}
+
+.Stats-wrapper .title {
+    border-bottom: 2px solid white;
+    font-size: larger;
+    text-shadow: 0 0 4px var(--color-purple);
+}
+
+.Stats-wrapper .statt div {
+    position: relative;
+    top: 20%;
+    padding-bottom: 6%;
+    margin-bottom: 10%;
+}
+
+.Stats-wrapper .middle {
+    font-size: 300%;
+    text-shadow: 0 0 4px var(--color-light-pink);
+}
+
+.Stats-wrapper .score {
+    display: flex;
+    justify-content: space-between;
+    text-shadow: 0 0 4px var(--color-yellow);
+}
+
+.Stats-wrapper .score span {
+    text-shadow: 0 0 4px var(--color-blue);
+}
+
+.Stats-wrapper .rank {
+    text-shadow: 0 0 4px var(--color-yellow);
+}
+
+.Stats-wrapper .rank span {
+    text-shadow: 0 0 4px var(--color-blue);
+}
+  
+.Stats-wrapper .win,
+.Stats-wrapper .lose {
+display: inline-block;
+}
+
+.Stats-wrapper .lose span {
+    text-shadow: 0 0 4px var(--color-light-pink);
+}

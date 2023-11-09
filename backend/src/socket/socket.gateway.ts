@@ -1,24 +1,31 @@
 import { Server, Socket } from "socket.io";
 import {
+	ConnectedSocket,
 	MessageBody,
 	OnGatewayConnection,
 	OnGatewayDisconnect,
+	OnGatewayInit,
 	SubscribeMessage,
 	WebSocketGateway,
-	WebSocketServer,
-	ConnectedSocket
+	WebSocketServer
 } from "@nestjs/websockets";
+import { GameService } from "src/game/game.service";
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { ChatService } from "src/chat/chat.service";
 
 @WebSocketGateway({
 	cors: {
-		origin: 'http://localhost:5173',
-	}, 
-	// transports: ["websocket"],
+		origin: ["http://localhost:5173"],
+	},
 })
-export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class SocketGateway implements
+	OnGatewayInit,
+	OnGatewayConnection,
+	OnGatewayDisconnect
+{
 
+	gameHandler: GameService;
+	
 	@WebSocketServer()
 	server: Server;
 
@@ -26,6 +33,12 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		@Inject(forwardRef(() => ChatService))
 		private readonly chatService: ChatService
 		) {}
+
+	afterInit() {
+		this.gameHandler = new GameService(this.server);
+		this.gameHandler.tick();
+		console.log("Init socket Gateway")
+	}
 
 	async handleConnection(client: Socket, ...args: any[]) {
 		console.log(`Client connected: ${client.id}`);
@@ -36,6 +49,12 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	async handleDisconnect(client: Socket) {
 		console.log(`Client disconnected: ${client.id}`);
 	}
+
+	sendToClient = (clientId: string, type: string, data: any) => {
+		this.server.to(clientId).emit(type, data);
+	}
+
+	// CHAT EVENTS
 
 	@SubscribeMessage('user')
 	chatUser(
@@ -52,15 +71,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		@ConnectedSocket() client : Socket
 	) {
 		this.chatService.chatMessage(client, data);
-	}
-
-	@SubscribeMessage('handshake')
-	// @UseGuards(AuthGuard)
-	chatHandshake(
-		@ConnectedSocket()  client:Socket
-	) {
-		console.log("Received Handshake");
-		return {}
 	}
 
 	@SubscribeMessage('room')
@@ -81,15 +91,59 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.chatService.chatFriend(client, data);
 	}
 
-	sendToClient = (clientId: string, type: string, data: any) => {
-		this.server.to(clientId).emit(type, data);
-	}
-
 	@SubscribeMessage('reset')
 	resetAll(
 		@ConnectedSocket() client: Socket
 	) {
 			this.chatService.resetAll(client);
+	}
+
+	@SubscribeMessage('handshake')
+	// @UseGuards(AuthGuard)
+	chatHandshake(
+		@ConnectedSocket()  client:Socket
+	) {
+		console.log("Received Handshake");
+		return {}
+	}
+
+	// GAME EVENTS
+
+	@SubscribeMessage("joinRandomNormal")
+	onRandomNormal(
+		@ConnectedSocket() socket: Socket)
+	{
+		this.gameHandler.joinRandomMatch(socket, 0);
+	}
+	
+	@SubscribeMessage("joinRandomSpecial")
+	onRandomSpecial(
+		@ConnectedSocket() socket: Socket)
+	{
+			this.gameHandler.joinRandomMatch(socket, 1);
+	}
+
+	@SubscribeMessage('cancelGameSearch')
+	onCancelSearch(
+		@ConnectedSocket() socket: Socket)
+	{
+		this.gameHandler.removeFromGame(socket);
+	}
+
+	@SubscribeMessage("keyUp")
+	onKeyUp(
+		@ConnectedSocket() socket: Socket,
+		@MessageBody() key: string)
+	{
+		this.gameHandler.keyUp(socket.id, key);
+	}
+
+	@SubscribeMessage("keyDown")
+	onKeyDown(
+		@ConnectedSocket() socket: Socket,
+		@MessageBody() key: string)
+	{
+		this.gameHandler.keyDown(socket.id, key);
 	}
 
 }

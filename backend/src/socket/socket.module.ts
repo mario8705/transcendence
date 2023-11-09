@@ -7,9 +7,9 @@ import { ChatService } from 'src/chat/chat.service';
 import { GameService } from 'src/game/game.service';
 
 @Module({
-  providers: [ChatService, GameService, UsersService, RoomService, SocketGateway],
-  controllers: [],
+	imports: [GameService],
+	providers: [ChatService, GameService, UsersService, RoomService, SocketGateway],
+	controllers: [],
 })
-export class SocketModule {}
 
-  
+export class SocketModule {}

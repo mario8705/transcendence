@@ -22,7 +22,7 @@ model User {
   befriendedBy Friends[] @relation("users")
   friends      Friends[] @relation("friends")
   bannedBy	   Blocked[]  @relation("users")
-  blocked	   Blocked[]	 @relation("blocked")
+  blocked	     Blocked[]	 @relation("blocked")
   messages     Message[]
 
   channelMemberships ChannelMembership[]
@@ -89,7 +89,7 @@ model Message {
 model Channel {
   id         Int      @id @default(autoincrement())
   ownerId    Int?
-  name		 String
+  name	     String
   createdAt  DateTime @default(now())
   password   String?
   visibility String   @default("private")

@@ -1,0 +1,27 @@
+.game-modes {
+	border: 2px solid white;
+	display: flex;
+	justify-content: space-around;
+	margin-top: 5%;
+	height: 40vw;
+}
+
+.game-modes button {
+	max-width: 70%;
+}
+
+.game-modes h3 {
+	padding: 15px;
+}
+
+.normal-mode {
+	border: 2px solid black;
+	width: 40%;
+	height: 100%;
+}
+
+.special-mode {
+	border: 2px solid black;
+	width: 40%;
+	height: 100%;
+}
