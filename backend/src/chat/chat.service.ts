@@ -19,7 +19,7 @@ export class ChatService {
 		private readonly roomService: RoomService,
 		@Inject(forwardRef(() => SocketGateway))
 		private readonly socketGateway: SocketGateway,
-		private readonly prismaService : PrismaClient
+		// private readonly prismaService : PrismaClient
 		) {}
 
 	chatUser(
