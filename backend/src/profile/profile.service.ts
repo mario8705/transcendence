@@ -30,14 +30,48 @@ export class ProfileService {
               id: userId,
             },
             include: {
-              gameParticipations: {
+              gameParticipationsCurrentUser: {
                 include: {
                   gameResult: true, // include the related GameResult records
+                  user2: true,
                 },
               },
             },
         });
         return userWithGames;
+    }
+
+    async getLadder(): Promise<any> {
+        const allUsers = await this.prisma.user.findMany({
+            select: {
+                id: true,
+                pseudo: true,
+                avatar: true,
+                gameParticipationsCurrentUser: {
+                    include: {
+                        gameResult: {
+                            select: {
+                                scored: true,
+                                conceded: true
+                            }
+                        }
+                    }
+                },
+            }
+        });
+        return allUsers;
+    }
+
+    async getAchievements(userId: number): Promise<any> {
+        const allAchievementsUnlocked = await this.prisma.userAchievements.findMany({
+            where: {
+                userId: userId,
+            },
+            include: {
+                achievement: true,
+            }
+        });
+        return allAchievementsUnlocked;
     }
 }
 

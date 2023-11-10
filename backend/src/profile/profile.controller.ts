@@ -48,9 +48,17 @@ export class ProfileController {
     }
 
     @Get(':userId/matchhistory')
-    async getMatchHistory(@Param('userId') userId: number): Promise<any> {
+    async getMatchHistory(@Param('userId', ParseIntPipe) userId: number): Promise<any> {
         return this.profileService.getMatchHistory(userId);
     }
-}
 
-// TODO: store this file in server / prisma
+    @Get(':userId/ladder')
+    async getLadder(): Promise<any> {
+        return this.profileService.getLadder();
+    }
+
+    @Get(':userId/achievements')
+    async getAchievements(@Param('userId', ParseIntPipe) userId: number): Promise<any> {
+        return this.profileService.getAchievements(userId);
+    }
+}

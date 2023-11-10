@@ -28,7 +28,8 @@ model User {
   channelMemberships ChannelMembership[]
 
   //gameResults   GameResult[] @relation("players")
-  gameParticipations GameParticipation[]
+  gameParticipationsCurrentUser GameParticipation[] @relation("CurrentUser")
+  gameParticipationsOpponent GameParticipation[] @relation("Opponent")
 
   ownedChannels Channel[] @relation("ownedChannels")
 
@@ -41,6 +42,8 @@ model Achievement {
   id Int @id @default(autoincrement())
   name String
   description String
+  difficulty Int
+  isHidden Boolean
   users UserAchievements[]
 }
 
@@ -111,9 +114,13 @@ model ChannelMembership {
 
 model GameParticipation {
   id          Int    @id @default(autoincrement())
-  userId      Int
+  //userId      Int
   gameResultId Int
-  user        User   @relation(fields: [userId], references: [id])
+  //user        User   @relation(fields: [userId], references: [id])
+  user1Id   Int
+  user1     User  @relation("CurrentUser", fields: [user1Id], references: [id])
+  user2Id   Int
+  user2     User  @relation("Opponent", fields: [user2Id], references: [id])
   gameResult  GameResult @relation(fields: [gameResultId], references: [id])
 }
 

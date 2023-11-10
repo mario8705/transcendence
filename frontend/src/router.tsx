@@ -20,7 +20,7 @@ export const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
             {
-                path: '/profile/:pseudo',
+                path: '/profile/:userId',
                 element: <Profile onRouteChange={() => void 0} />,
             },
             {

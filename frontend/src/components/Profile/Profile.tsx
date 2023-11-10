@@ -9,6 +9,7 @@ import Stats from "../Stats/Stats";
 import Ladder from "./Ladder/Ladder";
 import MatchHistory from "./MatchHistory/MatchHistory";
 import Achievements from "./Achievements/Achievements";
+import Switch2FA from "./Switch2FA/Switch2FA";
 
 import './Profile.css';
 
@@ -116,7 +117,8 @@ const Profile: React.FC<Props> = ({ onRouteChange }) => {
                     },
                 }}
             />
-            <Ladder profileInfos={profileInfos} />
+            <Switch2FA />
+            <Ladder />
             <Stats />
             <MatchHistory />
             <Achievements />
