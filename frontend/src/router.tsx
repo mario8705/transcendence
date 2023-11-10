@@ -43,6 +43,7 @@ export const router = createBrowserRouter([
                 path: '/chat',
                 element: <Chat />
             },
+            {
                 path: '/pong',
                 element: <PlayPage />
             },
