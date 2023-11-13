@@ -54,8 +54,8 @@ dependencies:
     specifier: ^4.7.2
     version: 4.7.2
   uuid:
-    specifier: ^9.0.0
-    version: 9.0.0
+    specifier: ^9.0.1
+    version: 9.0.1
   websockets:
     specifier: ^0.2.0
     version: 0.2.0
