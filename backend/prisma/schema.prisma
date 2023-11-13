@@ -23,9 +23,14 @@ model User {
 
   befriendedBy Friends[] @relation("users")
   friends      Friends[] @relation("friends")
+  bannedBy	   Blocked[]  @relation("users")
+  blocked	     Blocked[]	 @relation("blocked")
   messages     Message[]
 
   channelMemberships ChannelMembership[]
+//   ChannelAdministrators	ChannelAdministrators[]
+  conversationTo	Conversations[] @relation("conversations")
+  conversationFrom	Conversations[] @relation("users")
 
   //gameResults   GameResult[] @relation("players")
   gameParticipationsCurrentUser GameParticipation[] @relation("CurrentUser")
@@ -58,6 +63,18 @@ model UserAchievements {
   @@id([userId, achievementId])
 }
 
+model Conversations {
+	userId		Int
+	converserId	Int
+	createdAt	DateTime	@default(now())
+
+	user		User	@relation("users", fields: [userId], references: [id])
+	converser	User	@relation("conversations", fields: [converserId], references: [id])
+
+	//TODO il faut mettre les messages là non ?
+	@@id([userId, converserId])
+}
+
 model Friends {
   userId    Int
   friendId  Int
@@ -68,11 +85,24 @@ model Friends {
   @@id([userId, friendId])
 }
 
+model Blocked {
+	userId		Int
+	blockedId	Int
+	blockedAt	DateTime	@default(now())
+
+	user		User		@relation("users", fields: [userId], references: [id])
+	blocked		User		@relation("blocked", fields: [blockedId], references: [id])
+
+	@@id([userId, blockedId])
+}
+
 model Message {
   id        Int      @id @default(autoincrement())
   content   String
   createdAt DateTime @default(now())
   authorId  Int
+  channelId	Int // est ce que ça peut marcher ça?
+
   author    User     @relation(fields: [authorId], references: [id])
 }
 
@@ -85,12 +115,16 @@ model Message {
 model Channel {
   id         Int      @id @default(autoincrement())
   ownerId    Int?
+  name	     String
   createdAt  DateTime @default(now())
   password   String?
   visibility String   @default("private")
   // visibility ChannelVisibility @default(Private)
 
   memberships ChannelMembership[]
+//   administration	ChannelAdministrators[]
+
+  
 
   owner User? @relation("ownedChannels", fields: [ownerId], references: [id])
 }
@@ -99,7 +133,7 @@ model ChannelMembership {
   userId         Int
   channelId      Int
   joinedAt       DateTime @default(now())
-  permissionMask Int
+  permissionMask Int //1(simple member), 2(Administrator) or 4(owner)
 
   user    User    @relation(fields: [userId], references: [id])
   channel Channel @relation(fields: [channelId], references: [id])

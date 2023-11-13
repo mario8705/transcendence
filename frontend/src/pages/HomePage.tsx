@@ -1,10 +1,18 @@
-import { useAuthContext } from "../contexts/AuthContext";
+//import { useAuthContext } from "../contexts/AuthContext";
+import MainButton from "../components/MainButton/MainButton";
+import { useNavigate } from "react-router-dom";
 
-export const HomePage = () => {
-    const { user } = useAuthContext();
+const HomePage = () => {
+    //const { user } = useAuthContext();
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        navigate('/play');
+    }
     
     return (
-        <p>Hello {user.firstName} !</p>
+        <MainButton buttonName="PLAY" mode={0} onClick={handleClick}/>
     );
 };
 
+export default HomePage;

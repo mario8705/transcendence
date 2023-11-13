@@ -62,6 +62,9 @@ dependencies:
   uuid:
     specifier: ^9.0.1
     version: 9.0.1
+  websockets:
+    specifier: ^0.2.0
+    version: 0.2.0
 
 devDependencies:
   '@nestjs/cli':
@@ -83,8 +86,8 @@ devDependencies:
     specifier: ^1.4.9
     version: 1.4.9
   '@types/node':
-    specifier: ^20.3.1
-    version: 20.8.9
+    specifier: ^20.5.9
+    version: 20.5.9
   '@types/supertest':
     specifier: ^2.0.12
     version: 2.0.15
@@ -131,7 +134,7 @@ devDependencies:
     specifier: ^4.2.0
     version: 4.2.0
   typescript:
-    specifier: ^5.1.3
+    specifier: ^5.2.2
     version: 5.2.2
 
 packages:
@@ -1003,7 +1006,7 @@ packages:
       dotenv-expand: 10.0.0
       lodash: 4.17.21
       reflect-metadata: 0.1.13
-      uuid: 9.0.0
+      uuid: 9.0.1
     dev: false
 
   /@nestjs/core@10.2.7(@nestjs/common@10.2.7)(@nestjs/platform-express@10.2.7)(@nestjs/websockets@10.2.7)(reflect-metadata@0.1.13)(rxjs@7.8.1):
@@ -5658,6 +5661,11 @@ packages:
       - esbuild
       - uglify-js
     dev: true
+
+  /websockets@0.2.0:
+    resolution: {integrity: sha512-GjhUvj0PfZMpsRI7BdyyM7wsaGDkDd3uMrFThWNyb3lQy8BxmLWxtE22W7pQpI7z703xht8j1fqVOjRkZIulUw==}
+    engines: {node: '>=0.4.10'}
+    dev: false
 
   /whatwg-url@5.0.0:
     resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==}
