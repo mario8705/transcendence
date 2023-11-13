@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { ChatService } from 'src/chat/chat.service';
 import { UsersService } from 'src/chat/users/services/users.service';

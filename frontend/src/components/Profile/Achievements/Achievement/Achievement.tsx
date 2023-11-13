@@ -15,17 +15,16 @@ interface Props {
     isHidden: boolean,
 }
 
-const Achievement: React.FC<Props> = ({ name, description, difficulty, isHidden }) => {
+const Achievement: React.FC<Props> = ({ name, description, difficulty }) => {
     return (
-        <div class="achievement">
+        <div key={name} className="achievement">
             <div className="achievement-details">
                 <h2>{name}</h2>
                 <Difficulty difficultyLevel={difficulty} />
             </div>
             <div className="achievement-description">
                 <p>
-                    Some description hfuezf f jgrhikgb zbf ejbgjrkg nrzbn rhbnr  nkj bguef nksj
-                    nvfkn ezfhne e fenf hnfeohf ohouehgfou hgohgf uefouejfoezhj oejfoejf oezf Some description hfuezf f jgrhikgb zbf ejbgjrkg nrzbn rhbnr  nkj bguef nksj nvfkn ezfhne e fenf hnfeohf ohouehgfou hgohgf uefouejfoezhj oejfoejf oezf
+                    {description}
                 </p>
             </div>
         </div>

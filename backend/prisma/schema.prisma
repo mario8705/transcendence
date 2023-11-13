@@ -14,8 +14,10 @@ datasource db {
 model User {
   id Int @id @default(autoincrement())
 
+  pseudo        String  @unique
   email         String  @unique
   emailVerified Boolean @default(false)
+  avatar        String  @default("./frontend/src/assets/images/default_avatar.png")
 
   experience Int @default(0)
 
@@ -30,11 +32,35 @@ model User {
   conversationTo	Conversations[] @relation("conversations")
   conversationFrom	Conversations[] @relation("users")
 
-  // gameResults   GameResult[] @relation("players")
+  //gameResults   GameResult[] @relation("players")
+  gameParticipationsCurrentUser GameParticipation[] @relation("CurrentUser")
+  gameParticipationsOpponent GameParticipation[] @relation("Opponent")
 
   ownedChannels Channel[] @relation("ownedChannels")
 
   ftUser FortyTwoUser?
+
+  achievements UserAchievements[]
+}
+
+model Achievement {
+  id Int @id @default(autoincrement())
+  name String
+  description String
+  difficulty Int
+  isHidden Boolean
+  users UserAchievements[]
+}
+
+model UserAchievements {
+  userId Int
+  achievementId Int
+  createdAt    DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id])
+  achievement Achievement @relation(fields: [achievementId], references: [id])
+
+  @@id([userId, achievementId])
 }
 
 model Conversations {
@@ -120,15 +146,29 @@ model ChannelMembership {
 // Right
 // }
 
-// model GameResult {
-//   id Int @default(autoincrement()) @id
-//   createdAt DateTime @default(now())
+model GameParticipation {
+  id          Int    @id @default(autoincrement())
+  //userId      Int
+  gameResultId Int
+  //user        User   @relation(fields: [userId], references: [id])
+  user1Id   Int
+  user1     User  @relation("CurrentUser", fields: [user1Id], references: [id])
+  user2Id   Int
+  user2     User  @relation("Opponent", fields: [user2Id], references: [id])
+  gameResult  GameResult @relation(fields: [gameResultId], references: [id])
+}
 
-//   score Int
-//   playerId Int
-//   playerSide String // Either "left" or "right"
+model GameResult {
+  id Int @default(autoincrement()) @id
+  createdAt DateTime @default(now())
 
-// }
+  scored Int
+  conceded Int
+  gameParticipations GameParticipation[]
+  //playerId Int
+  // playerSide String // Either "left" or "right"
+
+}
 
 model FortyTwoUser {
   id          Int    @id

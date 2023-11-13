@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { RouterProvider } from 'react-router-dom';
 import { AuthConsumer, AuthProvider } from './contexts/AuthContext';
 import { router } from './router';
+import { AvatarProvider } from './contexts/AvatarContext';
 
 // import Navigation from './components/Navigation/Navigation';
 // import SocketContextComponent from './components/Socket/Context/Component';
@@ -23,7 +24,8 @@ const queryClient = new QueryClient({
 
 const App: React.FC = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
+    <AvatarProvider>
+      <AuthProvider>
         <div className="App">
           <AuthConsumer>
             {
@@ -33,7 +35,8 @@ const App: React.FC = () => (
             }
           </AuthConsumer>
         </div>
-    </AuthProvider>
+      </AuthProvider>
+    </AvatarProvider>
   </QueryClientProvider>
 );
 
