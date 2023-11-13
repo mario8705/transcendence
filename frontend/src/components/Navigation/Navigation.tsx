@@ -1,14 +1,16 @@
 import React, { MouseEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { Avatar, Stack, Popover, List, ListItem, ListItemButton, ListItemText, Divider } from "@mui/material";
 import default_avatar from "../../assets/images/default_avatar.png";
 import './Navigation.css';
 
 interface Props {
-    onRouteChange: (route: string) => void;
+    // onRouteChange: (route: string) => void;
     isSignedIn: boolean;
 }
 
-const Navigation: React.FC<Props> = ({ onRouteChange, isSignedIn }) => {
+const Navigation: React.FC<Props> = ({ /*onRouteChange,*/ isSignedIn }) => {
+    const navigate = useNavigate();
     const [avatarEl, setAvatarEl] = React.useState<HTMLDivElement | null>(null);
 
     const handleAvatarClick = (e: MouseEvent<HTMLDivElement>) => {
@@ -28,7 +30,7 @@ const Navigation: React.FC<Props> = ({ onRouteChange, isSignedIn }) => {
         return (
             <>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" style={{padding: '5px'}}>
-                    <p onClick={() => onRouteChange('pong')} className="logo">
+                    <p onClick={() => navigate('/pong')} className="logo">
                         PONG
                     </p>
                     <Avatar aria-describedby={id} alt="Avatar" onClick={handleAvatarClick} src={default_avatar} style={{margin: '5px 10px'}}/>
@@ -54,7 +56,7 @@ const Navigation: React.FC<Props> = ({ onRouteChange, isSignedIn }) => {
                 >
                     <List disablePadding>
                         <ListItem disablePadding>
-                            <ListItemButton>
+                            <ListItemButton onClick={() => navigate('/profile')}>
                                 <ListItemText primary="Profile"/>
                             </ListItemButton>
                         </ListItem>
@@ -62,7 +64,7 @@ const Navigation: React.FC<Props> = ({ onRouteChange, isSignedIn }) => {
                         <Divider />
 
                         <ListItem disablePadding>
-                            <ListItemButton>
+                            <ListItemButton onClick={() => navigate('/friends')}>
                                 <ListItemText primary="Friends" />
                             </ListItemButton>
                         </ListItem>
@@ -70,7 +72,7 @@ const Navigation: React.FC<Props> = ({ onRouteChange, isSignedIn }) => {
                         <Divider />
 
                         <ListItem disablePadding>
-                            <ListItemButton>
+                            <ListItemButton onClick={() => navigate('/chat')}>
                                 <ListItemText primary="Chat" />
                             </ListItemButton>
                         </ListItem>

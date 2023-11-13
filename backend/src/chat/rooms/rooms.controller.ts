@@ -1,9 +1,11 @@
 import { Controller, Post, Body, Get } from '@nestjs/common';
+import { UsersService } from '../users/services/users.service';
 import { RoomService } from './services/rooms.service';
 
 @Controller("room")
 export class RoomController {
-	roomService: RoomService;
+	constructor(private roomService: RoomService,
+				private usersService: UsersService) {}
 
 	@Get("allMessages")
 	GetMessages(
@@ -17,6 +19,8 @@ export class RoomController {
 	getUsers(
 		@Body('room') roomname: string
 	) {
+		console.log(roomname);
+		console.log(this.roomService.getUsersfromRoom(roomname))
 		return this.roomService.getUsersfromRoom(roomname);
 	}
 	

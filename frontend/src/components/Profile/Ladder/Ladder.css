@@ -1,0 +1,118 @@
+.ladder {
+    margin-top: 50px;
+}
+
+.title-l {
+    font-family: 'Permanent Marker';
+    color: #9747FF;
+    font-weight: 900;
+    letter-spacing: 10px;
+    text-align: left;
+    text-shadow: 5px 4px 10px;
+}
+
+#table-container-l {
+    background-color: rgba(151, 71, 255, 0.1);
+    border-radius: 10px;
+    border-left: 5px solid #9747FF;
+    border-bottom: 5px solid #9747FF;
+    box-shadow: 2px 1px 20px #9747FF;
+    min-width: 200px; 
+    max-width: 600px;
+}
+
+#table-l {
+    min-width: 200; 
+    max-width: 600;
+}
+
+#head-row-l {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+#cell-head-rank-l {
+    border-bottom: 1px solid #9747FF;
+}
+
+#cell-head-pseudo-l {
+    border-bottom: 1px solid #9747FF;
+    text-align: left;
+    padding: 1px;
+}
+
+#cell-head-wins-l {
+    border-bottom: 1px solid #9747FF;
+    text-align: center; 
+    padding: 1px;
+    overflow: auto;
+    font-weight: 900;
+    color: #23BE29;
+}
+
+#cell-head-losses-l {
+    border-bottom: 1px solid #9747FF;
+    text-align: center; 
+    padding: 1px;
+    overflow: auto;
+    font-weight: 900;
+    color: #CB2020;
+}
+
+#cell-head-avatar-l {
+    border-bottom: 1px solid #9747FF;
+    text-align: left;
+    padding: 1px;
+}
+
+#table-body-l {
+    display: block;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#row-body-l {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+#row-body-l:last-child td, #row-body-l:last-child th {
+    border: 0;
+}
+
+#cell-pseudo-l {
+    border-bottom: 1px solid #F8A38B;
+    text-align: center;
+    padding: 12px 1px;
+    overflow: auto;
+    font-weight: 600;
+    color: white;
+    letter-spacing: 1.1px;
+}
+
+#cell-wins-l {
+    border-bottom: 1px solid #F8A38B;
+    text-align: center;
+    padding: 12px 1px;
+    overflow: auto;
+    color: #23BE29;
+    font-size: 1.6em;
+}
+
+#cell-losses-l {
+    border-bottom: 1px solid #F8A38B;
+    text-align: center;
+    padding: 12px 1px;
+    overflow: auto;
+    color: #CB2020;
+    font-size: 1.6em;
+}
+
+#cell-avatar-l {
+    border-bottom: 1px solid #F8A38B;
+    text-align: center;
+    padding: 12px 1px;
+    overflow: auto;
+}

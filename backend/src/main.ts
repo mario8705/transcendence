@@ -20,6 +20,13 @@ async function bootstrap() {
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup("documentation", app, document);
 
+	app.setGlobalPrefix('api'); /* Starts every route with /api and then api version (eg. /api/v1/users/@me) */
+	app.enableVersioning({
+		type: VersioningType.URI,
+	});
+
+	app.enableCors();
+
 	await app.listen(3000);
 }
 bootstrap();
