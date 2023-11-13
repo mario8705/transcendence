@@ -87,7 +87,7 @@ devDependencies:
     version: 1.4.9
   '@types/node':
     specifier: ^20.5.9
-    version: 20.5.9
+    version: 20.8.9
   '@types/supertest':
     specifier: ^2.0.12
     version: 2.0.15
@@ -1006,7 +1006,7 @@ packages:
       dotenv-expand: 10.0.0
       lodash: 4.17.21
       reflect-metadata: 0.1.13
-      uuid: 9.0.1
+      uuid: 9.0.0
     dev: false
 
   /@nestjs/core@10.2.7(@nestjs/common@10.2.7)(@nestjs/platform-express@10.2.7)(@nestjs/websockets@10.2.7)(reflect-metadata@0.1.13)(rxjs@7.8.1):
