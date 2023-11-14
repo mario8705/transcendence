@@ -22,10 +22,6 @@ const Spacer = styled('p')({
 	fontSize: '1em',
 });
 
-type DoubleAuthProps = {
-	methods?: string[];
-};
-
 type AuthenticationMethodDescriptorTable = {
 	[k in typeof AuthenticationMode[keyof typeof AuthenticationMode]]: {
 		icon: React.ReactNode,
@@ -57,18 +53,20 @@ const methodsList: AuthenticationMethodDescriptorTable = {
 	},
 };
 
-const AuthMethodPicker: React.FC = ({ methods, onAuthModeChanged }) => {
-	const { setCurrentIndex } = useContext(AnimationContext);
+export type AuthMethodPickerProps = {
+	methods: string[];
+	onMethodPicked: (method: string) => void;
+};
 
+export const AuthMethodPicker: React.FC<AuthMethodPickerProps> = ({ methods, onMethodPicked }) => {
 	const methodsComponents = React.useMemo(() => {
 		return Object.entries(methodsList).filter(([ key ]) => methods.includes(key)).map(([ key, { icon, name } ], index) => (
 			<React.Fragment key={key}>
 				{index > 0 && <Spacer>or</Spacer>}
-				<MainButton icon={icon} buttonName={name} onClick={() => (setCurrentIndex(1), onAuthModeChanged(key as AuthenticationMode))} />
+				<MainButton icon={icon} buttonName={name} onClick={() => onMethodPicked(key)} />
 			</React.Fragment>
 		));
 	}, [ methods ]);
-
 
 	return (
 		<Stack direction="column">
@@ -78,105 +76,14 @@ const AuthMethodPicker: React.FC = ({ methods, onAuthModeChanged }) => {
 	);
 }
 
-type SliderProps = {
-	index: number;
-};
 
-interface MultiFactorAuthState {
-
-}
-
-interface MultiFactorAuthContext {
-	state: MultiFactorAuthState;
-	dispatch: () => void;
-}
-
-const MultiFactorAuthContext = React.createContext<MultiFactorAuthState>(undefined as any);
-
-const Slider: React.FC<PropsWithChildren<SliderProps>> = ({ children, index }) => {
-	const { currentIndex } = useContext(AnimationContext);
-	const [ mounted, setMounted ] = React.useState(false);
-
-	let animationClass;
-
-	if (index === currentIndex) {
-		animationClass = '';
-	} else if (index > currentIndex) {
-		animationClass = 'pushed-right';
-	} else if (index < currentIndex) {
-		animationClass = 'pushed-left';
-	}
-
-	React.useEffect(() => {
-		if (currentIndex === index && !mounted) {
-			setMounted(true);
-		}
-	}, [ currentIndex ]);
-
-	return (
-		<div className={`auth-panel ${animationClass}`} onTransitionEnd={() => setMounted(currentIndex === index)}>
-			{mounted && children}
-		</div>
-	);
-};
-
-interface IAnimationContext {
-	currentIndex: number;
-	setCurrentIndex: (value: number | ((prevIndex: number) => number)) => void;
-};
-
-const AnimationContext = React.createContext<IAnimationContext>(undefined as any);
-
-type AuthContainerProps = {
-	initialIndex?: number;
-}
-
-const AuthContainer: React.FC<PropsWithChildren<AuthContainerProps>> = ({ children, initialIndex = 0}) => {
-	const [ currentIndex, setCurrentIndex ] = React.useState<number>(initialIndex);
-	const ctx: IAnimationContext = {
-		currentIndex,
-		setCurrentIndex,
-	};
-
-	return (
-		<div className="auth-container">
-			<AnimationContext.Provider value={ctx}>
-				{children}
-			</AnimationContext.Provider>
-		</div>
-	);
-};
-
-const DoubleAuth: React.FC<DoubleAuthProps> = ({ methods = [ "sms", "email", "otp", "qrcode" ] }) => {
-	const [ authenticationMode, setAuthenticationMode ] = useState<AuthenticationMode | undefined>(() => {
-		if (methods.includes(AuthenticationMode.AuthCode)) {
-			return AuthenticationMode.AuthCode;
-		}
-		return undefined;
-	});
-
-	return (
-		<div className="box-parent">
-			<AuthContainer initialIndex={1}>
-				<Slider index={0}>
-					<AuthMethodPicker methods={methods} onAuthModeChanged={mode => setAuthenticationMode(mode)} />
-				</Slider>
-				<Slider index={1}>
-					<AuthenticationPanel authenticationMode={authenticationMode!} />
-				</Slider>
-			</AuthContainer>
-		</div>
-	);
-};
-
-type AuthenticationPanelProps = {
+export type AuthenticationPanelProps = {
 	authenticationMode: AuthenticationMode;
 	onBack: () => void;
 }
 
-const AuthenticationPanel: React.FC<PropsWithChildren<AuthenticationPanelProps>> = ({ children, authenticationMode, onBack }) => {
+export const AuthenticationPanel: React.FC<PropsWithChildren<AuthenticationPanelProps>> = ({ children, authenticationMode, onBack }) => {
 	const { title } = methodsList[authenticationMode];
-	const { setCurrentIndex } = useContext(AnimationContext);
 	const [ cooldownTime, setCooldownTime ] = React.useState<number>(0);
 
 	/* XXX Interval is reset every 1s but it still works nontheless... */
@@ -198,7 +105,7 @@ const AuthenticationPanel: React.FC<PropsWithChildren<AuthenticationPanelProps>>
 
 	return (
 		<>
-			<span className="icon-close" onClick={() => setCurrentIndex(idx => idx - 1)}>
+			<span className="icon-close" onClick={onBack}>
 				<HiOutlineArrowCircleLeft />
 			</span>
 			<form action="#">
@@ -302,5 +209,3 @@ const CodeInput: React.FC<CodeInputProps> = ({ length, onChange }) => {
 		</div>
 	);
 }
-
-export default DoubleAuth;

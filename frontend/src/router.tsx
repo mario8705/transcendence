@@ -5,15 +5,17 @@ import { LoginPage } from './pages/LoginPage';
 import Profile from './components/Profile/Profile';
 import Game from './components/Game/Game';
 import FriendList from './components/FriendList/FriendList';
+import { Auth } from './components/Auth/Auth';
 
 export const router = createBrowserRouter([
     {
         path: '/auth/login',
-        element: <LoginPage />,
+        element: <Auth />,
     },
     {
         path: '/auth/callback',
-        element: <AuthCallbackPage />,
+        element: <p>Non</p>
+        // element: <AuthCallbackPage />,
     },
     {
         path: '/',

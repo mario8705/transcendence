@@ -2,10 +2,25 @@
     color: white;
 }
 
+.login-form .or {
+    margin-top: 2em;
+    margin-bottom: 2em;;
+    display: flex;
+    align-items: center;
+}
+
+.login-form .or:before, .or:after {
+    content: '';
+    border-top: 2px solid white;
+    height: 0;
+    flex: 1;
+    margin: 0 1em;
+}
+
 .login-form p {
     font-size: 1em;
     color: white;
-    margin-top: 60px;
+    margin-top: 10px;
 }
 
 .login-form p a {
@@ -26,15 +41,14 @@
     background: transparent;
     border: 2px solid white;
     border-radius: 20px;
-    backdrop-filter: blur(20px);
     box-shadow: 0 0 30px rgb(0, 0, 0, .5);
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    padding: 40px;
+    padding: 20px 40px;
     top: 10vh;
-    margin-bottom: 4%;
+    margin-bottom: 4em;
 }
 
 .login-form .input-box {

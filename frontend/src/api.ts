@@ -45,5 +45,6 @@ function authorizedGet<P = any>(url: string, config: AxiosRequestConfig = {}) {
 }
 
 export const authorizeCode = (code: string) => client.post<AuthorizeCodeResponse>('/api/v1/auth/authorize_code', { provider: 'ft', code });
+export const loginWithPassword = (email: string, password: string) => client.post('/api/v1/auth/login', { email, password });
 
 export const fetchUserProfile = (profile: string) => authorizedGet(`/api/v1/users/${profile}`);
