@@ -65,7 +65,7 @@ const Navigation: React.FC<Props> = ({ /*onRouteChange,*/ isSignedIn }) => {
                 >
                     <List disablePadding>
                         <ListItem disablePadding>
-                            <ListItemButton onClick={() => navigate('/profile')}>
+                            <ListItemButton onClick={() => navigate('/profile/1')}>
                                 <ListItemText primary="Profile"/>
                             </ListItemButton>
                         </ListItem>
