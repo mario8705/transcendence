@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { RouterProvider } from 'react-router-dom';
 import { AuthConsumer, AuthProvider } from './contexts/AuthContext';
 import { router } from './router';
-
+import { AvatarProvider } from './contexts/AvatarContext';
 import './App.css';
 
 const queryClient = new QueryClient({
@@ -15,17 +15,19 @@ const queryClient = new QueryClient({
 
 const App: React.FC = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <div className="App">
-        <AuthConsumer>
-          {
-            auth => auth.isLoading ?
-              <p>Loading...</p> :
-              <RouterProvider router={router} />
-          }
-        </AuthConsumer>
-      </div>
-    </AuthProvider>
+    <AvatarProvider>
+      <AuthProvider>
+        <div className="App">
+          <AuthConsumer>
+            {
+              auth => auth.isLoading ?
+                <p>Loading...</p> :
+                <RouterProvider router={router} />
+            }
+          </AuthConsumer>
+        </div>
+      </AuthProvider>
+    </AvatarProvider>
   </QueryClientProvider>
 );
 

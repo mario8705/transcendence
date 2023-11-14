@@ -9,8 +9,9 @@ import {
 	WebSocketGateway,
 	WebSocketServer
 } from "@nestjs/websockets";
-import { Injectable } from "@nestjs/common";
 import { GameService } from "src/game/game.service";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
+import { ChatService } from "src/chat/chat.service";
 
 @WebSocketGateway({
 	cors: {
@@ -28,22 +29,105 @@ export class SocketGateway implements
 	@WebSocketServer()
 	server: Server;
 
+	constructor(
+		@Inject(forwardRef(() => ChatService))
+		private readonly chatService: ChatService
+		) {}
+
 	afterInit() {
 		this.gameHandler = new GameService(this.server);
+		this.gameHandler.tick();
 		console.log("Init socket Gateway")
 	}
 
-	handleConnection(client: Socket, ...args: any[]) {
+	async handleConnection(client: Socket, ...args: any[]) {
 		console.log(`Client connected: ${client.id}`);
+		//TODO rajouter socket pour chaque user, utiliser le token, trouver le moyen de le passe dans le header
+		client.join('server');
 	}
 
-	handleDisconnect(client: Socket) {
+	async handleDisconnect(client: Socket) {
 		console.log(`Client disconnected: ${client.id}`);
 	}
 
-	@SubscribeMessage("joinRandomMatch")
-	onRandomMatch(@ConnectedSocket() socket: Socket) {
-		this.gameHandler.joinRandomGame(socket);
+	sendToClient = (clientId: string, type: string, data: any) => {
+		this.server.to(clientId).emit(type, data);
+	}
+
+	// CHAT EVENTS
+
+	@SubscribeMessage('user')
+	chatUser(
+		@MessageBody('') data : string,
+		@ConnectedSocket()  client:Socket
+		) :void  {
+		this.chatService.chatUser(client, data);
+	}
+
+	@SubscribeMessage('message')
+	// @UseGuards(AuthGuard)
+	chatMessage(
+		@MessageBody('') data: {type: string, to: string, message: string, options: string},
+		@ConnectedSocket() client : Socket
+	) {
+		this.chatService.chatMessage(client, data);
+	}
+
+	@SubscribeMessage('room')
+	// @UseGuards(AuthGuard)
+	chatRoom(
+		@MessageBody('') data : {type: string, roomname: string, option: any},
+		@ConnectedSocket()  client:Socket
+	) {
+		this.chatService.chatRoom(client, data);
+	}
+
+	@SubscribeMessage('friend')
+	// @UseGuards(AuthGuard)
+	chatFriend(
+		@MessageBody('') data: {type: string, target: string, options: string},
+		@ConnectedSocket() client: Socket
+	) {
+		this.chatService.chatFriend(client, data);
+	}
+
+	@SubscribeMessage('reset')
+	resetAll(
+		@ConnectedSocket() client: Socket
+	) {
+			this.chatService.resetAll(client);
+	}
+
+	@SubscribeMessage('handshake')
+	// @UseGuards(AuthGuard)
+	chatHandshake(
+		@ConnectedSocket()  client:Socket
+	) {
+		console.log("Received Handshake");
+		return {}
+	}
+
+	// GAME EVENTS
+
+	@SubscribeMessage("joinRandomNormal")
+	onRandomNormal(
+		@ConnectedSocket() socket: Socket)
+	{
+		this.gameHandler.joinRandomMatch(socket, 0);
+	}
+	
+	@SubscribeMessage("joinRandomSpecial")
+	onRandomSpecial(
+		@ConnectedSocket() socket: Socket)
+	{
+			this.gameHandler.joinRandomMatch(socket, 1);
+	}
+
+	@SubscribeMessage('cancelGameSearch')
+	onCancelSearch(
+		@ConnectedSocket() socket: Socket)
+	{
+		this.gameHandler.removeFromGame(socket);
 	}
 
 	@SubscribeMessage("keyUp")
@@ -62,13 +146,4 @@ export class SocketGateway implements
 		this.gameHandler.keyDown(socket.id, key);
 	}
 
-	@SubscribeMessage('handshake')
-	handshake(
-		@ConnectedSocket() client: Socket)
-	{
-	  console.log("Received Handshake");
-	  return {}
-	//   this.server.emit('test', 'géééénial');
-	//   this.server.to(client.id).emit('handshake', 'coucou');
-	}
 }

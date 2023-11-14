@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { FortyTwoService } from './ft.service';
 import { HttpModule } from '@nestjs/axios';

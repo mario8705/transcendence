@@ -12,6 +12,7 @@
     display: inline-block;
     box-sizing: border-box;
     cursor: pointer;
+    margin: 10px 0px;
 }
    
 .mainBtn:hover, .mainBtn.is-loading {
@@ -21,10 +22,12 @@
     box-shadow: 0 0 0 0 var(--color-yellow);
 }
 
-.mainBtn .icon {
+.mainBtn .icon {}
+/* .mainBtn .icon:first-child {
+    padding-right: 15px;
     font-size: 1em;
     color: white;
-}
+}*/
 
 .mainBtn .icon:first-of-type {
     margin-right: 15px;
@@ -56,4 +59,10 @@
     100% {
         transform: rotate(360deg);
     }
+}
+.mainBtn .icon:last-child {
+    padding-left: 15px;
+    font-size: 1em;
+    color: white;
+
 }

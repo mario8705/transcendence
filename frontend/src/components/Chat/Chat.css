@@ -1,0 +1,6 @@
+.chat-wrapper {
+	display: flex;
+	width: 90vw;
+	height: 80vh;
+	border: 2px solid #FF00FF; 
+}

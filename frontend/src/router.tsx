@@ -1,11 +1,11 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { AppLayout } from './components/AppLayout';
-import { AuthCallbackPage } from './pages/AuthCallbackPage';
-import { LoginPage } from './pages/LoginPage';
-import Profile from './components/Profile/Profile';
-import Game from './components/Game/Game';
-import FriendList from './components/FriendList/FriendList';
 import { Auth } from './components/Auth/Auth';
+import Chat from './components/Chat/Chat';
+import FriendList from './components/FriendList/FriendList';
+import Game from './components/Game/Game';
+import Profile from './components/Profile/Profile';
+import PlayPage from './pages/PlayPage';
 
 export const router = createBrowserRouter([
     {
@@ -22,7 +22,7 @@ export const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
             {
-                path: '/profile',
+                path: '/profile/:userId',
                 element: <Profile onRouteChange={() => void 0} />,
             },
             {
@@ -30,8 +30,20 @@ export const router = createBrowserRouter([
                 element: <FriendList />,
             },
             {
-                path: '/game',
-                element: <Game className="gameCanvas" width={800} height={600} />,
+                path: '/game-normal',
+                element: <Game className="gameCanvas" width={800} height={600} specialMode={false} />,
+            },
+            {
+                path: '/game-special',
+                element: <Game className="gameCanvas" width={800} height={600} specialMode={true} />,
+            },
+            {
+                path: '/chat',
+                element: <Chat />
+            },
+            {
+                path: '/pong',
+                element: <PlayPage />
             },
         ],
     },

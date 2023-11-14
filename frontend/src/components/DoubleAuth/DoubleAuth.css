@@ -1,18 +1,18 @@
-h2 {
+.DoubleAuth-wrapper h2 {
     color: white;
 }
 
-.h2bis {
+.DoubleAuth-wrapper .h2bis {
     color: white;
     margin-bottom: 5%;
 }
 
-p {
+.DoubleAuth-wrapper p {
     font-size: 1em;
     color: white;
 }
 
-.pbis {
+.DoubleAuth-wrapper .pbis {
     font-size: 1em;
     color: white;
     margin-top: 4em;
@@ -24,7 +24,33 @@ p {
     float: right;
 }
 
-.remember-forgot {
+.DoubleAuth-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.DoubleAuth-wrapper .box-popup {
+    position: relative;
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 30px rgb(0, 0, 0, .5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 40px;
+    top: 10vh;
+    margin-bottom: 4%;
+}
+
+.DoubleAuth-wrapper .input-box {
+    position: relative;
+    width: 100%;
+}
+
+.DoubleAuth-wrapper .remember-forgot {
     font-size: .9em;
     color: white;
     font-weight: 500;
@@ -32,13 +58,13 @@ p {
     display: flex;
 }
 
-.remember-forgot a {
+.DoubleAuth-wrapper .remember-forgot a {
     color: white;
     text-decoration: none;
     margin-left: 30px;
 }
 
-.remember-forgot a:hover {
+.DoubleAuth-wrapper .remember-forgot a:hover {
     text-decoration: underline;
     text-shadow: 0 0 6px var(--color-yellow);
 }
@@ -75,6 +101,9 @@ p {
 }
 
 .mfa input {
+}
+
+.DoubleAuth-wrapper .input-box input {
     background: transparent;
     border: 2px solid white;
     border-radius: 20px;
@@ -87,7 +116,7 @@ p {
     margin: 1%;
 }
 
-.icon-close {
+.DoubleAuth-wrapper .icon-close {
     position: absolute;
     top: 0;
     left: 0;

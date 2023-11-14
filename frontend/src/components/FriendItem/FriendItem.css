@@ -1,15 +1,15 @@
-p {
+.FriendItem-wrapper p {
     font-size: 1em;
     color: white;
     overflow: hidden;
 }
 
-.box-parent {
+.FriendItem-wrapper {
     display: flex;
     justify-content: center;
 }
 
-.box-popup {
+.FriendItem-wrapper .box-popup {
     position: relative;
     background: linear-gradient(to top, #BF9CE8 10%, #FFEA95 100%) no-repeat;
     /* background: transparent; */
@@ -23,12 +23,12 @@ p {
     margin: 1%;
 }
 
-.input-box {
+.FriendItem-wrapper .input-box {
     display: flex;
     justify-content: space-between; 
     align-items: center;
 }
 
-.input-box > *:not(:last-child) {
+.FriendItem-wrapper .input-box > *:not(:last-child) {
     margin-right: 20px;
 }

@@ -1,12 +1,4 @@
-:root{
-    --color-yellow: rgb(251, 218, 86);
-    --color-purple: rgb(170, 156, 232);
-    --color-light-purple: rgb(191, 183, 229);
-    --color-blue: rgb(142, 212, 215);
-    --color-light-pink: rgb(248, 163, 139);
-}
-
-.stats .icon {
+.Stats-wrapper .icon {
     position: absolute;
     right: 8px;
     font-size: 150%;
@@ -14,11 +6,11 @@
     top: 8%;
 }
 
-.parent {
+.Stats-wrapper {
     margin-top: 50px;
 }
 
-.title-s {
+.Stats-wrapper .title-s {
     font-family: 'Permanent Marker';
     color: #9747FF;
     font-weight: 900;
@@ -27,7 +19,7 @@
     text-shadow: 5px 4px 10px;
 }
 
-.main {
+.Stats-wrapper .main {
     background: transparent;
     border: 2px solid white;
     border-radius: 20px;
@@ -38,7 +30,7 @@
     width: 40%; */
 }
 
-.statt {
+.Stats-wrapper .statt {
     color: white;
     position: relative;
     width: 100%;
@@ -46,51 +38,51 @@
     padding: 20px;
 }
 
-.statt:last-of-type {
+.Stats-wrapper .statt:last-of-type {
     border-right: none;
 }
 
-.title {
+.Stats-wrapper .title {
     border-bottom: 2px solid white;
     font-size: larger;
     text-shadow: 0 0 4px var(--color-purple);
 }
 
-.statt div {
+.Stats-wrapper .statt div {
     position: relative;
     top: 20%;
     padding-bottom: 6%;
     margin-bottom: 10%;
 }
 
-.middle {
+.Stats-wrapper .middle {
     font-size: 300%;
     text-shadow: 0 0 4px var(--color-light-pink);
 }
 
-.score {
+.Stats-wrapper .score {
     display: flex;
     justify-content: space-between;
     text-shadow: 0 0 4px var(--color-yellow);
 }
 
-.score span {
+.Stats-wrapper .score span {
     text-shadow: 0 0 4px var(--color-blue);
 }
 
-.rank {
+.Stats-wrapper .rank {
     text-shadow: 0 0 4px var(--color-yellow);
 }
 
-.rank span {
+.Stats-wrapper .rank span {
     text-shadow: 0 0 4px var(--color-blue);
 }
   
-.win,
-.lose {
+.Stats-wrapper .win,
+.Stats-wrapper .lose {
 display: inline-block;
 }
 
-.lose span {
+.Stats-wrapper .lose span {
     text-shadow: 0 0 4px var(--color-light-pink);
 }

@@ -1,13 +1,12 @@
 import React from 'react';
-import './Stats.css';
 import { IoAnalyticsOutline } from "react-icons/io5";
 import { GiWingedSword } from "react-icons/gi";
 import { BsStars } from "react-icons/bs";
+import './Stats.css';
 
 const Stats: React.FC = () => {
     return  (
-
-        <div className="parent stats">
+        <div className='Stats-wrapper'>
             <h2 className='title-s'>Statistics</h2>
             <div className='main'>
                 <div className='statt'>

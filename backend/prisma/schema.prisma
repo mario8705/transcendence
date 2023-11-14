@@ -12,36 +12,47 @@ datasource db {
 }
 
 // enum AuthenticationMethod {
-  // Password
-  // OAuth2
+// Password
+// OAuth2
 // }
 
 model User {
   id Int @id @default(autoincrement())
 
+  pseudo        String  @unique
   email         String  @unique
   emailVerified Boolean @default(false)
+  avatar        String  @default("./frontend/src/assets/images/default_avatar.png")
 
-  password      String? @unique
+  password String? @unique
 
-  totpSecret    String? @unique
-  totpEnabled   Boolean @default(false)
+  totpSecret  String? @unique
+  totpEnabled Boolean @default(false)
 
-  authMethod    String
+  authMethod String
 
   experience Int @default(0)
 
   befriendedBy Friends[] @relation("users")
   friends      Friends[] @relation("friends")
+  bannedBy     Blocked[] @relation("users")
+  blocked      Blocked[] @relation("blocked")
   messages     Message[]
 
   channelMemberships ChannelMembership[]
+  //   ChannelAdministrators	ChannelAdministrators[]
+  conversationTo     Conversations[]     @relation("conversations")
+  conversationFrom   Conversations[]     @relation("users")
 
-  // gameResults   GameResult[] @relation("players")
+  //gameResults   GameResult[] @relation("players")
+  gameParticipationsCurrentUser GameParticipation[] @relation("CurrentUser")
+  gameParticipationsOpponent    GameParticipation[] @relation("Opponent")
 
   ownedChannels Channel[] @relation("ownedChannels")
 
   ftUser FortyTwoUser?
+
+  achievements UserAchievements[]
 
   tickets Ticket[]
 
@@ -54,18 +65,50 @@ model Ticket {
   issuedAt       DateTime @default(now())
   allowedMethods String
 
-  user User @relation(fields: [userId], references: [id])
+  user      User       @relation(fields: [userId], references: [id])
   emailCode EmailCode?
 
   @@map("tickets")
 }
 
 model EmailCode {
-  code    Int @id
-  ticketId Int @unique
-  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  code     Int    @id
+  ticketId Int    @unique
+  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 
   @@map("email_codes")
+}
+
+model Achievement {
+  id          Int                @id @default(autoincrement())
+  name        String
+  description String
+  difficulty  Int
+  isHidden    Boolean
+  users       UserAchievements[]
+}
+
+model UserAchievements {
+  userId        Int
+  achievementId Int
+  createdAt     DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id])
+  achievement Achievement @relation(fields: [achievementId], references: [id])
+
+  @@id([userId, achievementId])
+}
+
+model Conversations {
+  userId      Int
+  converserId Int
+  createdAt   DateTime @default(now())
+
+  user      User @relation("users", fields: [userId], references: [id])
+  converser User @relation("conversations", fields: [converserId], references: [id])
+
+  //TODO il faut mettre les messages là non ?
+  @@id([userId, converserId])
 }
 
 model Friends {
@@ -79,12 +122,25 @@ model Friends {
   @@map("friends")
 }
 
+model Blocked {
+  userId    Int
+  blockedId Int
+  blockedAt DateTime @default(now())
+
+  user    User @relation("users", fields: [userId], references: [id])
+  blocked User @relation("blocked", fields: [blockedId], references: [id])
+
+  @@id([userId, blockedId])
+}
+
 model Message {
   id        Int      @id @default(autoincrement())
   content   String
   createdAt DateTime @default(now())
   authorId  Int
-  author    User     @relation(fields: [authorId], references: [id])
+  channelId Int // est ce que ça peut marcher ça?
+
+  author User @relation(fields: [authorId], references: [id])
 
   @@map("messages")
 }
@@ -98,12 +154,14 @@ model Message {
 model Channel {
   id         Int      @id @default(autoincrement())
   ownerId    Int?
+  name       String
   createdAt  DateTime @default(now())
   password   String?
   visibility String   @default("private")
   // visibility ChannelVisibility @default(Private)
 
   memberships ChannelMembership[]
+  //   administration	ChannelAdministrators[]
 
   owner User? @relation("ownedChannels", fields: [ownerId], references: [id])
 
@@ -114,7 +172,7 @@ model ChannelMembership {
   userId         Int
   channelId      Int
   joinedAt       DateTime @default(now())
-  permissionMask Int
+  permissionMask Int //1(simple member), 2(Administrator) or 4(owner)
 
   user    User    @relation(fields: [userId], references: [id])
   channel Channel @relation(fields: [channelId], references: [id])
@@ -128,15 +186,28 @@ model ChannelMembership {
 // Right
 // }
 
-// model GameResult {
-//   id Int @default(autoincrement()) @id
-//   createdAt DateTime @default(now())
+model GameParticipation {
+  id           Int        @id @default(autoincrement())
+  //userId      Int
+  gameResultId Int
+  //user        User   @relation(fields: [userId], references: [id])
+  user1Id      Int
+  user1        User       @relation("CurrentUser", fields: [user1Id], references: [id])
+  user2Id      Int
+  user2        User       @relation("Opponent", fields: [user2Id], references: [id])
+  gameResult   GameResult @relation(fields: [gameResultId], references: [id])
+}
 
-//   score Int
-//   playerId Int
-//   playerSide String // Either "left" or "right"
+model GameResult {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
 
-// }
+  scored             Int
+  conceded           Int
+  gameParticipations GameParticipation[]
+  //playerId Int
+  // playerSide String // Either "left" or "right"
+}
 
 model FortyTwoUser {
   id          Int    @id

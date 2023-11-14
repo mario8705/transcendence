@@ -1,13 +1,14 @@
-import { BadGatewayException, Injectable } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Prisma, PrismaClient } from '@prisma/client';
-import { FortyTwoService } from 'src/ft/ft.service';
-import { PrismaService } from 'src/prisma.service';
-import { TicketPayload, TicketService } from './ticket.service';
+import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { MailService } from 'src/mail/mail.service';
 import * as _ from 'lodash';
 import * as speakeasy from 'speakeasy';
+import { FortyTwoService } from 'src/ft/ft.service';
+import { MailService } from 'src/mail/mail.service';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { TicketPayload, TicketService } from './ticket.service';
 
 type Ticket = {
     ticket: string;
@@ -57,6 +58,7 @@ export class AuthService {
                 accessToken: credentials.access_token,
                 user: {
                     create: {
+                        pseudo: 'nopseudo',
                         email: 'noemail@example.com',
                         authMethod: 'oauth2',
                     }

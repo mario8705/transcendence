@@ -1,8 +1,9 @@
-import { Controller, Post, Body, UsePipes, ValidationPipe, BadRequestException, UnauthorizedException, UseGuards, Request, ForbiddenException } from '@nestjs/common';
-import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsNumberString, IsString, Length } from 'class-validator';
+import { BadRequestException, Body, Controller, ForbiddenException, Post, Request, UnauthorizedException, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import { IsEmail, IsEnum, IsNotEmpty, IsNumberString, IsString, Length } from 'class-validator';
+import { Request as ExpressRequest } from 'express';
 import { AuthService } from './auth.service';
 import { TicketGuard } from './ticket.guard';
-import { Request as ExpressRequest } from 'express';
 import { TicketPayload } from './ticket.service';
 
 export enum AuthorizationProviderType {
@@ -10,10 +11,12 @@ export enum AuthorizationProviderType {
 }
 
 export class AuthorizeCodeDto {
+    @ApiProperty({ })
     @IsString()
     @IsNotEmpty()
     code: string;
 
+    @ApiProperty({ enum: AuthorizationProviderType })
     @IsEnum(AuthorizationProviderType)
     provider: AuthorizationProviderType;
 }
@@ -55,6 +58,7 @@ export class SendVerificationMailDto {
     version: '1',
     path: 'auth',
 })
+@ApiTags('Authentication')
 @UsePipes(new ValidationPipe({
     whitelist: true,
     forbidNonWhitelisted: true,
@@ -66,7 +70,12 @@ export class AuthController {
     async authorizeCode(@Body() { provider, code }: AuthorizeCodeDto) {
         if (provider !== 'ft')
             throw new BadRequestException();
-        return await this.authService.authorizeCodeFortyTwo(code);
+        try {
+            const token = await this.authService.authorizeCodeFortyTwo(code);
+            return { token };
+        } catch {
+            throw new ForbiddenException();
+        }
     }
 
     @Post('/login')

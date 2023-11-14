@@ -51,6 +51,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ dispatch }) => {
 	}, []);
 
 	return (
+<<<<<<< HEAD
 		<form action="#" className="login-form" onSubmit={handleOnSubmit}>
 			<h2>Login</h2>
 			<div className="input-box">
@@ -63,6 +64,43 @@ const LoginForm: React.FC<LoginFormProps> = ({ dispatch }) => {
 					// required
 				/>
 				<IoMailOutline className="icon" />
+=======
+		<div className="LoginForm-wrapper">
+			<div className="box-popup">
+				<form action="#">
+					<h2>Login</h2>
+					<div className="input-box">
+						<label>Email</label>
+						<input
+						id="email"
+						name="email"
+						type="email"
+						// autoComplete="email"
+						required
+						/>
+						<IoMailOutline className="icon"/>
+					</div>
+					<div className="input-box">
+						<label>Password</label>
+						<input
+						id="password"
+						name="password"
+						type="password"
+						required/>
+						<IoLockClosedOutline className="icon"/>
+					</div>
+					<div className="remember-forgot">
+						<input type="checkbox" name="remember_me" />Remember me
+						<a href="#">Forgot Password?</a>
+					</div>
+					<MainButton buttonName='Login'/>
+					<div className="input-box">
+					<p>or</p>
+					<MainButton as="a" href={authorizeUrl} buttonName='42 Account' />
+					</div>
+					<p>Don't have an account ? <a href="#" className="register-link">Register</a></p>
+				</form>
+>>>>>>> main
 			</div>
 			<div className="input-box">
 				<label>Password</label>
