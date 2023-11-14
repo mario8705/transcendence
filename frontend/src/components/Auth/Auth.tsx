@@ -10,7 +10,7 @@ const AuthManager: React.FC<AuthManagerProps> = ({ state, dispatch }) => {
     return (
         <>
             <Panel index={0}>
-                <LoginForm state={state} dispatch={dispatch} />
+                <LoginForm dispatch={dispatch} />
             </Panel>
             <Panel index={1}>
                 <AuthMethodPicker

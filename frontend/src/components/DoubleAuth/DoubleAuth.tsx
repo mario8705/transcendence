@@ -1,11 +1,12 @@
-import React, { useCallback, useState, useRef, PropsWithChildren, useContext, Children } from 'react';
-import MainButton from '../MainButton/MainButton'
-import { IoMailOutline } from "react-icons/io5";
-import { HiOutlineArrowCircleLeft } from "react-icons/hi";
+import { Stack, styled } from '@mui/material';
+import React, { PropsWithChildren, useRef } from 'react';
 import { BsQrCode } from "react-icons/bs";
 import { FaCommentSms } from "react-icons/fa6";
+import { HiOutlineArrowCircleLeft } from "react-icons/hi";
+import { IoMailOutline } from "react-icons/io5";
 import { SiLetsencrypt } from "react-icons/si";
-import { Stack, styled } from '@mui/material';
+import { useMutation } from 'react-query';
+import MainButton from '../MainButton/MainButton';
 import './DoubleAuth.css';
 
 enum AuthenticationMode {
@@ -27,6 +28,7 @@ type AuthenticationMethodDescriptorTable = {
 		icon: React.ReactNode,
 		name: string;
 		title: string;
+		canSendCode: boolean;
 	};
 };
 
@@ -35,21 +37,25 @@ const methodsList: AuthenticationMethodDescriptorTable = {
 		icon: <SiLetsencrypt className="icon" />,
 		name: 'Code',
 		title: 'Open your app and enter the Code',
+		canSendCode: false,
 	},
 	[AuthenticationMode.Sms]: {
 		icon: <FaCommentSms className="icon" />,
 		name: 'SMS',
 		title: 'Enter the code you received by SMS',
+		canSendCode: true,
 	},
 	[AuthenticationMode.QrCode]: {
 		icon: <BsQrCode className="icon" />,
 		name: 'QR Code',
 		title: 'Open your app and enter the Code',
+		canSendCode: false,
 	},
 	[AuthenticationMode.Email]: {
 		icon: <IoMailOutline className="icon" />,
 		name: 'Email',
 		title: 'Enter the code you received in your Email',
+		canSendCode: true,
 	},
 };
 
@@ -76,15 +82,16 @@ export const AuthMethodPicker: React.FC<AuthMethodPickerProps> = ({ methods, onM
 	);
 }
 
-
 export type AuthenticationPanelProps = {
 	authenticationMode: AuthenticationMode;
 	onBack: () => void;
+	resendCooldown: number;
+	
 }
 
 export const AuthenticationPanel: React.FC<PropsWithChildren<AuthenticationPanelProps>> = ({ children, authenticationMode, onBack }) => {
-	const { title } = methodsList[authenticationMode];
-	const [ cooldownTime, setCooldownTime ] = React.useState<number>(0);
+	const { title, canSendCode } = methodsList[authenticationMode];
+	const [ cooldownTime, setCooldownTime ] = React.useState<number>(0); /* TODO use reducer cooldown */
 
 	/* XXX Interval is reset every 1s but it still works nontheless... */
 	React.useEffect(() => {
@@ -103,20 +110,41 @@ export const AuthenticationPanel: React.FC<PropsWithChildren<AuthenticationPanel
 		}
 	}, [ setCooldownTime, cooldownTime ]);
 
+	const sendCodeMutation = useMutation(async () => {return{}}, {
+		onSuccess(data, variables, context) {
+			
+		},
+		onError(error, variables, context) {
+			
+		},
+	});
+
+	const handleSubmit = React.useCallback((e: React.FormEvent<HTMLFormElement>) => {
+		const formData = new FormData(e.currentTarget);
+
+		console.log([...formData.entries()]);
+
+		e.preventDefault();
+	}, []);
+
 	return (
 		<>
 			<span className="icon-close" onClick={onBack}>
 				<HiOutlineArrowCircleLeft />
 			</span>
-			<form action="#">
+			<form action="#" onSubmit={handleSubmit}>
 				<h2 className='h2bis'>{title}</h2>
 				<CodeInput length={6} onChange={() => 0} />
-				<div className="remember-forgot">
-					<p className='pbis'>
-						Didn't have time to receive code?
-						<a href="#" onClick={sendAgain}>Send Again{cooldownTime > 0 ? ` (${cooldownTime}s)` : ''}</a>
-					</p>
-				</div>
+				{
+					canSendCode && (
+						<div className="remember-forgot">
+							<p className='pbis'>
+								Didn't have time to receive code?
+								<a href="#" onClick={sendAgain}>Send Again{cooldownTime > 0 ? ` (${cooldownTime}s)` : ''}</a>
+							</p>
+						</div>
+					)
+				}
 				<div className="input-box">
 					<MainButton buttonName='Submit'/>
 				</div>

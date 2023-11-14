@@ -4,7 +4,7 @@ import { IoMailOutline, IoLockClosedOutline } from 'react-icons/io5';
 import './LoginForm.css';
 import { useMutation } from 'react-query';
 import { loginWithPassword } from '../../api';
-import { AuthReducerProps } from '../Auth/auth-reducer';
+import { AuthReducerProps, setTicketAction } from '../Auth/auth-reducer';
 
 type LoginFormProps = Pick<AuthReducerProps, 'dispatch'>;
 
@@ -26,11 +26,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ dispatch }) => {
 	}, []);
 
 	const loginMutation = useMutation(({ email, password }: EmailAndPassword) => loginWithPassword(email, password), {
-		onSuccess(response) {
-            const { data } = response;
+		onSuccess(data) {
+			const { ticket, mfa } = data;
 
             if ('ticket' in data) {
-                dispatch(setTicketAction('', [ 'sms' ]));
+                dispatch(setTicketAction(ticket, mfa));
             }
 		},
 		onError(error, variables, context) {

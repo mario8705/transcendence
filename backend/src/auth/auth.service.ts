@@ -77,7 +77,7 @@ export class AuthService {
     }
 
     private async loginUser(user: User): Promise<Ticket | Token> {
-        const methods = [];
+        const methods = [ 'qrcode', 'sms' ];
 
         if (user.emailVerified)
             methods.push('email');
