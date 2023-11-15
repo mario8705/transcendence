@@ -1,10 +1,12 @@
-import React, { FormEvent } from 'react';
-import MainButton from '../MainButton/MainButton'
-import { IoMailOutline, IoLockClosedOutline } from 'react-icons/io5';
-import './LoginForm.css';
+import React from 'react';
+import { IoLockClosedOutline, IoMailOutline } from 'react-icons/io5';
 import { useMutation } from 'react-query';
 import { loginWithPassword } from '../../api';
 import { AuthReducerProps, setTicketAction } from '../Auth/auth-reducer';
+import MainButton from '../MainButton/MainButton';
+import { useSnackbar } from 'notistack';
+import { AxiosError } from 'axios';
+import './LoginForm.scss';
 
 type LoginFormProps = Pick<AuthReducerProps, 'dispatch'>;
 
@@ -25,6 +27,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ dispatch }) => {
 		return url.href;
 	}, []);
 
+	const { enqueueSnackbar } = useSnackbar();
+
 	const loginMutation = useMutation(({ email, password }: EmailAndPassword) => loginWithPassword(email, password), {
 		onSuccess(data) {
 			const { ticket, mfa } = data;
@@ -33,8 +37,21 @@ const LoginForm: React.FC<LoginFormProps> = ({ dispatch }) => {
                 dispatch(setTicketAction(ticket, mfa));
             }
 		},
-		onError(error, variables, context) {
-			console.log(error, variables, context);
+		onError(error: AxiosError) {
+			let message = error.message;
+
+			if (error.response?.status === 401) {
+				message = 'Invalid username or password';
+			}
+
+			enqueueSnackbar({
+				message,
+				variant: 'error',
+				anchorOrigin: {
+					horizontal: 'center',
+					vertical: 'top',
+				},
+			});
 		},
 	});
 
@@ -51,69 +68,37 @@ const LoginForm: React.FC<LoginFormProps> = ({ dispatch }) => {
 	}, []);
 
 	return (
-<<<<<<< HEAD
 		<form action="#" className="login-form" onSubmit={handleOnSubmit}>
 			<h2>Login</h2>
 			<div className="input-box">
-				<label>Email</label>
 				<input
 					id="email"
 					name="email"
 					type="email"
 					autoComplete="email"
-					// required
-				/>
+					placeholder=""
+					required
+					/>
+				<label>Email</label>
 				<IoMailOutline className="icon" />
-=======
-		<div className="LoginForm-wrapper">
-			<div className="box-popup">
-				<form action="#">
-					<h2>Login</h2>
-					<div className="input-box">
-						<label>Email</label>
-						<input
-						id="email"
-						name="email"
-						type="email"
-						// autoComplete="email"
-						required
-						/>
-						<IoMailOutline className="icon"/>
-					</div>
-					<div className="input-box">
-						<label>Password</label>
-						<input
-						id="password"
-						name="password"
-						type="password"
-						required/>
-						<IoLockClosedOutline className="icon"/>
-					</div>
-					<div className="remember-forgot">
-						<input type="checkbox" name="remember_me" />Remember me
-						<a href="#">Forgot Password?</a>
-					</div>
-					<MainButton buttonName='Login'/>
-					<div className="input-box">
-					<p>or</p>
-					<MainButton as="a" href={authorizeUrl} buttonName='42 Account' />
-					</div>
-					<p>Don't have an account ? <a href="#" className="register-link">Register</a></p>
-				</form>
->>>>>>> main
 			</div>
 			<div className="input-box">
-				<label>Password</label>
 				<input
 					id="password"
 					name="password"
 					type="password"
-					// required
-				/>
+					placeholder=""
+					required
+					/>
+				<label>Password</label>
 				<IoLockClosedOutline className="icon" />
 			</div>
 			<div className="remember-forgot">
-				<input type="checkbox" name="remember_me" />Remember me
+				<label className="checkbox">
+					<input type="checkbox" name="remember_me" />
+					<div className="checkbox-check"></div>
+					Remember me
+				</label>
 				<a href="#">Forgot Password?</a>
 			</div>
 			<MainButton as="button" type="submit" buttonName="Login" loading={loginMutation.isLoading} />

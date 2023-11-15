@@ -7,7 +7,7 @@ import { IoMailOutline } from "react-icons/io5";
 import { SiLetsencrypt } from "react-icons/si";
 import { useMutation } from 'react-query';
 import MainButton from '../MainButton/MainButton';
-import './DoubleAuth.css';
+import './DoubleAuth.scss';
 
 enum AuthenticationMode {
 	Email = 'email',
@@ -86,7 +86,6 @@ export type AuthenticationPanelProps = {
 	authenticationMode: AuthenticationMode;
 	onBack: () => void;
 	resendCooldown: number;
-	
 }
 
 export const AuthenticationPanel: React.FC<PropsWithChildren<AuthenticationPanelProps>> = ({ children, authenticationMode, onBack }) => {

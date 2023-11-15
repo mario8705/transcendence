@@ -5,38 +5,31 @@ import * as bcrypt from 'bcrypt';
 // initialize Prisma Client
 const prisma = new PrismaClient();
 
-main()
-    .then(async () => {
-        await prisma.$disconnect()
-    })
-    .catch(async (e) => {
-        console.error(e)
-        await prisma.$disconnect()
-        process.exit(1)
-    });
-
 async function main() {
-  await prisma.user.create({
-    data: {
-        email: 'alexislavaud191@gmail.com',
-        totpSecret: 'KVAFEKKWOZ4SYZD5JVYWS6KWF5UU4LDCKNBDYUCUGVZVEV3ZJNOQ',
-        authMethod: 'password',
-        totpEnabled: true,
-        password: bcrypt.hashSync('mdp', bcrypt.genSaltSync()),
-        // password: 
-        //otpauth://totp/SecretKey?secret=KVAFEKKWOZ4SYZD5JVYWS6KWF5UU4LDCKNBDYUCUGVZVEV3ZJNOQ
-    },
-});
-
   await prisma.gameParticipation.deleteMany();
   await prisma.gameResult.deleteMany();
   await prisma.userAchievements.deleteMany();
   await prisma.achievement.deleteMany();
   await prisma.user.deleteMany();
+
+  await prisma.user.create({
+    data: {
+        email: 'alexislavaud191@gmail.com',
+        totpSecret: 'KVAFEKKWOZ4SYZD5JVYWS6KWF5UU4LDCKNBDYUCUGVZVEV3ZJNOQ',
+        authMethod: 'password',
+        pseudo: 'alex191',
+        totpEnabled: true,
+        password: bcrypt.hashSync('mdp', bcrypt.genSaltSync()),
+        // password: 
+        //otpauth://totp/SecretKey?secret=KVAFEKKWOZ4SYZD5JVYWS6KWF5UU4LDCKNBDYUCUGVZVEV3ZJNOQ
+    },
+  });
+  
     const user1 = await prisma.user.create({
       data: {
         id: 1,
         pseudo: "User1",
+        authMethod: 'password',
         email: "user1@example.com",
         emailVerified: false,
         experience: 0,
@@ -47,6 +40,7 @@ async function main() {
       data: {
         id: 2,
         pseudo: "User2",
+        authMethod: 'password',
         email: "user2@example.com",
         emailVerified: false,
         experience: 0,
@@ -58,6 +52,7 @@ async function main() {
         id: 3,
         pseudo: "User3",
         email: "user3@example.com",
+        authMethod: 'password',
         emailVerified: false,
         experience: 0,
       },
@@ -189,71 +184,16 @@ async function main() {
       user2Id: user1.id,
       gameResultId: gameResult2.id,
       },
-    });  
+    });
 }
 
 // execute the main function
 main()
   .catch((e) => {
     console.error(e);
+    process.exit(1);
   })
   .finally(async () => {
     // close Prisma Client at the end
     await prisma.$disconnect();
   });
-// import {PrismaClient} from '@prisma/client'
-
-// const prisma = new PrismaClient();
-
-// async function main() {
-// 	const user1 = await prisma.user.create({
-// 		data: {
-// 			id: 1,
-// 			email:  "user1@example.fr",
-// 			emailVerified: true
-// 		}
-// 	});
-
-// 	const user2 = await prisma.user.create({
-// 		data: {
-// 			id: 2,
-// 			email:  "user1@example.fr",
-// 			emailVerified: true
-// 		}
-// 	});
-
-// 	const user3 = await prisma.user.create({
-// 		data: {
-// 			id: 3,
-// 			email:  "user1@example.fr",
-// 			emailVerified: true
-// 		}
-// 	});
-
-// 	const friendship1 = await prisma.friends.create({
-// 		data: {
-// 			userId: 1,
-// 			friendId: 2,
-// 			user: user1,
-// 			friend: user2 
-// 		}
-// 	});
-
-// 	const friendship2 = await prisma.friends.create({
-// 		data: {
-// 			userId:2,
-// 			friendId: 3,
-// 			user: user2,
-// 			friend: user3
-// 		}
-// 	});
-
-// }
-
-// main()
-// 	.catch((e) => {
-// 		console.error(e);
-// 	})
-// 	.finally(async () => {
-// 		await prisma.$disconnect();
-// 	});

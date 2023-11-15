@@ -1,6 +1,5 @@
 import React, { PropsWithChildren, useContext } from 'react';
-import '../DoubleAuth/DoubleAuth.css';
-
+import { Stack } from '@mui/material';
 export interface PanelProps {
 	index: number;
 };
@@ -68,13 +67,13 @@ export const PanelContainer: React.FC<PropsWithChildren<PanelContainerProps>> = 
 	};
 
 	return (
-        <div className="box-parent">
+		<Stack alignItems="center">
             <div className="auth-container" style={{ height: `${currentHeight}px` }}>
                 <AnimationContext.Provider value={ctx}>
                     {children}
                 </AnimationContext.Provider>
             </div>
-        </div>
+		</Stack>
 	);
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
-import './MainButton.css';
+import './MainButton.scss';
 
 export type MainButtonProps = {
     buttonName: string;
