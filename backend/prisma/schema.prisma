@@ -26,6 +26,8 @@ model User {
 
   password String? @unique
 
+  mfaEnabled Boolean @default(false)
+
   totpSecret  String? @unique
   totpEnabled Boolean @default(false)
 

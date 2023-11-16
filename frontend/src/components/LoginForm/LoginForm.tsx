@@ -2,7 +2,7 @@ import React from 'react';
 import { IoLockClosedOutline, IoMailOutline } from 'react-icons/io5';
 import { useMutation } from 'react-query';
 import { loginWithPassword } from '../../api';
-import { AuthReducerProps, setTicketAction } from '../Auth/auth-reducer';
+import { AuthReducerProps, setAuthToken, setTicketAction } from '../Auth/auth-reducer';
 import MainButton from '../MainButton/MainButton';
 import { useSnackbar } from 'notistack';
 import { AxiosError } from 'axios';
@@ -31,11 +31,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ dispatch }) => {
 
 	const loginMutation = useMutation(({ email, password }: EmailAndPassword) => loginWithPassword(email, password), {
 		onSuccess(data) {
-			const { ticket, mfa } = data;
+			const { ticket, token, mfa } = data;
 
             if ('ticket' in data) {
                 dispatch(setTicketAction(ticket, mfa));
-            }
+            } else if ('token' in data) {
+				dispatch(setAuthToken(token));
+			}
 		},
 		onError(error: AxiosError) {
 			let message = error.message;

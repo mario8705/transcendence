@@ -12,6 +12,8 @@ import { AuthorizationTokenPayload, submitOtp } from '../../api';
 import { AuthReducerProps, setAuthToken, setResendTime } from '../Auth/auth-reducer';
 import MainButton from '../MainButton/MainButton';
 import './DoubleAuth.scss';
+import { useAuthContext } from '../../contexts/AuthContext';
+import { setAuthenticationToken } from '../../storage';
 
 export enum AuthenticationMode {
 	Email = 'email',
@@ -134,7 +136,7 @@ const ResendButton: React.FC<ResendButtonProps> = ({ onSendAgain, nextTryTime })
 		if (cooldownTime === 0) {
 			onSendAgain();
 		}
-	}, [ onSendAgain, cooldownTime ])
+	}, [ onSendAgain, cooldownTime ]);
 
 	return (
 		<p className="resend-code">
@@ -152,6 +154,7 @@ export const AuthenticationPanel: React.FC<PropsWithChildren<AuthenticationPanel
 	const [ code, setCode ] = React.useState<string>('');
 	const [ submittedOnce, setSubmittedOnce ] = React.useState<boolean>(false);
 	const { enqueueSnackbar } = useSnackbar();
+	const { authenticate } = useAuthContext();
 
 	const { ticket } = state;
 	const currentMethodState = state.mfaState[authenticationMode];
@@ -162,8 +165,8 @@ export const AuthenticationPanel: React.FC<PropsWithChildren<AuthenticationPanel
 
 	const submitCodeMutation = useMutation(submitCode, {
 		mutationKey: [ authenticationMode, 'submit code' ],
-		onSuccess(data, variables, context) {
-			dispatch(setAuthToken('BONJOUR'));
+		onSuccess({ token }, variables, context) {
+			dispatch(setAuthToken(token));
 		},
 		onError(error: AxiosError, variables, context) {
 			enqueueSnackbar({
@@ -183,7 +186,7 @@ export const AuthenticationPanel: React.FC<PropsWithChildren<AuthenticationPanel
 		submitCodeMutation.mutate({ code, ticket: ticket! });
 
 		e?.preventDefault();
-	}, [ setSubmittedOnce ]);
+	}, [ setSubmittedOnce, code ]);
 
 	React.useEffect(() => {
 		if (!submittedOnce && code.length === 6) {
@@ -233,6 +236,10 @@ const CodeInput: React.FC<CodeInputProps> = ({ length, onChange }) => {
 	const [ inputs, setInputs ] = React.useState(() => new Array(frozenLength).fill(''));
 	const inputRefs = useRef(inputs.map(() => React.createRef<HTMLInputElement>()));
 
+	React.useEffect(() => {
+		onChange(inputs.join(''));
+	}, [ inputs ]);
+
 	const handleChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { value } = e.target;
 		const newInputs = [...inputs];
@@ -251,7 +258,6 @@ const CodeInput: React.FC<CodeInputProps> = ({ length, onChange }) => {
 
 		if (i > 0) {
 			setInputs(newInputs);
-			onChange(newInputs.join(''));
 		}
 	};
 

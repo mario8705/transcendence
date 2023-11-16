@@ -1,6 +1,7 @@
 import { AuthenticationMode } from "../DoubleAuth/DoubleAuth";
 
 export type IAuthState = {
+    token?: string;
     ticket?: string;
     mfa?: string[];
     selectedMfa?: string;
@@ -104,7 +105,9 @@ export function authReducer(state: IAuthState, action: IAuthAction): IAuthState 
     } else if ('SET_AUTH_TOKEN' === type) {
         const { token } = action as ISetAuthTokenAction;
 
-        console.log('Token: %s', token);
+        return patchState(state, {
+            token,
+        });
     }
     return state;
 }

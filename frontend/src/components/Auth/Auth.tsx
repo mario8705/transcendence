@@ -3,7 +3,9 @@ import { AuthMethodPicker, AuthenticationMode, AuthenticationPanel } from '../Do
 import LoginForm from '../LoginForm/LoginForm';
 import { Panel, PanelContainer } from './PanelContainer';
 import { AuthReducerProps, authReducer, backToMethodPicker, kAuthDefaultState, setSelectedMfa } from './auth-reducer';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { setAuthenticationToken } from '../../storage';
+import { useAuthContext } from '../../contexts/AuthContext';
 
 type AuthManagerProps = AuthReducerProps;
 
@@ -37,6 +39,28 @@ export const Auth: React.FC<AuthProps> = ({ isCallbackUrl }) => {
     const [ state, dispatch ] = React.useReducer(authReducer, kAuthDefaultState);
     const [ searchParams ] = useSearchParams();
     const code = searchParams.get('code');
+    const navigate = useNavigate();
+    const { token } = state;
+    const { isAuthenticated, authenticate } = useAuthContext();
+    const ignore = React.useRef<boolean>(false);
+
+    React.useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/');
+        }
+    }, []);
+
+    React.useEffect(() => {
+        if (token && !ignore.current) {
+            ignore.current = true;
+
+            setAuthenticationToken(token);
+            authenticate(token);
+        }
+    }, [ token ]);
+
+    if (isAuthenticated)
+        return null;
 
 	return (
         <PanelContainer currentIndex={state.currentPanelIndex}>
