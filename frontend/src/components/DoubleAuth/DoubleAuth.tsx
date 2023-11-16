@@ -1,34 +1,32 @@
-import { Stack, styled } from '@mui/material';
 import React, { PropsWithChildren, useRef } from 'react';
+import { Stack, styled } from '@mui/material';
+import { AxiosError } from 'axios';
+import { useSnackbar } from 'notistack';
 import { BsQrCode } from "react-icons/bs";
 import { FaCommentSms } from "react-icons/fa6";
 import { HiOutlineArrowCircleLeft } from "react-icons/hi";
 import { IoMailOutline } from "react-icons/io5";
 import { SiLetsencrypt } from "react-icons/si";
 import { useMutation } from 'react-query';
+import { AuthorizationTokenPayload, submitOtp } from '../../api';
+import { AuthReducerProps, setAuthToken, setResendTime } from '../Auth/auth-reducer';
 import MainButton from '../MainButton/MainButton';
 import './DoubleAuth.scss';
 
-enum AuthenticationMode {
+export enum AuthenticationMode {
 	Email = 'email',
 	Sms = 'sms',
 	QrCode = 'qrcode',
 	AuthCode = 'otp',
 };
 
-const Spacer = styled('p')({
-	marginTop: '1em',
-	marginBottom: '1em',
-	lineHeight: '1em',
-	fontSize: '1em',
-});
-
 type AuthenticationMethodDescriptorTable = {
 	[k in typeof AuthenticationMode[keyof typeof AuthenticationMode]]: {
 		icon: React.ReactNode,
 		name: string;
 		title: string;
-		canSendCode: boolean;
+		resendCode?: () => Promise<number>;
+		submitCode: (payload: { ticket: string; code: string; }) => Promise<AuthorizationTokenPayload>;
 	};
 };
 
@@ -37,25 +35,39 @@ const methodsList: AuthenticationMethodDescriptorTable = {
 		icon: <SiLetsencrypt className="icon" />,
 		name: 'Code',
 		title: 'Open your app and enter the Code',
-		canSendCode: false,
+		async submitCode({ ticket, code }) {
+			return submitOtp(ticket, code);
+		}
 	},
 	[AuthenticationMode.Sms]: {
 		icon: <FaCommentSms className="icon" />,
 		name: 'SMS',
 		title: 'Enter the code you received by SMS',
-		canSendCode: true,
+		async submitCode(payload) {
+			throw 'Not implemented';
+		},
+		async resendCode() {
+			return Date.now() + 1000 * 10;
+		},
 	},
 	[AuthenticationMode.QrCode]: {
 		icon: <BsQrCode className="icon" />,
 		name: 'QR Code',
 		title: 'Open your app and enter the Code',
-		canSendCode: false,
+		async submitCode(payload) {
+			throw 'Not implemented';
+		},
 	},
 	[AuthenticationMode.Email]: {
 		icon: <IoMailOutline className="icon" />,
 		name: 'Email',
 		title: 'Enter the code you received in your Email',
-		canSendCode: true,
+		async submitCode(payload) {
+			throw 'Not implemented';
+		},
+		async resendCode() {
+			return Date.now() + 1000 * 10;
+		},
 	},
 };
 
@@ -68,7 +80,7 @@ export const AuthMethodPicker: React.FC<AuthMethodPickerProps> = ({ methods, onM
 	const methodsComponents = React.useMemo(() => {
 		return Object.entries(methodsList).filter(([ key ]) => methods.includes(key)).map(([ key, { icon, name } ], index) => (
 			<React.Fragment key={key}>
-				{index > 0 && <Spacer>or</Spacer>}
+				{index > 0 && <div className="or">or</div>}
 				<MainButton icon={icon} buttonName={name} onClick={() => onMethodPicked(key)} />
 			</React.Fragment>
 		));
@@ -82,49 +94,102 @@ export const AuthMethodPicker: React.FC<AuthMethodPickerProps> = ({ methods, onM
 	);
 }
 
-export type AuthenticationPanelProps = {
+export type AuthenticationPanelProps = AuthReducerProps & {
 	authenticationMode: AuthenticationMode;
 	onBack: () => void;
-	resendCooldown: number;
 }
 
-export const AuthenticationPanel: React.FC<PropsWithChildren<AuthenticationPanelProps>> = ({ children, authenticationMode, onBack }) => {
-	const { title, canSendCode } = methodsList[authenticationMode];
-	const [ cooldownTime, setCooldownTime ] = React.useState<number>(0); /* TODO use reducer cooldown */
+type ResendButtonProps = {
+	onSendAgain: () => void;
+	nextTryTime: number;
+};
 
-	/* XXX Interval is reset every 1s but it still works nontheless... */
+/**
+ * Takes a unix-epoch time in the future in miliseconds and returns
+ * the number of seconds from now to that time.
+ * @param futureTime 
+ */
+function useCountdown(futureTime: number): number {
+	const [ currentTime, setCurrentTime ] = React.useState<number>(() => Date.now());
+	const isAhead = futureTime > currentTime;
+
 	React.useEffect(() => {
-		const id = setInterval(() => {
-			if (cooldownTime > 0) {
-				setCooldownTime(cooldownTime => cooldownTime - 1);
-			}
-		}, 1000);
-		return () => clearInterval(id);
-	}, [ setCooldownTime, cooldownTime ]);
+		if (!isAhead)
+			return ;
+		const updateCurrentTime = () => setCurrentTime(() => Date.now());
+		
+		const tid = setInterval(updateCurrentTime, 1000);
+		updateCurrentTime();
+
+		return () => clearInterval(tid);
+	}, [ isAhead ]);
+
+	return Math.max(0, Math.floor((futureTime - currentTime) / 1000));
+}
+
+const ResendButton: React.FC<ResendButtonProps> = ({ onSendAgain, nextTryTime }) => {
+	const cooldownTime = useCountdown(nextTryTime);
+
+	const handleSendAgain = React.useCallback(() => {
+		if (cooldownTime === 0) {
+			onSendAgain();
+		}
+	}, [ onSendAgain, cooldownTime ])
+
+	return (
+		<p className="resend-code">
+			Didn't have time to receive code?
+			<a href="#" onClick={handleSendAgain}>
+				Send Again{cooldownTime > 0 ? ` (${cooldownTime}s)` : ''}
+			</a>
+		</p>
+	);
+}
+
+export const AuthenticationPanel: React.FC<PropsWithChildren<AuthenticationPanelProps>> = ({ state, dispatch, authenticationMode, onBack }) => {
+	const { title, submitCode, resendCode } = methodsList[authenticationMode];
+	const canSendCode = typeof resendCode !== 'undefined';
+	const [ code, setCode ] = React.useState<string>('');
+	const [ submittedOnce, setSubmittedOnce ] = React.useState<boolean>(false);
+	const { enqueueSnackbar } = useSnackbar();
+
+	const { ticket } = state;
+	const currentMethodState = state.mfaState[authenticationMode];
 
 	const sendAgain = React.useCallback(() => {
-		if (cooldownTime === 0) {
-			setCooldownTime(30);
-			console.log('Sending');
-		}
-	}, [ setCooldownTime, cooldownTime ]);
+		dispatch(setResendTime(authenticationMode, Date.now() + 1000 * 10));
+	}, []);
 
-	const sendCodeMutation = useMutation(async () => {return{}}, {
+	const submitCodeMutation = useMutation(submitCode, {
+		mutationKey: [ authenticationMode, 'submit code' ],
 		onSuccess(data, variables, context) {
-			
+			dispatch(setAuthToken('BONJOUR'));
 		},
-		onError(error, variables, context) {
-			
+		onError(error: AxiosError, variables, context) {
+			enqueueSnackbar({
+				message: 'Invalid authentication code',
+				variant: 'error',
+				anchorOrigin: {
+					vertical: 'top',
+					horizontal: 'center',
+				},
+			});
 		},
 	});
 
-	const handleSubmit = React.useCallback((e: React.FormEvent<HTMLFormElement>) => {
-		const formData = new FormData(e.currentTarget);
+	const handleSubmit = React.useCallback((e?: React.FormEvent<HTMLFormElement>) => {
+		setSubmittedOnce(true);
 
-		console.log([...formData.entries()]);
+		submitCodeMutation.mutate({ code, ticket: ticket! });
 
-		e.preventDefault();
-	}, []);
+		e?.preventDefault();
+	}, [ setSubmittedOnce ]);
+
+	React.useEffect(() => {
+		if (!submittedOnce && code.length === 6) {
+			handleSubmit();
+		}
+	}, [ code, submittedOnce, handleSubmit ]);
 
 	return (
 		<>
@@ -132,20 +197,15 @@ export const AuthenticationPanel: React.FC<PropsWithChildren<AuthenticationPanel
 				<HiOutlineArrowCircleLeft />
 			</span>
 			<form action="#" onSubmit={handleSubmit}>
-				<h2 className='h2bis'>{title}</h2>
-				<CodeInput length={6} onChange={() => 0} />
+				<h2>{title}</h2>
+				<CodeInput length={6} onChange={code => setCode(code)} />
 				{
 					canSendCode && (
-						<div className="remember-forgot">
-							<p className='pbis'>
-								Didn't have time to receive code?
-								<a href="#" onClick={sendAgain}>Send Again{cooldownTime > 0 ? ` (${cooldownTime}s)` : ''}</a>
-							</p>
-						</div>
+						<ResendButton onSendAgain={sendAgain} nextTryTime={currentMethodState?.nextRetry ?? 0} />
 					)
 				}
 				<div className="input-box">
-					<MainButton buttonName='Submit'/>
+					<MainButton as="button" type="submit" buttonName='Submit' loading={submitCodeMutation.isLoading} />
 				</div>
 			</form>
 		</>
@@ -154,7 +214,6 @@ export const AuthenticationPanel: React.FC<PropsWithChildren<AuthenticationPanel
 
 type CodeInputProps = {
 	length: number;
-	// value: string;
 	onChange: (x: string) => void;
 };
 
@@ -168,8 +227,6 @@ const DigitInput = styled('input')({
 		boxShadow: '0 0 0 4px rgba(191, 156, 232, 0.8)',
 	},
 });
-/*
-	const validatedOnce = React.useRef<boolean>(false); /* Only validate automatically on the first attempt */
 
 const CodeInput: React.FC<CodeInputProps> = ({ length, onChange }) => {
 	const frozenLength = React.useMemo(() => length, []);
@@ -220,7 +277,7 @@ const CodeInput: React.FC<CodeInputProps> = ({ length, onChange }) => {
 	};
 
 	return (
-		<div className="input-box mfa">
+		<div className="mfa-code-input">
 			{
 				inputs.map((input, index) => (
 					<DigitInput

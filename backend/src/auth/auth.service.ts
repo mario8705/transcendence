@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
@@ -110,7 +110,7 @@ export class AuthService {
         });
 
         if (!await bcrypt.compare(password, user.password)) {
-            throw 'Password does not match';
+            throw new UnauthorizedException('Invalid email or password');
         }
 
         return await this.loginUser(user);
@@ -124,7 +124,10 @@ export class AuthService {
         return parseInt(firstDigit.concat(_.shuffle(digits).slice(0, 5).join('')));
     }
 
-    private async generateToken(ticket: TicketPayload): Promise<Token> {
+    private async generateTokenFromTicket(ticket: TicketPayload): Promise<Token> {
+        /** This function will throw if the ticket is not in the database,
+          * thus preventing a race condition where two tokens can be generated for the same ticket.
+          */
         await this.prismaService.ticket.delete({
             where: {
                 id: ticket.ticketId,
@@ -152,7 +155,7 @@ export class AuthService {
             throw 'Invalid code';
         }
 
-        return await this.generateToken(ticket);
+        return await this.generateTokenFromTicket(ticket);
     }
 
     async verifyOtpCode(ticket: TicketPayload, code: string): Promise<Token> {
@@ -168,10 +171,10 @@ export class AuthService {
             encoding: 'base32',
             token: code,
         })) {
-            throw 'Invalid TOTP token';
+            throw new UnauthorizedException();
         }
 
-        return await this.generateToken(ticket);
+        return await this.generateTokenFromTicket(ticket);
     }
 
     async sendEmailVerification(ticket: TicketPayload) {

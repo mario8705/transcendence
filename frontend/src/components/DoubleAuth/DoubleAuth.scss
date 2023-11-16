@@ -1,16 +1,24 @@
 @charset 'utf-8';
 
-.DoubleAuth-wrapper {
-    display: flex;
+.auth-panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+
+    display: inline-flex;
     justify-content: center;
+    // align-items: center;
+    
+    width: 40em;
+    // height: 30em;
+    padding: 40px;
+    
+    transition: transform 250ms ease-in-out;
 
     h2 {
         color: white;
-    }
-
-    .h2bis {
-        color: white;
-        margin-bottom: 5%;
+        margin-bottom: 1em;
     }
 
     p {
@@ -18,60 +26,8 @@
         color: white;
     }
 
-    .pbis {
-        font-size: 1em;
-        color: white;
-        margin-top: 4em;
-        text-align: left;
-        flex: 1;
-
-        a {
-            float: right;
-        }
-    }
-
-    .box-popup {
-        position: relative;
-        background: transparent;
-        border: 2px solid white;
-        border-radius: 20px;
-        backdrop-filter: blur(20px);
-        box-shadow: 0 0 30px rgb(0, 0, 0, .5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-        padding: 40px;
-        top: 10vh;
-        margin-bottom: 4%;
-    }
-
-    .input-box {
-        position: relative;
-        width: 100%;
-    }
-
-    .remember-forgot {
-        font-size: .9em;
-        color: white;
-        font-weight: 500;
-        margin: -15px 0 15px;
-        display: flex;
-        
-        a {
-            color: white;
-            text-decoration: none;
-            margin-left: 30px;
-
-            &:hover {
-                text-decoration: underline;
-                text-shadow: 0 0 6px var(--color-yellow);
-            }
-        }
-    }
-
-    .input-box input {
-        background: transparent;
+    .mfa-code-input input {
+        background: rgba(240, 240, 240, .2);
         border: 2px solid white;
         border-radius: 20px;
         outline: none;
@@ -79,8 +35,27 @@
         color: white;
         text-shadow: 0 0 4px var(--color-yellow);
         text-align: center;
-        padding: 3%;
-        margin: 1%;
+        margin: 6px;
+    }
+
+    .resend-code {
+        margin-top: 1em;
+        text-align: left;
+
+        font-size: .9em;
+        color: white;
+        font-weight: 500;
+  
+        a {
+            color: white;
+            text-decoration: none;
+            float: right;
+
+            &:hover {
+                text-decoration: underline;
+                text-shadow: 0 0 6px var(--color-yellow);
+            }
+        }
     }
     
     .icon-close {
@@ -101,25 +76,15 @@
 
 .auth-container {
     width: 40em;
-    height: 30em;
+    height: 40em;
     overflow: hidden;
 
     border: 2px solid white;
     border-radius: 20px;
     box-shadow: 0 0 30px rgb(0, 0, 0, .5);
     position: relative;
-}
 
-.auth-panel {
-    inset: 0;
-    position: absolute;
-    display: inline-flex;
-    width: 40em;
-    height: 30em;
-    padding: 40px;
-    justify-content: center;
-    align-items: center;
-    transition: transform 250ms ease-in-out;
+    transition: height 250ms ease-out;
 }
 
 .pushed-left {

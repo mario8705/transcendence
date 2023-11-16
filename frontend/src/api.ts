@@ -15,6 +15,14 @@ export type PasswordLoginResponse = {
     mfa: string[];
 }
 
+export type AuthorizationTokenPayload = {
+    token: string;
+    type: string;
+    expire_at: number;
+};
+
+type SubmitOTPResponse = AuthorizationTokenPayload;
+
 function makeAuthorizationHeader(): RawAxiosRequestHeaders {
     const token = getAuthenticationToken();
 
@@ -55,5 +63,6 @@ function wrapResponse<T>(resp: Promise<AxiosResponse<T>>): Promise<T> {
 
 export const authorizeCode = (code: string) => client.post<AuthorizeCodeResponse>('/api/v1/auth/authorize_code', { provider: 'ft', code });
 export const loginWithPassword = (email: string, password: string) => wrapResponse(client.post<PasswordLoginResponse>('/api/v1/auth/login', { email, password }));
+export const submitOtp = (ticket: string, code: string) => wrapResponse(client.post<AuthorizationTokenPayload>('/mfa/otp', { ticket, code }));
 
 export const fetchUserProfile = (profile: string) => authorizedGet(`/api/v1/users/${profile}`);

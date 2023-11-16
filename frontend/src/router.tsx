@@ -14,8 +14,7 @@ export const router = createBrowserRouter([
     },
     {
         path: '/auth/callback',
-        element: <p>Non</p>,
-        // element: <AuthCallbackPage />,
+        element: <Auth isCallbackUrl />,
     },
     {
         path: '/',
