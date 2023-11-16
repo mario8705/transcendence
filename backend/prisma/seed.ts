@@ -12,7 +12,7 @@ async function main() {
   await prisma.user.deleteMany();
     const user1 = await prisma.user.create({
       data: {
-        id: 1,
+        //id: 1,
         pseudo: "User1",
         email: "user1@example.com",
         emailVerified: false,
@@ -22,7 +22,7 @@ async function main() {
   
     const user2 = await prisma.user.create({
       data: {
-        id: 2,
+        //id: 2,
         pseudo: "User2",
         email: "user2@example.com",
         emailVerified: false,
@@ -32,7 +32,7 @@ async function main() {
   
     const user3 = await prisma.user.create({
       data: {
-        id: 3,
+        //id: 3,
         pseudo: "User3",
         email: "user3@example.com",
         emailVerified: false,
