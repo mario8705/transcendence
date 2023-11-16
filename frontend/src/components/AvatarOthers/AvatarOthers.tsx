@@ -3,7 +3,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import Box from '@mui/material/Box';
+import { Box } from "@mui/material"
 
 interface Props {
     // user: {

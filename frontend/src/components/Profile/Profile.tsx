@@ -23,7 +23,7 @@ interface AvatarContextType {
     setAvatar: (avatar: string) => void;
 }
 
-const Profile: React.FC<Props> = ({ onRouteChange }) => {
+const Profile: React.FC<Props> = () => {
     const [profileInfos, setProfileInfos] = useState(null);
     const [isPopupVisible, setPopupVisible] = useState(false);
     //const [avatar, setAvatar] = useState<string | undefined>();
@@ -36,16 +36,19 @@ const Profile: React.FC<Props> = ({ onRouteChange }) => {
             .then(response => response.json())
             .then(data => {
                 if (data.avatar) {
+                    console.log("1");
                     setAvatar(`http://localhost:3000/static/${data.avatar}`);
                 }
+                console.log("2");
                 setProfileInfos(data);
             })
-    }, [userId]);
+    }, [userId, setAvatar]);
 
     const handleUploadAvatar = (e) => {
         e.preventDefault();
 
-        const file = e.target.files[0]
+        const file = e.target.files[0];
+        console.log(file);
         const formData = new FormData();
         formData.append('file', file);
 

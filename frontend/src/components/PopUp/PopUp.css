@@ -6,6 +6,5 @@
     transform: translate(-50%, -50%);
     z-index: 1001;
     border-radius: 10px;
-    background-color: rgba(226,198,186, 0.8);
-
+    background-color: rgba(226,198,186, 0.5);
   }
