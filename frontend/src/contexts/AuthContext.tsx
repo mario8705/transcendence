@@ -114,6 +114,7 @@ const reducer = (state: AuthenticationState, action: Action) => (
 
 type AuthContextData = AuthenticationState & {
 //   signIn: (email: string, password: string) => Promise<void>;
+  authenticate: (token: string) => void;
   signOut: () => void;
 };
 
@@ -137,8 +138,6 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     if (initialized.current || state.refreshRequested) {
       return;
     }
-
-    console.log('Initialize', state);
 
     initialized.current = true;
 

@@ -165,10 +165,10 @@ export const AuthenticationPanel: React.FC<PropsWithChildren<AuthenticationPanel
 
 	const submitCodeMutation = useMutation(submitCode, {
 		mutationKey: [ authenticationMode, 'submit code' ],
-		onSuccess({ token }, variables, context) {
+		onSuccess({ token }) {
 			dispatch(setAuthToken(token));
 		},
-		onError(error: AxiosError, variables, context) {
+		onError(error: AxiosError) {
 			enqueueSnackbar({
 				message: 'Invalid authentication code',
 				variant: 'error',

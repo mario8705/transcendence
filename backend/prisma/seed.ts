@@ -22,6 +22,8 @@ async function main() {
         password: bcrypt.hashSync('mdp', bcrypt.genSaltSync()),
         // password: 
         //otpauth://totp/SecretKey?secret=KVAFEKKWOZ4SYZD5JVYWS6KWF5UU4LDCKNBDYUCUGVZVEV3ZJNOQ
+        // To test on your own phone, generate a qr code with the text of the previous comment
+        // And scan it.
     },
   });
   

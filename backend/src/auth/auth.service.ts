@@ -166,7 +166,7 @@ export class AuthService {
             },
         });
 
-        if (code !== '123456' && !speakeasy.totp.verify({
+        if (!speakeasy.totp.verify({
             secret: user.totpSecret,
             encoding: 'base32',
             token: code,
