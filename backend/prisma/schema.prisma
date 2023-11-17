@@ -22,7 +22,7 @@ model User {
   pseudo        String  @unique
   email         String  @unique
   emailVerified Boolean @default(false)
-  avatar        String  @default("./frontend/src/assets/images/default_avatar.png")
+  avatar        String?
 
   password String? @unique
 

@@ -7,6 +7,8 @@ export type MainButtonProps = {
     as?: string;
     className?: string;
     loading?: boolean;
+    mode?: number;
+    onClick?: ((whichButton: string) => void) | ((newMode: number) => void) | (() => void);
     icon?: React.ReactNode;
     [k: string]: any;
 }
