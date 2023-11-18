@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { Avatar, Button, TextField } from "@mui/material";
 import default_avatar from "../../assets/images/default_avatar.png";
 import { AvatarContext } from "../../contexts/AvatarContext";
+import { AchievementsListContext } from "../../contexts/AchievementsListContext";
 
 import Stats from "../Stats/Stats";
 import Ladder from "./Ladder/Ladder";
@@ -23,6 +24,25 @@ interface AvatarContextType {
     setAvatar: (avatar: string) => void;
 }
 
+interface Achievement {
+    id: number;
+    name: string;
+    description: string;
+    difficulty: number;
+    isHidden: boolean;
+    createdAt: Date;
+ }
+ 
+ interface UserAchievement {
+    userId: number;
+    achievement: Achievement;
+ }
+
+interface AchievementsListContextType {
+    achievementsList: UserAchievement[];
+    setAchievementsList: (achievementsList: UserAchievement[]) => void;
+}
+
 const Profile: React.FC<Props> = () => {
     const [profileInfos, setProfileInfos] = useState(null);
     const [isPopupVisible, setPopupVisible] = useState(false);
@@ -30,16 +50,15 @@ const Profile: React.FC<Props> = () => {
     const { userId } = useParams();
 
     const { avatar, setAvatar } = useContext(AvatarContext) as AvatarContextType;
+    const { achievementsList, setAchievementsList } = useContext(AchievementsListContext) as AchievementsListContextType;
 
     useEffect(() => {
         fetch(`http://localhost:3000/api/profile/${userId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.avatar) {
-                    console.log("1");
                     setAvatar(`http://localhost:3000/static/${data.avatar}`);
                 }
-                console.log("2");
                 setProfileInfos(data);
             })
     }, [userId, setAvatar]);
@@ -57,11 +76,40 @@ const Profile: React.FC<Props> = () => {
             body: formData
         }
 
-        fetch(`http://localhost:3000/api/profile/${userId}`, requestOptions)
+        const requestOptions2 = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId: Number(userId), achievementId: profileInfos?.achievement[0].id }),
+        }
+
+        fetch(`http://localhost:3000/api/profile/${userId}/add-avatar`, requestOptions)
             .then(response => response.json())
             .then(data => {
                 setAvatar(`http://localhost:3000/static/${data.avatar}`)
-                setPopupVisible(true);
+                if (!profileInfos?.avatar) {
+                    setPopupVisible(true); // TODO: Only the first time.
+                    console.log("HHHHHHHHHHHHHHHH");
+                    fetch(`http://localhost:3000/api/profile/${userId}/add-achievement-to-user`, requestOptions2)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error');
+                            }
+                            return response.json();
+                        })
+                        .then((data) => {
+                            console.log('Success:', data);
+                            fetch(`http://localhost:3000/api/profile/${userId}/achievements`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    setAchievementsList(data);
+                                });
+                        })
+                        .catch((error) => {
+                            console.error('Error:', error);
+                        });
+                }
             })
     }
 
@@ -73,7 +121,7 @@ const Profile: React.FC<Props> = () => {
         <>
             <div className="overlay" style={{ display: isPopupVisible ? 'block': 'none' }}></div>
             <div className="Profile">
-                {isPopupVisible && <PopUp title="New achievement Unlocked: Newwww Avatar" description="Congrats, you've just changed you're avatar for the very first time!" onClose={closePopup}/>}
+                {isPopupVisible && <PopUp userId={Number(userId)} achievementId={profileInfos?.achievement[0].id} title={profileInfos?.achievement[0].name} description={profileInfos?.achievement[0].description} onClose={closePopup}/>}
                 <Avatar
                     alt="Avatar"
                     src={avatar || default_avatar}

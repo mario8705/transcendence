@@ -10,7 +10,10 @@ async function main() {
   await prisma.userAchievements.deleteMany();
   await prisma.achievement.deleteMany();
   await prisma.user.deleteMany();
-    const user1 = await prisma.user.create({
+  await prisma.$executeRaw`UPDATE sqlite_sequence SET seq = 0 WHERE name = 'User';`;
+  await prisma.$executeRaw`UPDATE sqlite_sequence SET seq = 0 WHERE name = 'GameResult';`;
+  await prisma.$executeRaw`UPDATE sqlite_sequence SET seq = 0 WHERE name = 'Achievement';`;
+    await prisma.user.create({
       data: {
         //id: 1,
         pseudo: "User1",
@@ -20,7 +23,7 @@ async function main() {
       },
     });
   
-    const user2 = await prisma.user.create({
+     await prisma.user.create({
       data: {
         //id: 2,
         pseudo: "User2",
@@ -30,7 +33,7 @@ async function main() {
       },
     });
   
-    const user3 = await prisma.user.create({
+    await prisma.user.create({
       data: {
         //id: 3,
         pseudo: "User3",
@@ -41,85 +44,160 @@ async function main() {
     });
   
     // create achievements
-    const achievement1 = await prisma.achievement.create({
+    await prisma.achievement.create({
       data: {
-        name: "Achievement1",
-        description: "First achievement",
+        name: "Newwww Avatar",
+        description: "Congrats, you've just changed you're avatar for the very first time!",
+        difficulty: 1
+      },
+    });
+  
+    await prisma.achievement.create({
+      data: {
+        name: "Newwww Pseudo",
+        description: "Congrats, you've just changed you're pseudo for the very first time!",
         difficulty: 1,
-        isHidden: false,
-      },
-    });
-  
-    const achievement2 = await prisma.achievement.create({
-      data: {
-        name: "Achievement2",
-        description: "Second achievement",
-        difficulty: 2,
-        isHidden: true,
       },
     });
 
-    const achievement3 = await prisma.achievement.create({
+    await prisma.achievement.create({
+      data: {
+        name: "First Game",
+        description: "It's you're first game ever!",
+        difficulty: 1
+      },
+    });
+
+    await prisma.achievement.create({
+      data: {
+        name: "You're getting used to Pong",
+        description: "It's you're 10th game participation!",
+        difficulty: 2
+      },
+    });
+
+    await prisma.achievement.create({
+      data: {
+        name: "You're playing a lot",
+        description: "It's you're 100th game participation!",
+        difficulty: 3
+      },
+    });
+
+    await prisma.achievement.create({
         data: {
-          name: "Achievement3",
-          description: "Third achievement",
+          name: "3",
+          description: "3 wins in a row",
+          difficulty: 2,
+        },
+      });
+
+      await prisma.achievement.create({
+        data: {
+          name: "3 total",
+          description: "3 wins in total",
+          difficulty: 1,
+        },
+      });
+
+     await prisma.achievement.create({
+        data: {
+          name: "10",
+          description: "10 wins in a row",
+          difficulty: 2,
+        },
+      });
+
+     await prisma.achievement.create({
+        data: {
+          name: "10 total",
+          description: "10 wins in total",
+          difficulty: 2,
+        },
+      });
+
+      await prisma.achievement.create({
+        data: {
+          name: "100",
+          description: "100 wins in a row",
           difficulty: 3,
-          isHidden: false,
+        },
+      });
+
+      await prisma.achievement.create({
+        data: {
+          name: "100 total",
+          description: "10 wins in total",
+          difficulty: 3,
+        },
+      });
+
+      await prisma.achievement.create({
+        data: {
+          name: "Small Leader",
+          description: "You're the leader of a league that contains at least 3 participants",
+          difficulty: 2,
+        },
+      });
+
+      await prisma.achievement.create({
+        data: {
+          name: "Great Leader",
+          description: "You're the leader of a league that contains at least 10 participants",
+          difficulty: 3,
+        },
+      });
+
+      await prisma.achievement.create({
+        data: {
+          name: "Perfect win",
+          description: "You won 10-0",
+          difficulty: 2,
+        },
+      });
+
+      await prisma.achievement.create({
+        data: {
+          name: "You're a looser",
+          description: "You lost 10-0",
+          difficulty: 2,
+        },
+      });
+
+      await prisma.achievement.create({
+        data: {
+          name: "New level",
+          description: "You reached level 1!",
+          difficulty: 1,
+        },
+      });
+
+      await prisma.achievement.create({
+        data: {
+          name: "Level 21",
+          description: "You reached level 21! You're such a good player, I've never seen that before.",
+          difficulty: 3,
+        },
+      });
+
+      await prisma.achievement.create({
+        data: {
+          name: "You like to talk?",
+          description: "You've already sent 10 messages.",
+          difficulty: 1,
+        },
+      });
+
+      await prisma.achievement.create({
+        data: {
+          name: "Chatterbox",
+          description: "You can't stop talking! It's you're 100th message!",
+          difficulty: 2,
         },
       });
   
-    // assign achievements to users
-    await prisma.userAchievements.create({
-      data: {
-        userId: user1.id,
-        achievementId: achievement1.id,
-        // createdAt is automatically set to the current time
-      },
-    });
-
-    await prisma.userAchievements.create({
-        data: {
-          userId: user1.id,
-          achievementId: achievement3.id,
-          // createdAt is automatically set to the current time
-        },
-      });
-
-      await prisma.userAchievements.create({
-        data: {
-          userId: user2.id,
-          achievementId: achievement2.id,
-          // createdAt is automatically set to the current time
-        },
-      });
-
-      await prisma.userAchievements.create({
-        data: {
-          userId: user3.id,
-          achievementId: achievement1.id,
-          // createdAt is automatically set to the current time
-        },
-      });
-
-      await prisma.userAchievements.create({
-        data: {
-          userId: user3.id,
-          achievementId: achievement2.id,
-          // createdAt is automatically set to the current time
-        },
-      });
-
-      await prisma.userAchievements.create({
-        data: {
-          userId: user3.id,
-          achievementId: achievement3.id,
-          // createdAt is automatically set to the current time
-        },
-      });
-  
-    // and so on for other user-achievement relations
     // create game results
-    const gameResult1 = await prisma.gameResult.create({
+    await prisma.gameResult.create({
       data: {
         createdAt: new Date(),
         scored: 10,
@@ -127,7 +205,7 @@ async function main() {
       },
     });
     
-    const gameResult2 = await prisma.gameResult.create({
+    await prisma.gameResult.create({
       data: {
         createdAt: new Date(),
         scored: 8,
@@ -138,33 +216,33 @@ async function main() {
     // create game participations
     await prisma.gameParticipation.create({
       data: {
-      user1Id: user1.id,
-      user2Id: user3.id,
-      gameResultId: gameResult1.id,
+        user1Id: 1,
+        user2Id: 3,
+        gameResultId: 1,
       },
     });
     
     await prisma.gameParticipation.create({
       data: {
-      user1Id: user3.id,
-      user2Id: user1.id,
-      gameResultId: gameResult1.id,
+        user1Id: 3,
+        user2Id: 1,
+        gameResultId: 1,
       },
     });
     
     await prisma.gameParticipation.create({
       data: {
-      user1Id: user1.id,
-      user2Id: user2.id,
-      gameResultId: gameResult2.id,
+        user1Id: 1,
+        user2Id: 2,
+        gameResultId: 2,
       },
     });
     
     await prisma.gameParticipation.create({
       data: {
-      user1Id: user2.id,
-      user2Id: user1.id,
-      gameResultId: gameResult2.id,
+        user1Id: 2,
+        user2Id: 1,
+        gameResultId: 2,
       },
     });  
 }

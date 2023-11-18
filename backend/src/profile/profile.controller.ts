@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Param, UploadedFile, BadRequestException, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, UploadedFile, BadRequestException, ParseIntPipe } from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ProfileService } from './profile.service';
+import { CreateUserAchievementDto, ProfileService } from './profile.service';
 import { diskStorage } from 'multer';
 
 @Controller('profile')
@@ -16,7 +16,12 @@ export class ProfileController {
         return this.profileService.getProfileInfos(userId);
     }
 
-    @Post(':userId')
+    @Post(':userId/add-achievement-to-user')
+    async addAchievementToUser(@Body() dto: CreateUserAchievementDto): Promise<any> {
+        return this.profileService.addAchievementToUser(dto);
+    }
+
+    @Post(':userId/add-avatar')
     @UseInterceptors(FileInterceptor('file', { 
         storage: diskStorage({
             destination: './uploads',
@@ -35,12 +40,12 @@ export class ProfileController {
             callback(null, true);
         }
     }))
-    async uploadAvatar(@UploadedFile() avatar: Express.Multer.File) {
+    async uploadAvatar(@UploadedFile() avatar: Express.Multer.File, @Param('userId', ParseIntPipe) userId: number) {
         if (!avatar) {
             throw new BadRequestException("Avatar is not an image");
         } else {
             try {
-                return this.profileService.addAvatar(avatar.filename, "User1");
+                return this.profileService.addAvatar(avatar.filename, userId);
             } catch (error) {
                 console.error(`Error uploading file: ${error}`);
             }

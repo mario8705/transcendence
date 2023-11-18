@@ -2,23 +2,73 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
+export class CreateUserAchievementDto {
+    userId: number;
+    achievementId: number;
+}
+
 @Injectable()
 export class ProfileService {
     constructor(private prisma: PrismaClient) {}
     
     async getProfileInfos(userId: number): Promise<any> {
-        return this.prisma.user.findUnique({
+        const user = await this.prisma.user.findUnique({
             where: { id: userId },
             select: {
                 pseudo: true,
-                avatar: true
+                avatar: true,
+            }
+        });
+
+        const achievement = await this.prisma.achievement.findUnique({
+            where: { name: 'Newwww Avatar' },
+            select: {
+                id: true,
+                name: true,
+                description: true,
+                difficulty: true,
+                users: true,
+            }
+        })
+
+        return {
+            ...user,
+            achievement: [achievement]
+        };
+    }
+
+    async addAchievementToUser(dto: CreateUserAchievementDto): Promise<any> {
+        const existingUserAchievement = await this.prisma.userAchievements.findFirst({
+            where: {
+                userId: dto.userId,
+                achievementId: dto.achievementId
+            }
+        });
+
+        console.log("-->", existingUserAchievement);
+        if (existingUserAchievement) {
+            throw new Error('Already connected');
+        }
+
+        return this.prisma.userAchievements.create({
+            data: {
+                user: {
+                    connect: {
+                        id: dto.userId
+                    }
+                },
+                achievement: {
+                    connect: {
+                        id: dto.achievementId
+                    }
+                }
             },
         });
     }
 
-    async addAvatar(avatarPath: string, pseudo: string): Promise<any> {
+    async addAvatar(avatarPath: string, userId: number): Promise<any> {
         const updatedUser = await this.prisma.user.update({
-            where: { pseudo: pseudo },
+            where: { id: userId },
             data: { avatar: avatarPath },
         });
         return { "avatar": updatedUser.avatar};
