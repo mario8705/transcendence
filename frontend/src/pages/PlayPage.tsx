@@ -82,19 +82,35 @@ const PlayPage: React.FC = () => {
         <div className="game-modes">
             <div className="normal-mode">
                 <h3>Normal</h3>
-                { !waiting && <MainButton buttonName="Random" mode={0} onClick={() => { handleClick("random-normal") }}/> }
-                { !waiting && <MainButton buttonName="Friend" mode={0} onClick={() => { handleClick("friend-normal") }}/> }
-                { !waiting && <SelectFriend></SelectFriend>}
-                { waiting && <MainButton buttonName="X" mode={0} onClick={() => { handleCancel() }}/>}
-                {/* { isSuccess && <MainButton buttonName="Friend" mode={0} onClick={() => { handleClick("friend-normal") }}/> } */}
+                <div className="box-pong">
+                    <div className="random-choice">
+                        { !waiting && <MainButton buttonName="Random" mode={0} onClick={() => { handleClick("random-normal") }}/> }
+                    </div>
+                    <div className={`friend-choice ${waiting ? 'no-border' : ''}`}>
+                        { !waiting && <SelectFriend></SelectFriend>}
+                        { !waiting && <MainButton buttonName="Friend" mode={0} onClick={() => { handleClick("friend-normal") }}/> }
+                        { waiting && <MainButton buttonName="X" mode={0} onClick={() => { handleCancel() }}/>}
+                    </div>
+                    {/* { isSuccess && <MainButton buttonName="Friend" mode={0} onClick={() => { handleClick("friend-normal") }}/> } */}
+                </div>
+            </div>
+            <div className="choose">
+                <h3>Choose your mode!</h3>
             </div>
             <div className="special-mode">
                 <h3>Special</h3>
-                { !waiting && <MainButton buttonName="Random" mode={0} onClick={() => { handleClick("random-special") }}/> }
-                { !waiting && <MainButton buttonName="Friend" mode={0} onClick={() => { handleClick("friend-special") }}/> }
-                { !waiting && <SelectFriend></SelectFriend>}
-                { waiting && <MainButton buttonName="X" mode={0} onClick={() => { handleCancel() }}/>}
-                {/* { isSuccess && <MainButton buttonName="Friend" mode={0} onClick={() => { handleClick("friend-special") }}/> } */}
+                <div className="box-pong">
+                    <div className="random-choice">
+                        { !waiting && <MainButton buttonName="Random" mode={0} onClick={() => { handleClick("random-special") }}/> }
+                    </div>
+                    {/* <div className="friend-choice"> */}
+                        { waiting && <MainButton buttonName="X" mode={0} onClick={() => { handleCancel() }}/>}
+                    <div className={`friend-choice ${waiting ? 'no-border' : ''}`}>
+                        { !waiting && <SelectFriend></SelectFriend>}
+                        { !waiting && <MainButton buttonName="Friend" mode={0} onClick={() => { handleClick("friend-special") }}/> }
+                    </div>
+                    {/* { isSuccess && <MainButton buttonName="Friend" mode={0} onClick={() => { handleClick("friend-special") }}/> } */}
+                </div>
             </div>
         </div>
     );
