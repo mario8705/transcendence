@@ -77,29 +77,50 @@ const Game: React.FC<gameProps> = (props) => {
 	function clearBackground(ctx: CanvasRenderingContext2D): void {
 		const { width, height } = ctx.canvas;
 		ctx.rect(0, 0, width, height);
-		ctx.fillStyle = 'white';
+
+		const colorBlue = getComputedStyle(document.documentElement).getPropertyValue('--color-blue').trim();
+		ctx.fillStyle = colorBlue;
 		ctx.fill();
 	};
 	
 	function draw(ctx: CanvasRenderingContext2D): void {
 		
+		const { width, height } = ctx.canvas;
+		const colorYellow = getComputedStyle(document.documentElement).getPropertyValue('--color-yellow').trim();
+		const colorPurple = getComputedStyle(document.documentElement).getPropertyValue('--color-purple').trim();
+
 		// draw ball
-		ctx.fillStyle = 'black';
+		const gradientball = ctx.createLinearGradient(0, 0, 0, height);
+		gradientball.addColorStop(1, colorYellow);
+		gradientball.addColorStop(0, colorPurple);
+		ctx.fillStyle = gradientball;
+		// ctx.fillStyle = colorPurple;
 		ctx.beginPath();
 		ctx.arc(ball.x, ball.y, ball.radius, 0, 2*Math.PI);
 		ctx.closePath();
 		ctx.fill();
 		
 		// draw left paddle
-		ctx.fillStyle = leftPaddleColor;
+		const gradientleft = ctx.createLinearGradient(0, 0, 0, height);
+		gradientleft.addColorStop(0, colorYellow);
+		gradientleft.addColorStop(1, colorPurple);
+		ctx.fillStyle = gradientleft;
+		// ctx.fillStyle = colorYellow;
+		// ctx.fillStyle = leftPaddleColor;
 		ctx.fillRect(leftPad.x, leftPad.y, leftPad.width, leftPad.length);
 		
 		// draw right paddle
-		ctx.fillStyle = rightPaddleColor;
+		const gradientright = ctx.createLinearGradient(0, 0, 0, height);
+		gradientright.addColorStop(0, colorYellow);
+		gradientright.addColorStop(1, colorPurple);
+		ctx.fillStyle = gradientright;
+		// ctx.fillStyle = colorYellow;
+		// ctx.fillStyle = rightPaddleColor;
 		ctx.fillRect(rightPad.x, rightPad.y, rightPad.width, rightPad.length);
 		
-		ctx.fillStyle = "green";
-		ctx.font = "40px Orbitron";
+		// score
+		ctx.fillStyle = colorYellow;
+		ctx.font = "40px Short Stack";
 		ctx.fillText(score.leftPlayer, Math.round(props.width / 2 / 2), 100);
 		ctx.fillText(score.rightPlayer,Math.round(props.width / 2 * 1.5),100);
 	};
@@ -116,7 +137,7 @@ const Game: React.FC<gameProps> = (props) => {
 			leftPaddleColor = "red";
 		else
 			rightPaddleColor = "red";
-	}, [])
+	}, []);
 
 	const finishGame = useCallback(() => {
 		gameEnd = true;
@@ -178,7 +199,7 @@ const Game: React.FC<gameProps> = (props) => {
 		};
 	}, []);
 
-	return <canvas ref={canvasRef} {...props}/>;
+	return <canvas ref={canvasRef} {...props} className='canvasGame'/>;
 }
 
 export default Game
