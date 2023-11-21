@@ -1,7 +1,5 @@
 .game-modes {
-	/* border: 2px solid white; */
 	display: flex;
-	/* justify-content: space-around; */
 	align-items: center;
 	margin-top: 5%;
 	height: 40vw;
@@ -23,7 +21,6 @@
 	border: 2px solid white;
     border-radius: 20px;
     background: linear-gradient(to right, var(--color-blue) 10%, var(--color-light-pink) 100%) no-repeat;
-	/* background-color: var(--color-yellow); */
 	height: 20%;
 	width: 20%;
 	margin-left: 2%;
@@ -51,32 +48,17 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: space-around;
-	/* justify-content: center; */
-	/* border: 2px solid red; */
 	height: 90%;
 }
 
-/* .Random {
-	padding: 10PX;
-	border: 2px solid green;
-} */
-
 .random-choice {
 	padding-top: 10%;
-	/* border-bottom: 2px solid red; */
 }
 
 .friend-choice {
-	/* display: flex;
-	flex-direction: column; */
 	height: 50%;
-	/* height: 60%; */
-	/* border: 2px solid green; */
-	/* justify-content: space-around; */
 	border-top: 2px solid white;
-
 	padding-top: 20%;
-	/* padding-top: 60px; */
 }
 
 .no-border {
@@ -89,7 +71,6 @@
     border: 2px solid white;
     border-radius: 20px;
     backdrop-filter: blur(20px);
-    /* box-shadow: 0 0 30px rgb(0, 0, 0, .5); */
     background: transparent;
     font-size: 1em;
     color: white;
