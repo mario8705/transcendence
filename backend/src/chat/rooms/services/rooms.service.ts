@@ -276,7 +276,6 @@ export class RoomService {
 		return this.rooms.find((room) => room.name === roomname);
 	}
 
-
 	//! Il y a surement d'autres endroits où il faut que j'enlève la personne right? Genre regarder si il est pas amdin ou owner. Oh lala la catastrophe.
 	// async kickUser(curruser: User, roomname: string, target: User) : Promise<any> {
 	// 	if (this.prismaService.channelMembership.findUnique({where: {name: roomname, userId: curruser.id}}) !== null) {

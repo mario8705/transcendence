@@ -21,8 +21,8 @@ model User {
 
   befriendedBy Friends[] @relation("users")
   friends      Friends[] @relation("friends")
-  bannedBy	   Blocked[]  @relation("users")
-  blocked	     Blocked[]	 @relation("blocked")
+  bannedBy	   Blocked[] @relation("users")
+  blocked	   Blocked[] @relation("blocked")
   messages     Message[]
 
   channelMemberships ChannelMembership[]
@@ -93,6 +93,8 @@ model Channel {
   createdAt  DateTime @default(now())
   password   String?
   visibility String   @default("private")
+  accessMask	Int	@default(0) //0(libre), 1(inviteOnly), 2(Password)
+
   // visibility ChannelVisibility @default(Private)
 
   memberships ChannelMembership[]
@@ -108,6 +110,7 @@ model ChannelMembership {
   channelId      Int
   joinedAt       DateTime @default(now())
   permissionMask Int //1(simple member), 2(Administrator) or 4(owner)
+  membershipState	Int @default(1)//1(ok), 2(mute), 4(banned)
 
   user    User    @relation(fields: [userId], references: [id])
   channel Channel @relation(fields: [channelId], references: [id])

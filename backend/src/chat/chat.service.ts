@@ -4,7 +4,7 @@ import { UsersService } from './users/services/users.service';
 import { RoomService } from './rooms/services/rooms.service';
 import { SocketGateway } from '../socket/socket.gateway'
 import { v4 as uuidv4 } from 'uuid';
-import { PrismaClient } from '@prisma/client';
+// import { PrismaClient } from '@prisma/client';
 
 /**
  * TODO Recoder les fonctions avec prisma
@@ -114,7 +114,156 @@ export class ChatService {
 		}
 	}
 
-	chatRoom(
+
+	// //TODO les erreur
+	// /**
+	//  * @param client 
+	//  * @param data 
+	//  * @returns 
+	//  */
+	// async chatRoom(
+	// 	client: Socket, 
+	// 	data: {type: string, roomname: string, option: any}
+	// ) {
+	// 	const user = this.prismaService.user.findUnique({where: {id : client.id}});
+	// 	if (user) {
+	// 		switch(data.type) {
+	// 			case 'join': {
+	// 				if (this.roomService.joinRoom(user, data.roomname, data.option) != undefined)
+	// 					client.join(data.roomname);
+	// 					// this.socketGateway.server.to(data.roomname).emit()
+	// 					//dire aux gens qui sont dans la room qu'il a rejoin
+	// 				break; 
+	// 			}
+	// 			case 'exit': {
+	// 				if (this.prismaService.channel.findUnique({where: {name: data.roomname}}) != undefined) {
+	// 					const channel = this.prismaService.channel.findUnique({where: {name: data.roomname}});
+	// 					this.prismaService.channelMembership.delete({where: {}});
+	// 					//? faire une vérification supplémentaire ?
+	// 					user.socket.leave(data.roomname);
+	// 					//TODO prévenir les autres dans la room qu'il est parti
+	// 				}
+	// 				break;
+	// 			}
+	// 			case 'invited': {
+	// 				const channel = this.prismaService.channel.findUnique({where: {name: data.roomname}});
+	// 				if (channel != null) {
+	// 					if (this.prismaService.channelMembership.findUnique({where: {channelId: channel.id, userId: user.id}}) == null){
+	// 						this.roomService.joinRoom(user, data.roomname, data.option);
+	// 						client.join(data.roomname);
+	// 						// TODO prévenir tout le monde
+	// 					}
+	// 					// TODO prévenir qu'il est déjà dans la room
+	// 				}
+	// 				break;
+	// 			}
+	// 			case 'invite': {
+	// 				const channel = this.roomService.getRoom(data.roomname);
+	// 				if (channel != null) {
+	// 					const membership = this.prismaService.channelMembership.findUnique({where: {channelId : channel.id, userId: user.id}});
+	// 					if (membership.permissionMask == 1)
+	// 						return; //trouver un meilleur moyen de sortir à ce moment là, erreur.
+	// 					const invitedUser = this.prismaService.user.findUnique({where: {name: data.option.to}});
+	// 					if (invitedUser != null && this.roomService.isUserinRoom(user, data.roomname) == null) {
+	// 						this.socketGateway.server.to(invitedUser.socket.id).emit('room', {type: "invited", roomname: data.roomname, option: undefined}) // il faut que je me penche un peu plus la dessus
+	// 					}
+	// 					// TODO il faut que je fasse tous les messages d'erreur
+	// 				}
+	// 				break;
+	// 			}
+	// 			case 'manage': {
+	// 				const channel = this.prismaService.channel.findUnique({where: {name: data.roomname}});
+	// 				if (channel != null) {
+	// 					if (this.roomService.isRoomAdmin(user, data.roomname)) {
+	// 						switch (data.option.type) {
+	// 							case 'kick': {
+	// 								const result = this.roomService.kickUser(user, data.roomname, data.option.target);
+	// 								if (result.status === false)
+	// 									this.socketGateway.server.to(client.id).emit('error', result.msg);
+	// 								break;
+	// 							}
+	// 							case 'ban': {
+	// 								const result = this.roomService.banUser(user, data.roomname, data.option.target);
+	// 								if (result.status === false)
+	// 									this.socketGateway.server.to(client.id).emit('error', result.msg);
+	// 								break;
+	// 							}
+	// 							case 'mute': {
+	// 								const result = this.roomService.muteUser(user, data.roomname, data.option.target);
+	// 								if (result.status === false)
+	// 									this.socketGateway.server.to(client.id).emit('error', result.msg);
+	// 								break;
+	// 							}
+	// 							default: 
+	// 								break;
+	// 						}
+	// 						if (this.roomService.isRoomOwner(user, data.roomname)) {
+	// 							switch (data.option.type) {
+	// 								case 'addAdmin': {
+	// 									const result = this.roomService.addAdmin(data.roomname, data.option.target);
+	// 									if (result.status === false)
+	// 										this.socketGateway.server.to(client.id).emit('error', result.msg);
+	// 									break;
+	// 								}
+	// 								case 'kickAdmin': {
+	// 									const result = this.roomService.kickAdmin(data.roomname, data.option.target);
+	// 									if (result.status === false)
+	// 										this.socketGateway.server.to(client.id).emit('error', result.msg);
+	// 									break;
+	// 								}
+	// 								case 'addPwd': {
+	// 									const result = this.roomService.addPwd(data.roomname, data.option.target);
+	// 									if (result.status === false)
+	// 										this.socketGateway.server.to(client.id).emit('error', result.msg);
+	// 									break;
+	// 								}
+	// 								case 'rmPwd' : {
+	// 									const result = this.roomService.rmPwd(data.roomname);
+	// 									if (result.status === false)
+	// 										this.socketGateway.server.to(client.id).emit('error', result.msg);
+	// 									break;
+	// 								}
+	// 								case 'changePwd' : {
+	// 									const result = this.roomService.addPwd(data.roomname, data.option.target);
+	// 									if (result.status === false)
+	// 										this.socketGateway.server.to(client.id).emit('error', result.msg);
+	// 									break;
+	// 								}
+	// 								case 'addInvite' : {
+	// 									const result = this.roomService.addInvite(data.roomname);
+	// 									if (result.status === false)
+	// 										this.socketGateway.server.to(client.id).emit('error', result.msg);
+	// 									break;
+	// 								}
+	// 								case 'rmInvite' : {
+	// 									const result = this.roomService.rmInvite(data.roomname);
+	// 									if (result.status === false)
+	// 										this.socketGateway.server.to(client.id).emit('error', result.msg);
+	// 									break;
+	// 								}
+	// 								case 'delete' : {
+	// 									this.roomService.clearUsersfromRoom(data.roomname);
+	// 									this.messageService.clearMessagesfromChannel(data.roomname); // à coder
+	// 									const result = this.roomService.deleteRoom(data.roomname);
+	// 									if (result.status === false)
+	// 									this.socketGateway.server.to(client.id).emit('error', result.msg);
+	// 									//prévenir tous les gens qui étaient dans la room qu'elle a été supprimée.
+	// 									// members.map(user => {user.socket.leave(data.roomname)});
+	// 								}
+	// 								default: 
+	// 									break;
+	// 							}
+	// 						}
+	// 					}
+	// 				}
+	// 			}
+	// 			default: 
+	// 				break;
+	// 		}
+	// 	}
+	// }
+
+	chatRoom( //! modifier cette fonction pour qu'elle renvoie par API et non pas par socket
 		client: Socket,
 		data: {type: string, roomname: string, option: any},
 	) {
@@ -136,11 +285,11 @@ export class ChatService {
 					console.log(this.roomService.getUsersfromRoom(data.roomname));
 				}
 				else
-					this.socketGateway.sendToClient(client.id, 'error', {errmsg: "You are not in this room"});
+					this.socketGateway.sendToClient(client.id, 'error', {errmsg: "You are not in this room"}); //oh làlà, je ne sais pas. 
 			}
 			else this.socketGateway.sendToClient(client.id, 'error', {errmsg: "This room does not exist"});
 		}
-		else if (data.type === 'invited') {
+		else if (data.type === 'invited') { //une fois invité il faut le mettre automatiquement dans la room
 			if (this.roomService.roomExists(data.roomname)) {
 				//il faut que je regarde: si la room existe, si il ne fait pas déjà partie de la room
 				if (this.roomService.isUserinRoom(user, data.roomname)) {

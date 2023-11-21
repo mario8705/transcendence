@@ -6,6 +6,8 @@
 // import { v4 as uuidv4 } from 'uuid';
 // import { PrismaClient } from '@prisma/client';
 
+import { User } from "src/chat/users/model/user.model"
+
 
 // /**
 //  * TODO Mettre le masque des permissions quand création ou join de channel
@@ -20,18 +22,30 @@
 // 		private readonly prismaService : PrismaClient
 // 		) {}
 
-// 	async createRoom(name: string, user: User, option: {invite: boolean, key: boolean, value: string}): Promise<any> {
-// 		//! Il faut aussi ajouter au User qu'il est owner d'une room ++ au niveau du user est ce que je l'ai récupéré au préalable dans la db ?
-// 		this.prismaService.channel.create({
+// 	async createRoom(name: string, user: User, option: {invite: boolean, value: string}): Promise<any> {
+// 		const visibility : string = 'public';
+// 		const access : number = 0;
+//		if (option.invite == true) {
+// 			visibility = "private";
+// 			access += 1;
+// 		}
+		
+// 		if (option.value !== '') {
+// 			access += 2;
+// 			visibility = 'private';
+// 		}
+//! Il faut aussi ajouter au User qu'il est owner d'une room ++ au niveau du user est ce que je l'ai récupéré au préalable dans la db ?
+// 		const channel = await this.prismaService.channel.create({
 // 			data: {
 // 				name: name,
 // 				ownerId: user.id,
 // 				createdAt: Date.now(),
-// 				password: option.value
-// 				//?Comment je vais pour la visibility ?
+// 				password: option.value,
+// 				visibility: visibility,
+				// accessMask: access
 // 			}
-// 		}); //* AAAAAH c'est trop compliqué, je ne suis pas contente.
-// 		TODO doit retourner l'ID de la room
+// 		});
+//		return channel.id;
 // 	}
 
 // 	// createRoom(name: string, user: User, option: {invite: boolean, key: boolean, value: string}) : Room {
@@ -47,16 +61,16 @@
 // 	// 	return newRoom;
 // 	// }
 
-// 	//TODO finir cette fonction
+// 	//TODO les erreurs
 // 	async joinRoom(curruser: User, roomname: string, option : {invite: boolean, key: boolean, value: string}): Promise<any> {
-// 		let room = this.prismaService.channel.findUnique({
+// 		let room = await this.prismaService.channel.findUnique({
 // 			where: {
 // 				name: roomname ///weird, what is the problem exactly ???
 // 		}});
 // 		if (room === null) {
 // 			const id = this.createRoom(roomname, curruser, option);
 // 			if (id !== undefined) {
-// 				const channelMembership = this.prismaService.channelMembership.create({
+// 				const channelMembership = await this.prismaService.channelMembership.create({
 // 				data: {
 // 					userId : curruser.id,
 // 					channelId: id,
@@ -69,11 +83,17 @@
 // 			return undefined;
 // 		}
 // 		else if (room !== null && this.prismaService.channelMembership.findUnique({where: {channelId : channelId, userId: curruser.id}}) === null) {
-// 			const id = this.prismaService.channel.findUnique({where : {name: roomname}}); //Je ne comprends rien purée. //!Il faut récupérer l'id de la room
-// 			const channelMembership = this.prismaService.channelMembership.create({
+// 			const channel = this.prismaService.channel.findUnique({where : {name: roomname}}); //Je ne comprends rien purée. //!Il faut récupérer l'id de la room
+// 			if (channel.accessMask !== 0) {
+			// 		if (channel.accessMask == 1)
+			// 			return; //error, invite only
+			// 		else if (channel.accessMask == 2 && option.value !== channel.password)
+			// 			return; //error, pas le bon mot de passe
+			// }
+			// const channelMembership = this.prismaService.channelMembership.create({
 // 				data: {
 // 					userId: curruser.id,
-// 					channelId: id,
+// 					channelId: channel.id,
 // 					joinedAt: Date(),
 // 					permissionMask: 1
 // 				}
@@ -81,33 +101,6 @@
 // 			return channelMembership;
 // 		}
 // 	}
-
-// 	// joinRoom(curruser: User, roomname: string, option: {invite: boolean, key: boolean, value: string}) : boolean {
-// 	// 	let room = this.rooms.find((room) => room.name === roomname);
-// 	// 	if (room == undefined)	{
-// 	// 		room = this.createRoom(roomname, curruser, option);
-// 	// 		console.log("create room");
-// 	// 	}
-// 	// 	//ici faire les vérifications de mot de passe et d'invite only.
-// 	// 	else if (room.users.find((user) => user.name === curruser.name) === undefined) {
-// 	// 		if (room.inviteOnly)  /* trouver si il a été invité */ {
-// 	// 			console.log('inviteOnly');
-// 	// 			//return si il n'a pas été invité.
-// 	// 		}
-// 	// 		else if (room.pwdValue === undefined) {//! Attention est ce qu'il faut faire cette vérification ? On peut rentrer quoi qu'il arrive si il y a pas besoin de mdp 
-// 	// 			if (option.value !== room.pwdValue)
-// 	// 			return false;	
-// 	// 		}
-// 	// 		console.log("push");
-// 	// 		room?.users.push(curruser);
-// 	// 	}
-// 	// 	else {
-// 	// 		console.log(curruser.name, " is already in ", roomname);
-// 	// 		return false;
-// 	// 	}
-// 	// 	console.log(curruser.name, ' joined room: ', roomname);
-// 	// 	return true;
-// 	// }
 
 // 	async roomExists(roomname: string) : Promise<any> {
 // 		return this.prismaService.channel.findUnique({where:{name: roomname}});
@@ -120,6 +113,15 @@
 
 
 // 	async isRoomAdmin(curruser: User, roomname: string) : Promise<any> {
+		const channel = await this.prismaService.channel.findUnique({
+			where: {
+				name : roomname
+			},
+			include : {
+				memberships: true
+			}
+		});
+		
 // 		return this.prismaService.channel.findUnique({
 // 			where: {
 // 				name: roomname,
@@ -330,6 +332,7 @@
 // 	async deleteRoom(roomname: string) : Promise<any> {// mais il faut supprimer d'autres choses avant, genre les channel membership.
 		
 // 		this.clearUsersfromRoom(roomname);
+//		this.messageSevice.clearAllMessages(roomname);
 // 		return this.prismaService.channel.delete({
 // 			where: {
 // 				name: roomname

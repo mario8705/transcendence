@@ -73,14 +73,14 @@ export class SocketGateway implements
 		this.chatService.chatMessage(client, data);
 	}
 
-	@SubscribeMessage('room')
-	// @UseGuards(AuthGuard)
-	chatRoom(
-		@MessageBody('') data : {type: string, roomname: string, option: any},
-		@ConnectedSocket()  client:Socket
-	) {
-		this.chatService.chatRoom(client, data);
-	}
+	// @SubscribeMessage('room')
+	// // @UseGuards(AuthGuard)
+	// chatRoom(
+	// 	@MessageBody('') data : {type: string, roomname: string, option: any},
+	// 	@ConnectedSocket()  client:Socket
+	// ) {
+	// 	this.chatService.chatRoom(client, data);
+	// }
 
 	@SubscribeMessage('friend')
 	// @UseGuards(AuthGuard)
