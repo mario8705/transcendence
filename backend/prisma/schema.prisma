@@ -43,7 +43,7 @@ model User {
 model Friendship {
   @@id([userId, friendId])
 
-  status     Int      @default(0)   //0 sender   /1 receiver  /2 accepted
+  status     Int      @default(0)   //0 sender   /1 receiver  /2 accepted /3 blocked
 
   userId     Int
   friendId   Int
@@ -74,8 +74,8 @@ model GameParticipation {
 model Game {
   id                  Int     @id @default(autoincrement())
 
-  score1              Int
-  score2              Int
+  winnerScore         Int
+  looserScore         Int
   winnerId            Int
   looserId            Int
   gameParticipations  GameParticipation[]

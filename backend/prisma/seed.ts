@@ -6,47 +6,57 @@ const prisma = new PrismaClient();
 
 async function main() {
   await prisma.gameParticipation.deleteMany();
-  await prisma.gameResult.deleteMany();
+  await prisma.game.deleteMany();
   await prisma.userAchievements.deleteMany();
   await prisma.achievement.deleteMany();
   await prisma.user.deleteMany();
     const user1 = await prisma.user.create({
       data: {
-        //id: 1,
         pseudo: "User1",
         email: "user1@example.com",
         emailVerified: false,
-        experience: 0,
       },
     });
   
     const user2 = await prisma.user.create({
       data: {
-        //id: 2,
         pseudo: "User2",
         email: "user2@example.com",
         emailVerified: false,
-        experience: 0,
       },
     });
   
     const user3 = await prisma.user.create({
       data: {
-        //id: 3,
         pseudo: "User3",
         email: "user3@example.com",
         emailVerified: false,
-        experience: 0,
       },
     });
-  
+    
+    const user4 = await prisma.user.create({
+      data: {
+        pseudo: "User4",
+        email: "user4@example.com",
+        emailVerified: false,
+      },
+    });
+
+    const user5 = await prisma.user.create({
+      data: {
+        pseudo: "User5",
+        email: "user5@example.com",
+        emailVerified: false,
+      },
+    });
+
+
     // create achievements
     const achievement1 = await prisma.achievement.create({
       data: {
         name: "Achievement1",
         description: "First achievement",
         difficulty: 1,
-        isHidden: false,
       },
     });
   
@@ -55,7 +65,6 @@ async function main() {
         name: "Achievement2",
         description: "Second achievement",
         difficulty: 2,
-        isHidden: true,
       },
     });
 
@@ -64,7 +73,6 @@ async function main() {
           name: "Achievement3",
           description: "Third achievement",
           difficulty: 3,
-          isHidden: false,
         },
       });
   
@@ -73,7 +81,6 @@ async function main() {
       data: {
         userId: user1.id,
         achievementId: achievement1.id,
-        // createdAt is automatically set to the current time
       },
     });
 
@@ -81,7 +88,6 @@ async function main() {
         data: {
           userId: user1.id,
           achievementId: achievement3.id,
-          // createdAt is automatically set to the current time
         },
       });
 
@@ -89,7 +95,6 @@ async function main() {
         data: {
           userId: user2.id,
           achievementId: achievement2.id,
-          // createdAt is automatically set to the current time
         },
       });
 
@@ -97,7 +102,6 @@ async function main() {
         data: {
           userId: user3.id,
           achievementId: achievement1.id,
-          // createdAt is automatically set to the current time
         },
       });
 
@@ -105,7 +109,6 @@ async function main() {
         data: {
           userId: user3.id,
           achievementId: achievement2.id,
-          // createdAt is automatically set to the current time
         },
       });
 
@@ -113,62 +116,114 @@ async function main() {
         data: {
           userId: user3.id,
           achievementId: achievement3.id,
-          // createdAt is automatically set to the current time
         },
       });
   
     // and so on for other user-achievement relations
     // create game results
-    const gameResult1 = await prisma.gameResult.create({
+    const game1 = await prisma.game.create({
       data: {
-        createdAt: new Date(),
-        scored: 10,
-        conceded: 5,
+        winnerScore: 10,
+        looserScore: 5,
+        winnerId: user1.id,
+        looserId: user2.id
       },
     });
     
-    const gameResult2 = await prisma.gameResult.create({
+    const game2 = await prisma.game.create({
       data: {
-        createdAt: new Date(),
-        scored: 8,
-        conceded: 10,
+        winnerScore: 10,
+        looserScore: 3,
+        winnerId: user1.id,
+        looserId: user3.id
+      },
+    });
+
+    const game3 = await prisma.game.create({
+      data: {
+        winnerScore: 10,
+        looserScore: 9,
+        winnerId: user3.id,
+        looserId: user1.id
+      },
+    });
+
+    const game4 = await prisma.game.create({
+      data: {
+        winnerScore: 10,
+        looserScore: 4,
+        winnerId: user1.id,
+        looserId: user4.id
       },
     });
     
     // create game participations
-    await prisma.gameParticipation.create({
-      data: {
-      user1Id: user1.id,
-      user2Id: user3.id,
-      gameResultId: gameResult1.id,
-      },
-    });
-    
-    await prisma.gameParticipation.create({
-      data: {
-      user1Id: user3.id,
-      user2Id: user1.id,
-      gameResultId: gameResult1.id,
-      },
-    });
-    
-    await prisma.gameParticipation.create({
-      data: {
-      user1Id: user1.id,
-      user2Id: user2.id,
-      gameResultId: gameResult2.id,
-      },
-    });
-    
-    await prisma.gameParticipation.create({
-      data: {
-      user1Id: user2.id,
-      user2Id: user1.id,
-      gameResultId: gameResult2.id,
-      },
-    });  
-}
 
+    // GAME 1 Pair
+    await prisma.gameParticipation.create({
+      data: {
+        userId: user1.id,
+        gameId: game1.id,
+        opponentId: user2.id
+      },
+    });
+    await prisma.gameParticipation.create({
+      data: {
+        userId: user2.id,
+        gameId: game1.id,
+        opponentId: user1.id
+      },
+    });
+    
+    // GAME 2 Pair
+    await prisma.gameParticipation.create({
+      data: {
+        userId: user1.id,
+        gameId: game2.id,
+        opponentId: user3.id
+      },
+    });
+    await prisma.gameParticipation.create({
+      data: {
+        userId: user3.id,
+        gameId: game2.id,
+        opponentId: user1.id
+      },
+    });
+
+    // GAME 3 Pair
+    await prisma.gameParticipation.create({
+      data: {
+        userId: user3.id,
+        gameId: game3.id,
+        opponentId: user1.id
+      },
+    });
+    await prisma.gameParticipation.create({
+      data: {
+        userId: user1.id,
+        gameId: game3.id,
+        opponentId: user3.id
+      },
+    });
+
+    // GAME 4 Pair
+    await prisma.gameParticipation.create({
+      data: {
+        userId: user1.id,
+        gameId: game4.id,
+        opponentId: user4.id
+      },
+    });
+    await prisma.gameParticipation.create({
+      data: {
+        userId: user4.id,
+        gameId: game4.id,
+        opponentId: user1.id
+      },
+    });
+  }
+  
 // execute the main function
 main()
   .catch((e) => {
@@ -178,59 +233,3 @@ main()
     // close Prisma Client at the end
     await prisma.$disconnect();
   });
-// import {PrismaClient} from '@prisma/client'
-
-// const prisma = new PrismaClient();
-
-// async function main() {
-// 	const user1 = await prisma.user.create({
-// 		data: {
-// 			id: 1,
-// 			email:  "user1@example.fr",
-// 			emailVerified: true
-// 		}
-// 	});
-
-// 	const user2 = await prisma.user.create({
-// 		data: {
-// 			id: 2,
-// 			email:  "user1@example.fr",
-// 			emailVerified: true
-// 		}
-// 	});
-
-// 	const user3 = await prisma.user.create({
-// 		data: {
-// 			id: 3,
-// 			email:  "user1@example.fr",
-// 			emailVerified: true
-// 		}
-// 	});
-
-// 	const friendship1 = await prisma.friends.create({
-// 		data: {
-// 			userId: 1,
-// 			friendId: 2,
-// 			user: user1,
-// 			friend: user2 
-// 		}
-// 	});
-
-// 	const friendship2 = await prisma.friends.create({
-// 		data: {
-// 			userId:2,
-// 			friendId: 3,
-// 			user: user2,
-// 			friend: user3
-// 		}
-// 	});
-
-// }
-
-// main()
-// 	.catch((e) => {
-// 		console.error(e);
-// 	})
-// 	.finally(async () => {
-// 		await prisma.$disconnect();
-// 	});
