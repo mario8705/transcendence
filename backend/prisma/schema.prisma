@@ -11,12 +11,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Ticket {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  issuedAt       DateTime @default(now())
+
+  user      User       @relation(fields: [userId], references: [id])
+}
+
 model User {
   id                   Int          @id @default(autoincrement())
 
   pseudo               String       @unique
   email                String       @unique
   emailVerified        Boolean      @default(false)
+
+  totpSecret           String?
+  totpEnabled          Boolean @default(false)
+
+  // The bcrypt password when using email & password login
+  password             String?
 
   avatar               String?   /////////////////////////////////////////////////
 
@@ -36,6 +50,7 @@ model User {
   ownedChannels        Channel[]
 
   ftUser               FortyTwoUser?
+  tickets              Ticket[]
 
   achievements         UserAchievement[]
 }

@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { PrismaClient } from '@prisma/client';
+import { hashSync } from 'bcrypt';
 
 // initialize Prisma Client
 const prisma = new PrismaClient();
@@ -23,6 +24,7 @@ async function main() {
         pseudo: "User1",
         email: "user1@example.com",
         emailVerified: false,
+        password: hashSync('mdp', 10),
       },
     });
   
@@ -31,6 +33,12 @@ async function main() {
         pseudo: "User2",
         email: "user2@example.com",
         emailVerified: false,
+        password: hashSync('mdp', 10),
+        //otpauth://totp/SecretKey?secret=KVAFEKKWOZ4SYZD5JVYWS6KWF5UU4LDCKNBDYUCUGVZVEV3ZJNOQ
+        // To test on your own phone, generate a qr code with the text of the previous comment
+        // And scan it.
+        totpSecret: 'KVAFEKKWOZ4SYZD5JVYWS6KWF5UU4LDCKNBDYUCUGVZVEV3ZJNOQ',
+        totpEnabled: true,
       },
     });
   
