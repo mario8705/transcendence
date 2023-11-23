@@ -3,7 +3,9 @@ import { RouterProvider } from 'react-router-dom';
 import { AuthConsumer, AuthProvider } from './contexts/AuthContext';
 import { router } from './router';
 import { AvatarProvider } from './contexts/AvatarContext';
+import { PseudoProvider } from './contexts/PseudoContext';
 import { AchievementsListProvider } from './contexts/AchievementsListContext';
+import { LeaderProvider } from './contexts/LeaderContext';
 
 // import Navigation from './components/Navigation/Navigation';
 // import SocketContextComponent from './components/Socket/Context/Component';
@@ -26,19 +28,23 @@ const queryClient = new QueryClient({
 const App: React.FC = () => (
   <QueryClientProvider client={queryClient}>
     <AvatarProvider>
-      <AchievementsListProvider>
-        <AuthProvider>
-          <div className="App">
-            <AuthConsumer>
-              {
-                auth => auth.isLoading ?
-                  <p>Loading...</p> :
-                  <RouterProvider router={router} />
-              }
-            </AuthConsumer>
-          </div>
-        </AuthProvider>
-      </AchievementsListProvider>
+      <LeaderProvider>
+        <PseudoProvider>
+          <AchievementsListProvider>
+            <AuthProvider>
+              <div className="App">
+                <AuthConsumer>
+                  {
+                    auth => auth.isLoading ?
+                      <p>Loading...</p> :
+                      <RouterProvider router={router} />
+                  }
+                </AuthConsumer>
+              </div>
+            </AuthProvider>
+          </AchievementsListProvider>
+        </PseudoProvider>
+      </LeaderProvider>
     </AvatarProvider>
   </QueryClientProvider>
 );

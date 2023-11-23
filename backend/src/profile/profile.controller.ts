@@ -2,7 +2,7 @@
 import { Controller, Get, Post, Param, Body, UploadedFile, BadRequestException, ParseIntPipe } from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CreateUserAchievementDto, ProfileService } from './profile.service';
+import { CreateUserAchievementDto, ChangePseudoDto, ProfileService } from './profile.service';
 import { diskStorage } from 'multer';
 
 @Controller('profile')
@@ -13,7 +13,12 @@ export class ProfileController {
 
     @Get(':userId')
     async getProfileInfos(@Param('userId', ParseIntPipe) userId: number) {
-        return this.profileService.getProfileInfos(userId);
+        return this.profileService.getProfileInfos(userId); // TODO: await ??
+    }
+
+    @Post(':userId/change-pseudo')
+    async changePseudo(@Body() dto: ChangePseudoDto, @Param('userId', ParseIntPipe) userId: number): Promise<any> {
+        return await this.profileService.changePseudo(dto, userId);
     }
 
     @Post(':userId/add-achievement-to-user')

@@ -1,10 +1,22 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateUserAchievementDto {
     userId: number;
     achievementId: number;
+}
+
+export class ChangePseudoDto {
+    @IsNotEmpty()
+    @IsString()
+    pseudo: string
+}
+
+export class ChangeIsPopupShown {
+    isShown: boolean
+    achievementId: number
 }
 
 @Injectable()
@@ -12,16 +24,28 @@ export class ProfileService {
     constructor(private prisma: PrismaClient) {}
     
     async getProfileInfos(userId: number): Promise<any> {
-        const user = await this.prisma.user.findUnique({
+        const currentUser = await this.prisma.user.findUnique({
             where: { id: userId },
             select: {
+                id: true,
                 pseudo: true,
                 avatar: true,
             }
         });
 
-        const achievement = await this.prisma.achievement.findUnique({
-            where: { name: 'Newwww Avatar' },
+        const gamesParticipated = await this.prisma.gameParticipation.findMany({
+            where: { userId: userId },
+            select: {
+                game: {
+                    select: {
+                        winner: true,
+                        createdAt: true,
+                    }
+                }
+            }
+        });
+
+        const achievements = await this.prisma.achievement.findMany({
             select: {
                 id: true,
                 name: true,
@@ -31,39 +55,57 @@ export class ProfileService {
             }
         })
 
+        const achievementsObj = {};
+        achievements.forEach(achievement => {
+            const filteredUsers = achievement.users.filter(user => {
+                return user.userId === currentUser.id;
+            });
+            achievement.users = filteredUsers;
+            achievementsObj[achievement.name] = achievement;
+        });
+
+
         return {
-            ...user,
-            achievement: [achievement]
+            ...currentUser,
+            gamesParticipated: gamesParticipated,
+            achievements: achievementsObj,
         };
     }
 
     async addAchievementToUser(dto: CreateUserAchievementDto): Promise<any> {
-        const existingUserAchievement = await this.prisma.userAchievements.findFirst({
-            where: {
-                userId: dto.userId,
-                achievementId: dto.achievementId
-            }
-        });
+        console.log('Adding achievement to user...', dto); // Log the start of the function
 
-        console.log("-->", existingUserAchievement);
-        if (existingUserAchievement) {
-            throw new Error('Already connected');
-        }
+   const existingUserAchievement = await this.prisma.userAchievements.findFirst({
+       where: {
+           userId: dto.userId,
+           achievementId: dto.achievementId
+       }
+   });
 
-        return this.prisma.userAchievements.create({
-            data: {
-                user: {
-                    connect: {
-                        id: dto.userId
-                    }
-                },
-                achievement: {
-                    connect: {
-                        id: dto.achievementId
-                    }
-                }
-            },
-        });
+   console.log(`Existing user achievement: ${existingUserAchievement}`); // Log the existing user achievement
+
+   if (existingUserAchievement) {
+       throw new Error('Already connected');
+   }
+
+   const newUserAchievement = await this.prisma.userAchievements.create({
+       data: {
+           user: {
+               connect: {
+                  id: dto.userId
+               }
+           },
+           achievement: {
+               connect: {
+                  id: dto.achievementId
+               }
+           }
+       },
+   });
+
+   console.log(`New user achievement: ${newUserAchievement}`); // Log the new user achievement
+
+   return newUserAchievement;
     }
 
     async addAvatar(avatarPath: string, userId: number): Promise<any> {
@@ -74,21 +116,46 @@ export class ProfileService {
         return { "avatar": updatedUser.avatar};
     }
 
+    async changePseudo(dto: ChangePseudoDto, userId: number): Promise<any> {
+        const updatedPseudo = await this.prisma.user.update({
+            where: { id: userId },
+            data: { pseudo: dto.pseudo },
+        })
+        return { "pseudo" : updatedPseudo.pseudo };
+    }
+
     async getMatchHistory(userId: number): Promise<any> {
-        const userWithGames = await this.prisma.user.findFirst({
+        const gameParticipations = await this.prisma.gameParticipation.findMany({
             where: {
-              id: userId,
+              userId: userId,
             },
             include: {
-              gameParticipationsCurrentUser: {
-                include: {
-                  gameResult: true, // include the related GameResult records
-                  user2: true,
-                },
-              },
+              game: true,
             },
-        });
-        return userWithGames;
+          });
+         
+          const matchHistory = await Promise.all(
+            gameParticipations.map(async (participation) => {
+              const opponentParticipation = await this.prisma.gameParticipation.findFirst({
+                where: {
+                  gameId: participation.gameId,
+                  userId: {
+                    not: userId,
+                  },
+                },
+                include: {
+                  user: true,
+                },
+              });
+         
+              return {
+                game: participation.game,
+                opponent: opponentParticipation?.user,
+              };
+            })
+            )
+         
+          return matchHistory;
     }
 
     async getLadder(): Promise<any> {
@@ -97,12 +164,12 @@ export class ProfileService {
                 id: true,
                 pseudo: true,
                 avatar: true,
-                gameParticipationsCurrentUser: {
+                gameParticipation: {
                     include: {
-                        gameResult: {
+                        game: {
                             select: {
-                                scored: true,
-                                conceded: true
+                                winner: true,
+                                loser: true
                             }
                         }
                     }

@@ -13,12 +13,12 @@ interface Props {
     onClose: () => void;
 }
 
-const PopUp: React.FC<Props> = ({ userId, achievementId, title, description, onClose }) => {
+const PopUp: React.FC<Props> = ({ userId, infos, onClose }) => {
 
     return (
         <div className="popup">
-            <p style={{marginTop: '40px', }}>{title}</p>
-            <p style={{margin: '40px 0', }}>{description}</p>
+            <p style={{marginTop: '40px', }}>{infos.name}</p>
+            <p style={{margin: '40px 0', }}>{infos.description}</p>
             <MainButton buttonName="Close" onClick={onClose}/>
         </div>
     );

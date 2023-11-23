@@ -6,12 +6,12 @@ const prisma = new PrismaClient();
 
 async function main() {
   await prisma.gameParticipation.deleteMany();
-  await prisma.gameResult.deleteMany();
+  await prisma.game.deleteMany();
   await prisma.userAchievements.deleteMany();
   await prisma.achievement.deleteMany();
   await prisma.user.deleteMany();
   await prisma.$executeRaw`UPDATE sqlite_sequence SET seq = 0 WHERE name = 'User';`;
-  await prisma.$executeRaw`UPDATE sqlite_sequence SET seq = 0 WHERE name = 'GameResult';`;
+  await prisma.$executeRaw`UPDATE sqlite_sequence SET seq = 0 WHERE name = 'Game';`;
   await prisma.$executeRaw`UPDATE sqlite_sequence SET seq = 0 WHERE name = 'Achievement';`;
     await prisma.user.create({
       data: {
@@ -197,54 +197,54 @@ async function main() {
       });
   
     // create game results
-    await prisma.gameResult.create({
+    await prisma.game.create({
       data: {
         createdAt: new Date(),
-        scored: 10,
-        conceded: 5,
+        score1: 10,
+        score2: 5,
+        winner: 1,
+        loser: 3,
       },
     });
     
-    await prisma.gameResult.create({
+    await prisma.game.create({
       data: {
         createdAt: new Date(),
-        scored: 8,
-        conceded: 10,
+        score1: 8,
+        score2: 10,
+        winner: 2,
+        loser: 1,
       },
     });
-    
+
     // create game participations
     await prisma.gameParticipation.create({
       data: {
-        user1Id: 1,
-        user2Id: 3,
-        gameResultId: 1,
+        userId: 1,
+        gameId: 1,
       },
     });
     
     await prisma.gameParticipation.create({
       data: {
-        user1Id: 3,
-        user2Id: 1,
-        gameResultId: 1,
+        userId: 3,
+        gameId: 1,
       },
     });
     
     await prisma.gameParticipation.create({
       data: {
-        user1Id: 1,
-        user2Id: 2,
-        gameResultId: 2,
+        userId: 1,
+        gameId: 2,
       },
     });
-    
+
     await prisma.gameParticipation.create({
       data: {
-        user1Id: 2,
-        user2Id: 1,
-        gameResultId: 2,
+        userId: 2,
+        gameId: 2,
       },
-    });  
+    });
 }
 
 // execute the main function

@@ -32,9 +32,7 @@ model User {
   conversationTo	Conversations[] @relation("conversations")
   conversationFrom	Conversations[] @relation("users")
 
-  //gameResults   GameResult[] @relation("players")
-  gameParticipationsCurrentUser GameParticipation[] @relation("CurrentUser")
-  gameParticipationsOpponent GameParticipation[] @relation("Opponent")
+  gameParticipation GameParticipation[]
 
   ownedChannels Channel[] @relation("ownedChannels")
 
@@ -146,27 +144,23 @@ model ChannelMembership {
 // }
 
 model GameParticipation {
-  id          Int    @id @default(autoincrement())
-  //userId      Int
-  gameResultId Int
-  //user        User   @relation(fields: [userId], references: [id])
-  user1Id   Int
-  user1     User  @relation("CurrentUser", fields: [user1Id], references: [id])
-  user2Id   Int
-  user2     User  @relation("Opponent", fields: [user2Id], references: [id])
-  gameResult  GameResult @relation(fields: [gameResultId], references: [id])
+  id          Int    @id @default(autoincrement()) // Add @@
+
+  userId   Int
+  user     User  @relation(fields: [userId], references: [id])
+  gameId Int
+  game  Game @relation(fields: [gameId], references: [id])
 }
 
-model GameResult {
+model Game {
   id Int @default(autoincrement()) @id
   createdAt DateTime @default(now())
 
-  scored Int
-  conceded Int
+  score1 Int
+  score2 Int
+  winner Int
+  loser  Int
   gameParticipations GameParticipation[]
-  //playerId Int
-  // playerSide String // Either "left" or "right"
-
 }
 
 model FortyTwoUser {
