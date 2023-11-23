@@ -34,7 +34,6 @@ export class TicketService {
                         id: userId,
                     }
                 },
-                allowedMethods: methods.join(' '),
             },
         });
 

@@ -1,7 +1,6 @@
 .game-modes {
-	border: 2px solid white;
 	display: flex;
-	justify-content: space-around;
+	align-items: center;
 	margin-top: 5%;
 	height: 40vw;
 }
@@ -12,16 +11,69 @@
 
 .game-modes h3 {
 	padding: 15px;
+	color: white;
+	text-shadow: 0 0 4px var(--color-yellow);
+	font-size: 2em;
+	height: 10%;
+}
+
+.choose {
+	border: 2px solid white;
+    border-radius: 20px;
+    background: linear-gradient(to right, var(--color-blue) 10%, var(--color-light-pink) 100%) no-repeat;
+	height: 20%;
+	width: 20%;
+	margin-left: 2%;
+	margin-right: 2%;
+	overflow: hidden;
 }
 
 .normal-mode {
-	border: 2px solid black;
+	border: 2px solid white;
+    border-radius: 20px;
+	background-color: var(--color-blue);
 	width: 40%;
 	height: 100%;
 }
 
 .special-mode {
-	border: 2px solid black;
+	border: 2px solid white;
+    border-radius: 20px;
+	background-color: var(--color-light-pink);
 	width: 40%;
 	height: 100%;
+}
+
+.box-pong {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	height: 90%;
+}
+
+.random-choice {
+	padding-top: 10%;
+}
+
+.friend-choice {
+	height: 50%;
+	border-top: 2px solid white;
+	padding-top: 20%;
+}
+
+.no-border {
+	border-top: none;
+   }
+   
+
+.friendList {
+	font-family: "Short Stack";
+    border: 2px solid white;
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    background: transparent;
+    font-size: 1em;
+    color: white;
+    text-shadow: 0 0 4px var(--color-yellow);
+	width: 80%;
 }

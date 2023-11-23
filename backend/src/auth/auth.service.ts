@@ -60,7 +60,6 @@ export class AuthService {
                     create: {
                         pseudo: 'nopseudo',
                         email: 'noemail@example.com',
-                        authMethod: 'oauth2',
                     }
                 }
             },
@@ -79,15 +78,12 @@ export class AuthService {
     }
 
     private async loginUser(user: User): Promise<Ticket | Token> {
-        const methods = [ 'qrcode', 'sms' ];
-
-        if (user.emailVerified)
-            methods.push('email');
+        const methods = [];
 
         if (user.totpEnabled)
             methods.push('otp');
 
-        if (methods.length > 0 && user.mfaEnabled) {
+        if (methods.length > 0) {
             return {
                 ticket: await this.ticketService.generateTicket(user.id, methods as any),
                 mfa: methods,
@@ -116,14 +112,6 @@ export class AuthService {
         return await this.loginUser(user);
     }
 
-    private generateCode(): number {
-        const digits = [ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ];
-        const firstDigit = _.shuffle(digits.slice(1))[0];
-
-        digits.push(...digits); /* Double it */
-        return parseInt(firstDigit.concat(_.shuffle(digits).slice(0, 5).join('')));
-    }
-
     private async generateTokenFromTicket(ticket: TicketPayload): Promise<Token> {
         /** This function will throw if the ticket is not in the database,
           * thus preventing a race condition where two tokens can be generated for the same ticket.
@@ -144,20 +132,6 @@ export class AuthService {
         };
     }
 
-    async verifyEmailCode(ticket: TicketPayload, code: number): Promise<Token> {
-        const emailCode = await this.prismaService.emailCode.findUniqueOrThrow({
-            where: {
-                ticketId: ticket.ticketId,
-            },
-        });
-
-        if (emailCode.code !== code) {
-            throw 'Invalid code';
-        }
-
-        return await this.generateTokenFromTicket(ticket);
-    }
-
     async verifyOtpCode(ticket: TicketPayload, code: string): Promise<Token> {
         const user = await this.prismaService.user.findUniqueOrThrow({
             where: {
@@ -175,35 +149,5 @@ export class AuthService {
         }
 
         return await this.generateTokenFromTicket(ticket);
-    }
-
-    async sendEmailVerification(ticket: TicketPayload) {
-        /* TODO check if the user can use email verification */
-
-        const user = await this.prismaService.user.findFirstOrThrow({
-            where: {
-                id: ticket.userId,
-            },
-            select: {
-                email: true,
-            },
-        });
-
-        const emailCode = await this.prismaService.emailCode.upsert({
-            create: {
-                ticket: {
-                    connect: {
-                        id: ticket.ticketId,
-                    },
-                },
-                code: this.generateCode(),
-            },
-            update: {},
-            where: {
-                ticketId: ticket.ticketId,
-            },
-        });
-
-        await this.mailService.sendConfirmationMail(user.email, `${emailCode.code}`);
     }
 }
