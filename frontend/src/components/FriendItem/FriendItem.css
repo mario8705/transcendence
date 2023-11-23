@@ -1,7 +1,7 @@
 .FriendItem-wrapper p {
     font-size: 1em;
     color: white;
-    overflow: hidden;
+    overflow-x: scroll;
 }
 
 .FriendItem-wrapper {

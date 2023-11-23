@@ -7,7 +7,12 @@
 .FriendList-wrapper {
     display: flex;
     justify-content: center;
-    height: 400px;
+    /* height: 400px; */
+    flex-direction: column;
+    height: 150vw;
+    width: 40vw;
+    /* padding: 40px; */
+    /* margin: 40px; */
 }
 
 .FriendList-wrapper .box {
@@ -18,9 +23,12 @@
     backdrop-filter: blur(20px);
     box-shadow: 0 0 30px rgb(0, 0, 0, .5);
     overflow-y: scroll;
+
+    margin: 4vw;
+    justify-content: center;
 }
 
-.FriendList-wrapper .box::-webkit-scrollbar {
+/* .FriendList-wrapper .box::-webkit-scrollbar {
     width: 5px;
 }
 
@@ -39,4 +47,4 @@
 .FriendList-wrapper .box::-webkit-scrollbar-thumb:hover {
     background: #555;
     border-radius: 20px;
-}
+} */
