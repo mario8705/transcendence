@@ -38,7 +38,7 @@ export class ProfileService {
             select: {
                 game: {
                     select: {
-                        winner: true,
+                        winnerId: true,
                         createdAt: true,
                     }
                 }
@@ -73,7 +73,7 @@ export class ProfileService {
     }
 
     async addAchievementToUser(dto: CreateUserAchievementDto): Promise<any> {
-        const existingUserAchievement = await this.prisma.userAchievements.findFirst({
+        const existingUserAchievement = await this.prisma.userAchievement.findFirst({
             where: {
                 userId: dto.userId,
                 achievementId: dto.achievementId
@@ -83,7 +83,7 @@ export class ProfileService {
             throw new Error('Already connected');
         }
 
-        const newUserAchievement = await this.prisma.userAchievements.create({
+        const newUserAchievement = await this.prisma.userAchievement.create({
             data: {
                 user: {
                     connect: {
@@ -160,7 +160,7 @@ export class ProfileService {
                     include: {
                         game: {
                             select: {
-                                winner: true,
+                                winnerId: true,
                                 loser: true
                             }
                         }
@@ -172,7 +172,7 @@ export class ProfileService {
     }
 
     async getAchievements(userId: number): Promise<any> {
-        const allAchievementsUnlocked = await this.prisma.userAchievements.findMany({
+        const allAchievementsUnlocked = await this.prisma.userAchievement.findMany({
             where: {
                 userId: userId,
             },

@@ -54,7 +54,7 @@ const Ladder: React.FC = () => {
             user.losses = 0;
 
             user.gameParticipation.forEach(game => {
-                if (game.game.winner === game.userId) {
+                if (game.game.winnerId === game.userId) {
                     user.wins++;
                 } else {
                     user.losses++;

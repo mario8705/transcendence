@@ -30,7 +30,7 @@ const MatchHistory: React.FC = () => {
                 setMatchHistory(data);
                 data.map(game => {
                     if ((game.game.score1 === 10 && game.game.score2 === 0) || (game.game.score1 === 0 && game.game.score2 === 10)) {
-                        if (userId == game.game.winner) {
+                        if (userId == game.game.winnerId) {
                             setPerfectWin(true);
                         } else {
                             setPerfectLose(true);
@@ -56,7 +56,7 @@ const MatchHistory: React.FC = () => {
                                     display: 'table',
                                     width: '100%',
                                     tableLayout: 'fixed',
-                                    backgroundColor: row.game.winner == userId ? '#85DE89' : '#DE8585'
+                                    backgroundColor: row.game.winnerId == userId ? '#85DE89' : '#DE8585'
                                 }}
                             >
                                 <TableCell id="cell-scored-mh">

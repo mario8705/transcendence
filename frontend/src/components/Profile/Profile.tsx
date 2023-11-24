@@ -67,7 +67,7 @@ interface AchievementsListContextType {
 }
 
 type GameResult = {
-    winner: number
+    winnerId: number
     createdAd: Date
 };
    
@@ -106,7 +106,7 @@ const Profile: React.FC<Props> = () => {
     const gamesWonFunc = ( userId: string, games: Game[] ): number => {
         let gamesWon = 0;
         games.map(game => {
-            if (game.game.winner == userId) {
+            if (game.game.winnerId == userId) {
                 gamesWon++;
             }
         });
@@ -128,7 +128,7 @@ const Profile: React.FC<Props> = () => {
         let currentConsecutiveWins = 0;
 
         games.forEach((game) => {
-            if (userId == game.game.winner) {
+            if (userId == game.game.winnerId) {
                 currentConsecutiveWins++;
                 maxConsecutiveWins = Math.max(maxConsecutiveWins, currentConsecutiveWins);
             } else {
