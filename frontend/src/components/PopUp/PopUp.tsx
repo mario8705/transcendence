@@ -1,16 +1,19 @@
-import React, { useEffect, useContext } from "react";
-import { AchievementsListContext } from "../../contexts/AchievementsListContext";
-
+import React from "react";
 import MainButton from "../MainButton/MainButton";
 
 import './PopUp.css';
 
+type InfosType = {
+    name: string
+    achievementId: number
+	title: string
+    description: string
+}
+
 interface Props {
-    userId: number,
-    achievementId: number,
-	title: string;
-    description: string;
-    onClose: () => void;
+    userId: number
+    infos: InfosType
+    onClose: () => void
 }
 
 const PopUp: React.FC<Props> = ({ userId, infos, onClose }) => {

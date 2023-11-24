@@ -2,7 +2,7 @@
 import { Module } from "@nestjs/common";
 import { ProfileController } from "./profile.controller";
 import { ProfileService } from "./profile.service";
-import { PrismaClient } from "@prisma/client";
+import { PrismaService } from "src/prisma/prisma.service";
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from "path";
 
@@ -10,7 +10,7 @@ import { join } from "path";
     controllers: [ProfileController],
     providers: [
         ProfileService,
-        PrismaClient
+        PrismaService
     ],
     imports: [
         ServeStaticModule.forRoot({
@@ -22,4 +22,4 @@ import { join } from "path";
 export class ProfileModule {
     constructor() {
     console.log(join(__dirname, '..', '..', '..', 'uploads'));
-  }}
+}}

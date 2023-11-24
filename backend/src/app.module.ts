@@ -9,7 +9,16 @@ import { ProfileModule } from './profile/profile.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [ AuthModule, GameModule, SocketModule, UsersModule, RoomsModule, ProfileModule, TestModule, PrismaModule ],
+  imports: [
+    AuthModule,
+    GameModule,
+    SocketModule,
+    UsersModule,
+    RoomsModule,
+    ProfileModule,
+    TestModule,
+    PrismaModule,
+  ],
   controllers: [],
   providers: [],
 })

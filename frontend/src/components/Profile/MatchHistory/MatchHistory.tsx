@@ -1,5 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
+
+import { PerfectContext } from '../../../contexts/PerfectContext';
+import { PerfectContextType } from '../Profile';
 
 import { 
     Table, 
@@ -15,6 +18,8 @@ import AvatarOthers from '../../AvatarOthers/AvatarOthers';
 
 const MatchHistory: React.FC = () => {
     const [matchHistory, setMatchHistory] = useState([]);
+    const { setPerfectWin, setPerfectLose } = useContext(PerfectContext) as PerfectContextType;
+
 
     const { userId } = useParams();
 
@@ -23,12 +28,17 @@ const MatchHistory: React.FC = () => {
             .then(response => response.json())
             .then(data => {
                 setMatchHistory(data);
+                data.map(game => {
+                    if ((game.game.score1 === 10 && game.game.score2 === 0) || (game.game.score1 === 0 && game.game.score2 === 10)) {
+                        if (userId == game.game.winner) {
+                            setPerfectWin(true);
+                        } else {
+                            setPerfectLose(true);
+                        }
+                    }
+                });
             })
     }, [userId])
-
-    interface CellStyle {
-        backgroundColor: string,
-    }
 
     return (
         <div className="matchHistory">

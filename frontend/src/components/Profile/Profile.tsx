@@ -17,6 +17,7 @@ import PseudoButton from "./PseudoButton/PseudoButton";
 import ChangeAvatar from "./ChangeAvatar/ChangeAvatar";
 
 import './Profile.css';
+import { PerfectContext } from "../../contexts/PerfectContext";
 
 interface Props {
     onRouteChange: (route: string) => void;
@@ -37,6 +38,13 @@ export interface LeaderContextType {
     setSmallLeader: (smallLeader: boolean) => void;
     greatLeader: boolean
     setGreatLeader: (greatLeader: boolean) => void;
+}
+
+export interface PerfectContextType {
+    perfectWin: boolean
+    setPerfectWin: (perfectWin: boolean) => void;
+    perfectLose: boolean
+    setPerfectLose: (perfectLose: boolean) => void;
 }
 
 interface Achievement {
@@ -83,6 +91,8 @@ const Profile: React.FC<Props> = () => {
         '100': false,
         'Small Leader': false,
         'Great Leader': false,
+        'Perfect win': false,
+        'You\'re a looser': false,
     });
     const [popupQueue, setPopupQueue] = useState([]);
     const { userId } = useParams();
@@ -91,6 +101,7 @@ const Profile: React.FC<Props> = () => {
     const { setAchievementsList } = useContext(AchievementsListContext) as AchievementsListContextType;
     const { pseudo, setPseudo } = useContext(PseudoContext) as PseudoContextType;
     const { smallLeader, greatLeader } = useContext(LeaderContext) as LeaderContextType;
+    const { perfectWin, perfectLose } = useContext(PerfectContext) as PerfectContextType;
 
     const gamesWonFunc = ( userId: string, games: Game[] ): number => {
         let gamesWon = 0;
@@ -192,71 +203,64 @@ const Profile: React.FC<Props> = () => {
             });
 
             if (data !== null) {
+                const handleAchievement = (achievementName: string) => {
+                    showPopup(achievementName);
+                    const requestOptions = requestOptionsAchievements({achievementName: achievementName, data});
+                    queue.push({ requestOptions });
+                };
+
                 const gamesWon = gamesWonFunc(userId, data?.gamesParticipated);
-                if (gamesWon >= 3 && data?.achievements["3 total"].users.length === 0) {
-                    showPopup('3 total');
-                    const requestOptions = requestOptionsAchievements({achievementName: "3 total", data});
-                    queue.push({ requestOptions });
+                if (gamesWon >= 3 && data?.achievements['3 total'].users.length === 0) {
+                    handleAchievement('3 total');
                 }
-                if (gamesWon >= 10 && data?.achievements["10 total"].users.length === 0) {
-                    showPopup('10 total');
-                    const requestOptions = requestOptionsAchievements({achievementName: "10 total", data});
-                    queue.push({ requestOptions });
+                if (gamesWon >= 10 && data?.achievements['10 total'].users.length === 0) {
+                    handleAchievement('10 total');
                 }
-                if (gamesWon >= 100 && data?.achievements["100 total"].users.length === 0) {
-                    showPopup('100 total');
-                    const requestOptions = requestOptionsAchievements({achievementName: "100 total", data});
-                    queue.push({ requestOptions });
+                if (gamesWon >= 100 && data?.achievements['100 total'].users.length === 0) {
+                    handleAchievement('100 total');
                 }
 
                 const gamesWonInARow = gamesWonInARowFunc(userId, data?.gamesParticipated);
-                if (gamesWonInARow >= 3 && data?.achievements["3"].users.length === 0) {
-                    showPopup("3");
-                    const requestOptions = requestOptionsAchievements({achievementName: "3", data});
-                    queue.push({ requestOptions });
+                if (gamesWonInARow >= 3 && data?.achievements['3'].users.length === 0) {
+                    handleAchievement('3');
                 }
-                if (gamesWonInARow >= 3 && data?.achievements["10"].users.length === 0) {
-                    showPopup("10");
-                    const requestOptions = requestOptionsAchievements({achievementName: "10", data});
-                    queue.push({ requestOptions });
+                if (gamesWonInARow >= 3 && data?.achievements['10'].users.length === 0) {
+                    handleAchievement('10');
                 }
-                if (gamesWonInARow >= 3 && data?.achievements["100"].users.length === 0) {
-                    showPopup("100");
-                    const requestOptions = requestOptionsAchievements({achievementName: "100", data});
-                    queue.push({ requestOptions });
+                if (gamesWonInARow >= 3 && data?.achievements['100'].users.length === 0) {
+                    handleAchievement('100');
                 }
 
                 const gameParticipations = data?.gamesParticipated.length;
-                if (gameParticipations >= 1 && data?.achievements["First Game"].users.length === 0) {
-                    showPopup("First Game");
-                    const requestOptions = requestOptionsAchievements({achievementName: "First Game", data});
-                    queue.push({ requestOptions });
+                if (gameParticipations >= 1 && data?.achievements['First Game'].users.length === 0) {
+                    handleAchievement('First Game');
                 }
-                if (gameParticipations >= 10 && data?.achievements["You're getting used to Pong"].users.length === 0) {
-                    showPopup("You're getting used to Pong");
-                    const requestOptions = requestOptionsAchievements({achievementName: "You're getting used to Pong", data});
-                    queue.push({ requestOptions });
+                if (gameParticipations >= 10 && data?.achievements['You\'re getting used to Pong'].users.length === 0) {
+                    handleAchievement('You\'re getting used to Pong');
                 }
-                if (gameParticipations >= 100 && data?.achievements["You're playing a lot"].users.length === 0) {
-                    showPopup("You're playing a lot");
-                    const requestOptions = requestOptionsAchievements({achievementName: "You're playing a lot", data});
-                    queue.push({ requestOptions });
+                if (gameParticipations >= 100 && data?.achievements['You\'re playing a lot'].users.length === 0) {
+                    handleAchievement('You\'re playing a lot');
                 }
 
-                if (smallLeader && data?.achievements["Small Leader"].users.length === 0) {
-                    showPopup("Small Leader");
-                    const requestOptions = requestOptionsAchievements({achievementName: "Small Leader", data});
-                    queue.push({ requestOptions });
+                if (smallLeader && data?.achievements['Small Leader'].users.length === 0) {
+                    handleAchievement('Small Leader');
                 }
-                if (greatLeader && data?.achievements["Great Leader"].users.length === 0) {
-                    showPopup("Great Leader");
-                    const requestOptions = requestOptionsAchievements({achievementName: "Great Leader", data});
-                    queue.push({ requestOptions });
+                if (greatLeader && data?.achievements['Great Leader'].users.length === 0) {
+                    handleAchievement('Great Leader');
                 }
+
+                if (perfectWin && data?.achievements['Perfect win'].users.length === 0) {
+                    handleAchievement('Perfect win');
+                }
+                if (perfectLose && data?.achievements['You\'re a looser'].users.length === 0) {
+                    handleAchievement('You\'re a looser');
+                }
+
+                //TODO: New level, Level 21, You like to talk?, Chatterbox
             }
         };
         fetchData();
-    }, [smallLeader, greatLeader]);
+    }, [smallLeader, greatLeader, perfectWin, perfectLose]);
 
     const handleUploadAvatar = (e) => {
         e.preventDefault();
@@ -342,6 +346,8 @@ const Profile: React.FC<Props> = () => {
             <div className="overlay" style={{ display: currentPopup['100'] ? 'block': 'none' }}></div>
             <div className="overlay" style={{ display: currentPopup['Small Leader'] ? 'block': 'none' }}></div>
             <div className="overlay" style={{ display: currentPopup['Great Leader'] ? 'block': 'none' }}></div>
+            <div className="overlay" style={{ display: currentPopup['Perfect win'] ? 'block': 'none' }}></div>
+            <div className="overlay" style={{ display: currentPopup['You\'re a looser'] ? 'block': 'none' }}></div>
             <div className="Profile">
                 {popupQueue.length > 0 && <PopUp userId={Number(userId)} infos={profileInfos?.achievements[popupQueue[0]]} onClose={closePopup}/>}
                 <ChangeAvatar handleUploadAvatar={handleUploadAvatar} />

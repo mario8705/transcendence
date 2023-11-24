@@ -6,6 +6,7 @@ import { AvatarProvider } from './contexts/AvatarContext';
 import { PseudoProvider } from './contexts/PseudoContext';
 import { AchievementsListProvider } from './contexts/AchievementsListContext';
 import { LeaderProvider } from './contexts/LeaderContext';
+import { PerfectProvider } from './contexts/PerfectContext';
 
 // import Navigation from './components/Navigation/Navigation';
 // import SocketContextComponent from './components/Socket/Context/Component';
@@ -29,21 +30,23 @@ const App: React.FC = () => (
   <QueryClientProvider client={queryClient}>
     <AvatarProvider>
       <LeaderProvider>
-        <PseudoProvider>
-          <AchievementsListProvider>
-            <AuthProvider>
-              <div className="App">
-                <AuthConsumer>
-                  {
-                    auth => auth.isLoading ?
-                      <p>Loading...</p> :
-                      <RouterProvider router={router} />
-                  }
-                </AuthConsumer>
-              </div>
-            </AuthProvider>
-          </AchievementsListProvider>
-        </PseudoProvider>
+        <PerfectProvider>
+          <PseudoProvider>
+            <AchievementsListProvider>
+              <AuthProvider>
+                <div className="App">
+                  <AuthConsumer>
+                    {
+                      auth => auth.isLoading ?
+                        <p>Loading...</p> :
+                        <RouterProvider router={router} />
+                    }
+                  </AuthConsumer>
+                </div>
+              </AuthProvider>
+            </AchievementsListProvider>
+          </PseudoProvider>
+        </PerfectProvider>
       </LeaderProvider>
     </AvatarProvider>
   </QueryClientProvider>
