@@ -161,7 +161,7 @@ export class ProfileService {
                         game: {
                             select: {
                                 winnerId: true,
-                                loser: true
+                                looserId: true
                             }
                         }
                     }
