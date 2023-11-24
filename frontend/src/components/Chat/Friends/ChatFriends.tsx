@@ -30,7 +30,7 @@ interface friendsProp {
 const DisplayFriends: React.FC<friendsProp> = ({ friends }) => {
 	let listFriends = friends.map((friend) =>
 		<li key={ friend }>
-			<button>{ friend }</button>
+			<button className="friends-button">{ friend }</button>
 		</li>
 	);
 
@@ -43,6 +43,7 @@ const DisplayFriends: React.FC<friendsProp> = ({ friends }) => {
 
 const ChatFriends: React.FC = () => {
 
+	// const friends = ["friendA", "Cha", "Yvanx","friendA", "Cha", "Yvanx","friendA", "Cha", "Yvanx","friendA", "Cha", "Yvanx","friendA", "Cha", "Yvanx","friendA", "Cha", "Yvanx","friendA", "Cha", "Yvanx"];
 	const friends = ["friendA", "Cha", "Yvanx"];
 
 	useEffect(() => {
@@ -51,7 +52,9 @@ const ChatFriends: React.FC = () => {
 
 	return (
 		<div className="chat-friends">
-			<h3>Friends</h3>
+			<div className='title'>
+				<h3>Friends</h3>
+			</div>
 			<DisplayFriends friends={friends} />
 			<AddFriend />
 		</div>
