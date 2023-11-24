@@ -7,13 +7,6 @@ export class FriendsController {
 
   @Get(':userId')
   async getFriendsList(@Param('userId', ParseIntPipe) userId: number) {
-    console.log('get called');
     return this.friendService.getFriendsList(userId);
   }
-
-  // @Get(':userId/channels-list')
-  // async getChannelList(@Param('userId', ParseIntPipe) userId: number) {
-  //   console.log('bouuuuh', userId);
-  //   return this.chatService.getChannelList(userId);
-  // }
 }
