@@ -1,26 +1,38 @@
 import React from 'react';
-import './RegisterForm.css';
+import './RegisterForm.scss';
 import MainButton from '../MainButton/MainButton'
 import { IoMailOutline } from "react-icons/io5";
 import { IoLockClosedOutline } from "react-icons/io5";
 import { IoPawOutline } from "react-icons/io5";
 import { GiFireflake } from "react-icons/gi";
 import { HiOutlineUserCircle } from "react-icons/hi2";
-
-
+import { Stack } from '@mui/material';
+import { Input } from '../Form/Input';
+import { Link } from 'react-router-dom';
 
 const RegisterForm: React.FC = () => {
 	return (
-		<div className="register-wrapper">
-			<div className="box-popup">
+		<Stack direction="row" justifyContent="center">
+			<div className="auth-container register-form">
 				<form action="#">
 					<h2>Register</h2>
-					<div className="input-box">
-						<input type="text" required />
-						<label>Username</label>
-						<HiOutlineUserCircle className="icon"/>
-					</div>
-					<div className="input-box">
+					<Input
+						label="Username"
+						icon={<HiOutlineUserCircle />}
+						name="username"
+						autoComplete="off"
+						type="text"
+						required
+						/>
+					<Input
+						label="Email"
+						icon={<IoMailOutline />}
+						name="email"
+						type="email"
+						autoComplete="email"
+						required
+						/>
+					{/* <div className="input-box">
 						<select name="element" className="element">
 							<option value="fire">fire</option>
 							<option value="water">water</option>
@@ -29,48 +41,35 @@ const RegisterForm: React.FC = () => {
 						</select>
 						<label>Your favorite element:</label>
 						<GiFireflake className="icon"/>
-					</div>
-					<div className="input-box">
-						<label>Email</label>
-						<input
-						id="email"
-						name="email"
-						type="email"
-						autoComplete="email"
+					</div> */}
+					<Input
+						label="Password"
+						icon={<IoLockClosedOutline />}
+						name="password"
+						type="password"
 						required
 						/>
-						<IoMailOutline className="icon"/>
-					</div>
-					<div className="input-box">
-						<label>Password</label>
-						<input
-						id="password"
-						name="password"
+					<Input
+						label="Confirm Password"
+						icon={<IoPawOutline />}
+						name="password_confirm"
 						type="password"
-						required/>
-						<IoLockClosedOutline className="icon"/>
-					</div>
-					<div className="input-box">
-						<label>Confirm Password</label>
-						<input
-						id="password"
-						name="password"
-						type="password"
-						required/>
-						<IoPawOutline className="icon"/>
-					</div>
-					<div className="remember-forgot">
-						<input type="checkbox"/>I agree to the terms & conditions
-					</div>
-					<MainButton buttonName='Register'/>
-					<div className="input-box">
-						<p>or</p>
-					<MainButton buttonName='42 Account'/>
-					</div>
-					<p>Already have an account ? <a href="#" className="register-link">Login</a></p>
+						required
+						/>
+					<Stack direction="row" justifyContent="flex-start">
+						<div className="remember-forgot">
+							<input type="checkbox"/>I agree to the terms & conditions
+						</div>
+					</Stack>
+					<MainButton buttonName="Register"/>
+					<p className="or">or</p>
+					<MainButton buttonName="42 Account" />
+					<p>
+						Already have an account ? <Link to="/auth/login">Login</Link>
+					</p>
 				</form>
 			</div>
-		</div>
+		</Stack>
 	);
 };
 

@@ -4,13 +4,17 @@ import { Auth } from './components/Auth/Auth';
 import Chat from './components/Chat/Chat';
 import FriendList from './components/FriendList/FriendList';
 import Game from './components/Game/Game';
-import Profile from './components/Profile/Profile';
+import RegisterForm from './components/RegisterForm/RegisterForm';
 import PlayPage from './pages/PlayPage';
 
 export const router = createBrowserRouter([
     {
         path: '/auth/login',
         element: <Auth />,
+    },
+    {
+        path: '/auth/register',
+        element: <RegisterForm />
     },
     {
         path: '/auth/callback',
