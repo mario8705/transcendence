@@ -43,7 +43,8 @@ const FriendItem: React.FC<Props> = ({friendName, status}) => {
 						<MainButton buttonName='Block' mode={BLOCK_MODE} onClick={handleClick} /> */}
 						<MainButton buttonName='Play' />
 						<MainButton buttonName='MSG' />
-						<MainButton buttonName='Block'  />
+						<MainButton buttonName='Block' />
+						{/* <MainButton buttonName='Delete' /> */}
 					</div>
 				</div>
 			</div>
@@ -57,7 +58,8 @@ const FriendItem: React.FC<Props> = ({friendName, status}) => {
 					<div className="input-box">
 						<AvatarOthers status='Offline'/>
 						<p>{friendName}</p>
-						<MainButton buttonName='Unblock' mode={FRIEND_MODE}  />
+						<MainButton buttonName='Unblock' mode={FRIEND_MODE} />
+						<MainButton buttonName='Delete' />
 					</div>
 				</div>
 			</div>
