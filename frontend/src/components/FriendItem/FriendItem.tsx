@@ -42,7 +42,7 @@ const FriendItem: React.FC<Props> = ({friendName, status}) => {
 					<div className="input-box">
 						<AvatarOthers status='Offline'/>
 						<p>{friendName}</p>
-						<MainButton buttonName='Unblock' mode={FRIEND_MODE} />
+						<MainButton buttonName='Unblock' mode={FRIENDS} />
 						<MainButton buttonName='Delete' />
 					</div>
 				</div>
