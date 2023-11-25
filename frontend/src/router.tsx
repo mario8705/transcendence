@@ -21,6 +21,10 @@ export const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
             {
+                path: '/profile/:userId',
+                element: <Profile onRouteChange={() => void 0} />,
+            },
+            {
                 path: '/friends',
                 element: <FriendList />,
             },

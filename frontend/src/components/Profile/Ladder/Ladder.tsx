@@ -15,8 +15,8 @@ import AvatarOthers from '../../AvatarOthers/AvatarOthers';
 
 import './Ladder.css';
 
-const Ladder: React.FC = () => {
-    const { setSmallLeader, setGreatLeader } = useContext(LeaderContext) as LeaderContextType;
+const Ladder: React.FC = ({ currentPopup }) => {
+    // const { setSmallLeader, setGreatLeader } = useContext(LeaderContext) as LeaderContextType;
 
     interface CellStyle {
         color: string,
@@ -74,13 +74,11 @@ const Ladder: React.FC = () => {
             }
             return a.losses - b.losses;
         });
-        if (ranking.length >= 3 && ranking[0].id == userId) {
-            console.log("SMALL LEADER");
-            setSmallLeader(true);
-        } else if (ranking.length >= 10 && ranking[0].id == userId) {
-            console.log("GREAT LEADER");
-            setGreatLeader(true);
-        }
+        // if (ranking.length >= 3 && ranking[0].id == userId) {
+        //     setSmallLeader(true);
+        // } else if (ranking.length >= 10 && ranking[0].id == userId) {
+        //     setGreatLeader(true);
+        // }
         return ranking;
     };
 

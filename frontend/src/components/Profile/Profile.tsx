@@ -232,7 +232,10 @@ const Profile: React.FC<Props> = () => {
                 }
 
                 const gameParticipations = data?.gamesParticipated.length;
+                let inc = 0;
                 if (gameParticipations >= 1 && data?.achievements['First Game'].users.length === 0) {
+                    inc++;
+                    console.log("inc", inc);
                     handleAchievement('First Game');
                 }
                 if (gameParticipations >= 10 && data?.achievements['You\'re getting used to Pong'].users.length === 0) {
@@ -242,25 +245,24 @@ const Profile: React.FC<Props> = () => {
                     handleAchievement('You\'re playing a lot');
                 }
 
-                if (smallLeader && data?.achievements['Small Leader'].users.length === 0) {
-                    handleAchievement('Small Leader');
-                }
-                if (greatLeader && data?.achievements['Great Leader'].users.length === 0) {
-                    handleAchievement('Great Leader');
-                }
+                // if (smallLeader && data?.achievements['Small Leader'].users.length === 0) {
+                //     handleAchievement('Small Leader');
+                // }
+                // if (greatLeader && data?.achievements['Great Leader'].users.length === 0) {
+                //     handleAchievement('Great Leader');
+                // }
 
-                if (perfectWin && data?.achievements['Perfect win'].users.length === 0) {
-                    handleAchievement('Perfect win');
-                }
-                if (perfectLose && data?.achievements['You\'re a looser'].users.length === 0) {
-                    handleAchievement('You\'re a looser');
-                }
-
+                // if (perfectWin && data?.achievements['Perfect win'].users.length === 0) {
+                //     handleAchievement('Perfect win');
+                // }
+                // if (perfectLose && data?.achievements['You\'re a looser'].users.length === 0) {
+                //     handleAchievement('You\'re a looser');
+                // }
                 //TODO: New level, Level 21, You like to talk?, Chatterbox
             }
         };
         fetchData();
-    }, [smallLeader, greatLeader, perfectWin, perfectLose]);
+    }, []);
 
     const handleUploadAvatar = (e) => {
         e.preventDefault();

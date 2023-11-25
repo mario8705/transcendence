@@ -238,48 +238,48 @@ async function main() {
         },
       });
   
-    // assign achievements to users
-  await prisma.userAchievement.create({
-      data: {
-        userId: user1.id,
-        achievementId: ach1.id,
-      },
-    });
+  //   // assign achievements to users
+  // await prisma.userAchievement.create({
+  //     data: {
+  //       userId: user1.id,
+  //       achievementId: ach1.id,
+  //     },
+  //   });
 
-    await prisma.userAchievement.create({
-        data: {
-          userId: user1.id,
-          achievementId: ach3.id,
-        },
-      });
+  //   await prisma.userAchievement.create({
+  //       data: {
+  //         userId: user1.id,
+  //         achievementId: ach3.id,
+  //       },
+  //     });
 
-      await prisma.userAchievement.create({
-        data: {
-          userId: user2.id,
-          achievementId: ach2.id,
-        },
-      });
+  //     await prisma.userAchievement.create({
+  //       data: {
+  //         userId: user2.id,
+  //         achievementId: ach2.id,
+  //       },
+  //     });
 
-      await prisma.userAchievement.create({
-        data: {
-          userId: user3.id,
-          achievementId: ach1.id,
-        },
-      });
+  //     await prisma.userAchievement.create({
+  //       data: {
+  //         userId: user3.id,
+  //         achievementId: ach1.id,
+  //       },
+  //     });
 
-      await prisma.userAchievement.create({
-        data: {
-          userId: user3.id,
-          achievementId: ach2.id,
-        },
-      });
+  //     await prisma.userAchievement.create({
+  //       data: {
+  //         userId: user3.id,
+  //         achievementId: ach2.id,
+  //       },
+  //     });
 
-      await prisma.userAchievement.create({
-        data: {
-          userId: user3.id,
-          achievementId: ach3.id,
-        },
-      });
+  //     await prisma.userAchievement.create({
+  //       data: {
+  //         userId: user3.id,
+  //         achievementId: ach3.id,
+  //       },
+  //     });
   
     // and so on for other user-achievement relations
     // create game results
