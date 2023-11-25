@@ -97,25 +97,25 @@ export class AuthController {
         }
     }
 
-    @UseGuards(TicketGuard)
-    @Post('/mfa/email')
-    async verifyEmail(@Body() { code }: VerifyEmailDto, @Request() req: ExpressRequest) {
-        try {
-            return await this.authService.verifyEmailCode(req.ticket!, parseInt(code, 10));
-        } catch {
-            throw new UnauthorizedException();
-        }
-    }
+    // @UseGuards(TicketGuard)
+    // @Post('/mfa/email')
+    // async verifyEmail(@Body() { code }: VerifyEmailDto, @Request() req: ExpressRequest) {
+    //     try {
+    //         return await this.authService.verifyEmailCode(req.ticket!, parseInt(code, 10));
+    //     } catch {
+    //         throw new UnauthorizedException();
+    //     }
+    // }
 
-    @UseGuards(TicketGuard)
-    @Post('/mfa/email/send')
-    async sendVerificationMail(@Body() {}: SendVerificationMailDto, @Request() req: ExpressRequest) {
-        try {
-            return await this.authService.sendEmailVerification(req.ticket!);
-        } catch {
-            throw new UnauthorizedException();
-        }
-    }
+    // @UseGuards(TicketGuard)
+    // @Post('/mfa/email/send')
+    // async sendVerificationMail(@Body() {}: SendVerificationMailDto, @Request() req: ExpressRequest) {
+    //     try {
+    //         return await this.authService.sendEmailVerification(req.ticket!);
+    //     } catch {
+    //         throw new UnauthorizedException();
+    //     }
+    // }
 }
 
 declare global {
