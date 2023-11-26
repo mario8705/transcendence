@@ -76,7 +76,7 @@ model Blocked {
 }
 
 model GameParticipation {
-  id          Int     @id @default(autoincrement()) // TODO: @@id([userId, gameId])
+  @@id([userId, gameId])
 
   opponentId Int
 
