@@ -22,27 +22,21 @@ interface FriendElem {
 
 const FriendList: React.FC = () => {
 	const [friendList, setFriendList] = useState< FriendElem[] | null>(null);
-	const userId = 48;
+	const userId = 1;
 			
 	useEffect(() => {
 		const fetchData = async () => {
 		const response = await fetch(`http://localhost:3000/api/friends/${userId}`);
 		const data = await response.json();
-		console.log(data);
 		setFriendList(data);
 	};
 	fetchData();
 	}, []); 
 
-	// const handleUnblock = () => {
-	// 	setFriendList([]);
-	// };
 	const ParentRerender = (data: FriendElem[] | null) => {
+		console.log(data);
 		setFriendList(data);
 	};
-	// const parentRerender = (newFriendList: FriendElem[] | null) => {
-	// 	setFriendList(newFriendList);
-	// };
 	
 	const friendsListSender = friendList ? friendList.filter(friend => friend.status === SENDER) : [];
 	const friendsListReceiver = friendList ? friendList.filter(friend => friend.status === RECEIVER) : [];
@@ -114,7 +108,6 @@ const FriendList: React.FC = () => {
 						{
 							friendList && Array.prototype.map.call(friendsListBlocked || [], ({ status, friend: { id, pseudo } }) => (
 							<FriendItem key={id} userId={userId} friendName={pseudo} status={status} friendId={id} parentRerender={ParentRerender} />
-							// <FriendItem key={id} userId={userId} friendName={pseudo} status={status} friendId={id} onUnblock={handleUnblock} />
 							)) as React.ReactNode[]
 						}
 					</div>

@@ -1,4 +1,3 @@
-import React, { useCallback, useState, useRef } from 'react';
 import './FriendItem.css';
 import MainButton from '../MainButton/MainButton'
 import AvatarOthers from '../AvatarOthers/AvatarOthers';
@@ -22,39 +21,17 @@ interface Props {
 	friendName: string;
 	status: number;
 	friendId: number;
-	// onUnblock: () => void;
-	// onBlock: () => void;
-	// onDelete: () => void;
-	// onCancel: () => void;
-	// onAccept: () => void;
-	// onDecline: () => void;
 	parentRerender: (data: FriendElem[] | null) => void;
 }
 
-// const FriendItem: React.FC<Props> = ({userId, friendName, status, friendId, onUnblock, onBlock, onDelete, onCancel, onAccept, onDecline}) => {
-	const FriendItem: React.FC<Props> = ({userId, friendName, status, friendId, parentRerender}) => {
-	// const friendId = key;
-	// const [unblockFriend, setUnblockFriend] = useState< UnblockFriendElem[] | null>(null);
-	// const [blockFriend, setBlockFriend] = useState< BlockFriendElem[] | null>(null);
-	// const [deletekFriend, setDeleteFriend] = useState< DeleteFriendElem[] | null>(null);
-	// const [cancelFriend, setCancelFriend] = useState< CancelUnblockFriendElem[] | null>(null);
-	// const [acceptFriend, setAcceptFriend] = useState< AcceptUnblockFriendElem[] | null>(null);
-	// const [declineFriend, setDeclineFriend] = useState< DeclineUnblockFriendElem[] | null>(null);
+const FriendItem: React.FC<Props> = ({userId, friendName, status, friendId, parentRerender}) => {
 
 	const handleUnblock = () => {
 		fetch(`http://localhost:3000/api/friends/${userId}/unblock/${friendId}`, {
 			method: 'POST',
-			// headers: {
-			//   'Content-Type': 'application/json',
-			// },
-			// body: JSON.stringify({
-			//   userId: /* userId */,
-			//   blockedFriendId: /* blockedFriendId */,
-			// }),
 		})
 		.then(response => response.json())
 		.then(data => parentRerender(data))
-		// .then(data => onUnblock())
 		.catch((error) => {
 			console.error('Error:', error);
 		});
@@ -66,7 +43,6 @@ interface Props {
 		})
 		.then(response => response.json())
 		.then(data => parentRerender(data))
-		// .then(data => onBlock())
 		.catch((error) => {
 			console.error('Error:', error);
 		});
@@ -78,7 +54,6 @@ interface Props {
 		})
 		.then(response => response.json())
 		.then(data => parentRerender(data))
-		// .then(data => onDelete())
 		.catch((error) => {
 			console.error('Error:', error);
 		});
@@ -90,7 +65,6 @@ interface Props {
 		})
 		.then(response => response.json())
 		.then(data => parentRerender(data))
-		// .then(data => onCancel())
 		.catch((error) => {
 			console.error('Error:', error);
 		});
@@ -103,7 +77,6 @@ interface Props {
 		})
 		.then(response => response.json())
 		.then(data => parentRerender(data))
-		// .then(data => onAccept())
 		.catch((error) => {
 			console.error('Error:', error);
 		});
@@ -115,7 +88,6 @@ interface Props {
 		})
 		.then(response => response.json())
 		.then(data => parentRerender(data))
-		// .then(data => onDecline())
 		.catch((error) => {
 			console.error('Error:', error);
 		});
@@ -129,8 +101,6 @@ interface Props {
 					<div className="input-box">
 						<AvatarOthers status='Online'/>
 						<p>{friendName}</p>
-						{/* <MainButton onClick={() => handleClick(PLAY_MODE)}>lol</MainButton> */}
-						{/* <MainButton buttonName='Play' mode={PLAY_MODE} onClick={handleClick} />*/}
 						<MainButton buttonName='Play' />
 						<MainButton buttonName='MSG' />
 						<MainButton buttonName='Block' onClick={() => handleBlock()} />
