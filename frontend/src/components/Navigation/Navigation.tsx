@@ -41,7 +41,7 @@ const Navigation: React.FC<Props> = ({ /*onRouteChange,*/ isSignedIn }) => {
         return (
             <>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" style={{padding: '5px'}}>
-                    <p onClick={() => navigate('/pong')} className="logo">
+                    <p onClick={() => navigate('/')} className="logo">
                         PONG
                     </p>
                     <Avatar aria-describedby={id} alt="Avatar" onClick={handleAvatarClick} src={avatar || default_avatar} style={{margin: '5px 10px'}}/>
