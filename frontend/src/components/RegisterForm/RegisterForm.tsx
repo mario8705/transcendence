@@ -9,12 +9,82 @@ import { HiOutlineUserCircle } from "react-icons/hi2";
 import { Stack } from '@mui/material';
 import { Input } from '../Form/Input';
 import { Link } from 'react-router-dom';
+import { Form, FormValidator } from '../Form/Form';
+import { useMutation } from 'react-query';
+import { registerUser } from '../../api';
+import { useSnackbar } from 'notistack';
+import { AxiosError } from 'axios';
+import { useAuthContext } from '../../contexts/AuthContext';
+
+const registerFormValidator: FormValidator = {
+	username(value: string) {
+		if (value.length < 3) {
+			throw new Error('Usernames must be at least 3 characters in length');
+		}
+
+		if (value.length > 32) {
+			throw new Error('Usernames must be less than 32 characters');
+		}
+	},
+	password(value: string, data: object) {
+		if (value !== data['password_confirm']) {
+			throw new Error('Passwords do not match');
+		}
+	},
+	password_confirm(value: string, data: object) {
+		if (value !== data['password']) {
+			throw new Error('Passwords do not match');
+		}
+	},
+	email(value: string) {
+
+	}
+};
 
 const RegisterForm: React.FC = () => {
+	const { enqueueSnackbar } = useSnackbar();
+	const [ formErrors, setFormErrors ] = React.useState<object>({});
+	const { authenticate } = useAuthContext();
+
+	const registerMutation = useMutation(registerUser, {
+		onSuccess(data, variables, context) {
+			if ('token' in data) {
+				/* TODO broken */
+				// authenticate(data['token']);
+			}
+
+			setFormErrors({});
+			/* TODO here we should login the user */
+		},
+		onError(error: AxiosError) {
+			if (error.response?.status === 400) {
+				const { errors } = (error.response.data as any);
+
+				if (typeof errors === 'object') {
+					setFormErrors(errors as object);
+					return ;
+				}
+			}
+
+			enqueueSnackbar({
+				message: `Could not register : ${error.message}`,
+				variant: 'error',
+				anchorOrigin: {
+					horizontal: 'center',
+					vertical: 'top',
+				},
+			});
+		},
+	});
+
+	const handleOnSubmit = React.useCallback((data: any) => {
+		registerMutation.mutate(data);
+	}, []);
+
 	return (
 		<Stack direction="row" justifyContent="center">
 			<div className="auth-container register-form">
-				<form action="#">
+				<Form validator={registerFormValidator} onSubmit={handleOnSubmit} errors={formErrors}>
 					<h2>Register</h2>
 					<Input
 						label="Username"
@@ -61,13 +131,13 @@ const RegisterForm: React.FC = () => {
 							<input type="checkbox"/>I agree to the terms & conditions
 						</div>
 					</Stack>
-					<MainButton buttonName="Register"/>
+					<MainButton buttonName="Register" loading={registerMutation.isLoading} />
 					<p className="or">or</p>
 					<MainButton buttonName="42 Account" />
 					<p>
 						Already have an account ? <Link to="/auth/login">Login</Link>
 					</p>
-				</form>
+				</Form>
 			</div>
 		</Stack>
 	);
