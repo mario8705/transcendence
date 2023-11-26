@@ -20,113 +20,89 @@ export class FriendsService {
         },
       },
     });
-    // console.log(friends);
     return friends;
   }
 
   async unblockFriend(userId: number, friendId: number): Promise<any> {
+    const blockedId = friendId;
+
+    const blockedFriend = await this.prisma.blocked.findUnique({
+      where: {
+        userId_blockedId: { userId, blockedId },
+      },
+    });
+
+    if (blockedFriend) {
+      const statusFriend = await this.prisma.friendship.update({
+        where: {
+          userId_friendId: { userId, friendId },
+        },
+        data: {
+          status: 2,
+        },
+      });
+
+      const unblockFriend = await this.prisma.blocked.delete({
+        where: {
+          userId_blockedId: { userId, blockedId },
+        },
+      });
+    }
+    console.log(this.unblockFriend);
+
+    // return this.getFriendsList(userId);
+    const friends = await this.prisma.friendship.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        status: true,
+        friend: {
+          select: {
+            id: true,
+            pseudo: true,
+          },
+        },
+      },
+    });
+    return friends;
+  }
+
+  async blockFriend(userId: number, friendId: number): Promise<any> {
     const statusFriend = await this.prisma.friendship.update({
       where: {
         userId_friendId: { userId, friendId },
       },
       data: {
-        status: 2,
+        status: 3,
       },
     });
 
-    const blockedId = friendId;
+    const unblockFriend = await this.prisma.blocked.create({
+      data: {
+        userId: userId,
+        blockedId: friendId,
+      },
+    });
 
-    const blockFriend = await this.prisma.blocked.delete({
+    console.log(unblockFriend, statusFriend);
+    // return { unblockFriend, statusFriend };
+    // return this.getFriendsList(userId);
+    const friends = await this.prisma.friendship.findMany({
       where: {
-        // userId_friendId: { userId, friendId },
-        userId_blockedId: { userId, blockedId },
+        userId,
+      },
+      select: {
+        status: true,
+        friend: {
+          select: {
+            id: true,
+            pseudo: true,
+          },
+        },
       },
     });
-
-    // const blockedFriendIndex = blockFriend.findIndex(
-    //   (friend) => friend.blocked.id === blockedFriendId,
-    // );
-
-    // if (blockedFriendIndex !== -1) {
-    //   blockFriend[blockedFriendIndex].blocked.friends.status = 2;
-    //   blockFriend.splice(blockedFriendIndex, 1);
-    // }
-
-    // const blockedFriendIndex = blockFriend.findIndex(
-    //   (friend) => friend.blocked.id === blockedFriendId,
-    // );
-    // if (blockedFriendIndex !== -1) {
-    //   const blockedFriend = blockFriend[blockedFriendIndex].blocked;
-    //   const friendToUnblock = blockedFriend.friends.find(
-    //     (friend) => friend.userId === blockedFriendId,
-    //   );
-
-    //   if (friendToUnblock) {
-    //     friendToUnblock.status = 2;
-    //     blockedFriend.friends = blockedFriend.friends.filter(
-    //       (friend) => friend.userId !== blockedFriendId,
-    //     );
-    //   }
-    // }
-
-    return { blockFriend, statusFriend };
+    console.log(friends);
+    return friends;
   }
-  // async unblockFriend(userId: number, friendId: number): Promise<any> {
-  //   const blockFriend = await this.prisma.blocked.findMany({
-  //     where: {
-  //       userId,
-  //       // friendId,
-  //     },
-  //     select: {
-  //       user: {
-  //         select: {
-  //           id: true,
-  //           pseudo: true,
-  //         },
-  //       },
-  //       blocked: {
-  //         select: {
-  //           id: true,
-  //           pseudo: true,
-  //         },
-  //         include: {
-  //           friends: {
-  //             select: {
-  //               userId: true,
-  //               status: true,
-  //             },
-  //           },
-  //         },
-  //       },
-  //     },
-  //   });
-
-  //   const blockedFriendIndex = blockFriend.findIndex(
-  //     (friend) => friend.blocked.id === blockedFriendId,
-  //   );
-
-  //   if (blockedFriendIndex !== -1) {
-  //     blockFriend[blockedFriendIndex].blocked.friends.status = 2;
-  //     blockFriend.splice(blockedFriendIndex, 1);
-  //   }
-
-  //   // const blockedFriendIndex = blockFriend.findIndex(
-  //   //   (friend) => friend.blocked.id === blockedFriendId,
-  //   // );
-  //   // if (blockedFriendIndex !== -1) {
-  //   //   const blockedFriend = blockFriend[blockedFriendIndex].blocked;
-  //   //   const friendToUnblock = blockedFriend.friends.find(
-  //   //     (friend) => friend.userId === blockedFriendId,
-  //   //   );
-
-  //   //   if (friendToUnblock) {
-  //   //     friendToUnblock.status = 2;
-  //   //     blockedFriend.friends = blockedFriend.friends.filter(
-  //   //       (friend) => friend.userId !== blockedFriendId,
-  //   //     );
-  //   //   }
-  //   // }
-
-  //   return { blockFriend, statusFriend};
-  // }
 }

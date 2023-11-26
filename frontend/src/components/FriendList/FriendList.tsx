@@ -26,7 +26,7 @@ const FriendList: React.FC = () => {
 			
 	useEffect(() => {
 		const fetchData = async () => {
-			const response = await fetch(`http://localhost:3000/api/friends/${userId}`);
+		const response = await fetch(`http://localhost:3000/api/friends/${userId}`);
 		const data = await response.json();
 		console.log(data);
 		setFriendList(data);
@@ -34,9 +34,15 @@ const FriendList: React.FC = () => {
 	fetchData();
 	}, []); 
 
-	const handleUnblock = () => {
-		setFriendList([]); // clear the friendList state to trigger a re-render
-	  };
+	// const handleUnblock = () => {
+	// 	setFriendList([]);
+	// };
+	const ParentRerender = (data: FriendElem[] | null) => {
+		setFriendList(data);
+	};
+	// const parentRerender = (newFriendList: FriendElem[] | null) => {
+	// 	setFriendList(newFriendList);
+	// };
 	
 	const friendsListSender = friendList ? friendList.filter(friend => friend.status === SENDER) : [];
 	const friendsListReceiver = friendList ? friendList.filter(friend => friend.status === RECEIVER) : [];
@@ -63,7 +69,7 @@ const FriendList: React.FC = () => {
 					<h2>Friendship received</h2>
 					{
 						friendList && Array.prototype.map.call(friendsListReceiver || [], ({ status, friend: { id, pseudo } }) => (
-							<FriendItem key={id} friendName={pseudo} status={status} friendId={id} />
+							<FriendItem key={id} userId={userId} friendName={pseudo} status={status} friendId={id} parentRerender={ParentRerender} />
 						)) as React.ReactNode[]
 					}
 				</div>
@@ -85,7 +91,7 @@ const FriendList: React.FC = () => {
 						<h2>Friendship sent</h2>
 						{
 							friendList && Array.prototype.map.call(friendsListSender || [], ({ status, friend: { id, pseudo } }) => (
-							<FriendItem key={id} friendName={pseudo} status={status} friendId={id} />
+							<FriendItem key={id} userId={userId} friendName={pseudo} status={status} friendId={id} parentRerender={ParentRerender} />
 							)) as React.ReactNode[]
 						}
 					</div>
@@ -107,7 +113,8 @@ const FriendList: React.FC = () => {
 						<h2>Blocked friends</h2>
 						{
 							friendList && Array.prototype.map.call(friendsListBlocked || [], ({ status, friend: { id, pseudo } }) => (
-							<FriendItem key={id} friendName={pseudo} status={status} friendId={id} onUnblock={handleUnblock} />
+							<FriendItem key={id} userId={userId} friendName={pseudo} status={status} friendId={id} parentRerender={ParentRerender} />
+							// <FriendItem key={id} userId={userId} friendName={pseudo} status={status} friendId={id} onUnblock={handleUnblock} />
 							)) as React.ReactNode[]
 						}
 					</div>
@@ -129,7 +136,7 @@ const FriendList: React.FC = () => {
 						<h2>Friends</h2>
 						{
 							friendList && Array.prototype.map.call(friendsListFriends || [], ({ status, friend: { id, pseudo } }) => (
-							<FriendItem key={id} friendName={pseudo} status={status} friendId={id} />
+							<FriendItem key={id} userId={userId} friendName={pseudo} status={status} friendId={id} parentRerender={ParentRerender} />
 							)) as React.ReactNode[]
 						}
 					</div>
