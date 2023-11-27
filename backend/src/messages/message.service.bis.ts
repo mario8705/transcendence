@@ -1,7 +1,7 @@
 // import { Injectable } from '@nestjs/common';
 // import { PrismaClient, User } from '@prisma/client';
 // import { Socket } from 'socket.io';
-// import { ChatService } from 'src/chat/chat.service';
+// import { ChatService } from 'src/chat/DBchat.service';
 
 // /**
 //  * ? Comment ça marche exactement la différence entre je reçois et j'envoie le message ?

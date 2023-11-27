@@ -11,7 +11,10 @@ import {
 } from "@nestjs/websockets";
 import { GameService } from "src/game/game.service";
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
-import { ChatService } from "src/chat/chat.service";
+import { ChatService } from "src/chat/DBchat.service";
+import { User } from "src/users_chat/user.model";
+import { SocketService } from "./socket.service";
+import { RoomService } from "src/rooms/DBrooms.service";
 
 @WebSocketGateway({
 	cors: {
@@ -24,6 +27,7 @@ export class SocketGateway implements
 	OnGatewayDisconnect
 {
 
+	sockets: Socket[] = [];
 	gameHandler: GameService;
 	
 	@WebSocketServer()
@@ -31,7 +35,9 @@ export class SocketGateway implements
 
 	constructor(
 		@Inject(forwardRef(() => ChatService))
-		private readonly chatService: ChatService
+		private readonly chatService: ChatService,
+		private readonly socketService: SocketService,
+		private readonly roomService: RoomService
 		) {}
 
 	afterInit() {
@@ -44,30 +50,48 @@ export class SocketGateway implements
 		console.log(`Client connected: ${client.id}`);
 		//TODO rajouter socket pour chaque user, utiliser le token, trouver le moyen de le passe dans le header
 		client.join('server');
+		this.socketService.addSocket(token.id, client);
 	}
 
 	async handleDisconnect(client: Socket) {
 		console.log(`Client disconnected: ${client.id}`);
+		client.leave('server');
+		this.socketService.removeSocket(token.id, client);
+		
 	}
 
-	sendToClient = (clientId: string, type: string, data: any) => {
-		this.server.to(clientId).emit(type, data);
+	sendToClient = (userId: number, type: string, data: any) => {
+		const sockets = this.socketService.getSockets(userId);
+		sockets.map((sock) => {
+			this.server.to(sock.id).emit('info', {type: type, msg: data});
+		});
+	}
+
+	sendPrivateMessage = (userId: number, type : string, data: any) => {
+		const sockets = this.socketService.getSockets(userId);
+		sockets.map((sock) => {
+			this.server.to(sock.id).emit('message', {type, from: data.from, to : data.to, message: data.message});
+			//TODO ne pas oublier de transmettre le moment ou le message a été invoyé aussi. Genre le DTO
+		});
+	}
+
+	sendChannelMessage = (userId: number, channelName: string, channelId: number, type: string, data: any) => {
 	}
 
 	// CHAT EVENTS
 
 	@SubscribeMessage('user')
 	chatUser(
-		@MessageBody('') data : string,
+		@MessageBody('') data : any, //ici il faut faire le truc de block
 		@ConnectedSocket()  client:Socket
 		) :void  {
-		this.chatService.chatUser(client, data);
+		// this.chatService.chatUser(client, data);
 	}
 
 	@SubscribeMessage('message')
 	// @UseGuards(AuthGuard)
 	chatMessage(
-		@MessageBody('') data: {type: string, to: string, message: string, options: string},
+		@MessageBody('') data: {curruser: any, type: string, to: string, channelId: number, message: string, options: string},
 		@ConnectedSocket() client : Socket
 	) {
 		this.chatService.chatMessage(client, data);
@@ -82,21 +106,21 @@ export class SocketGateway implements
 	// 	this.chatService.chatRoom(client, data);
 	// }
 
-	@SubscribeMessage('friend')
-	// @UseGuards(AuthGuard)
-	chatFriend(
-		@MessageBody('') data: {type: string, target: string, options: string},
-		@ConnectedSocket() client: Socket
-	) {
-		this.chatService.chatFriend(client, data);
-	}
+	// @SubscribeMessage('friend')
+	// // @UseGuards(AuthGuard)
+	// chatFriend(
+	// 	@MessageBody('') data: {type: string, target: string, options: string},
+	// 	@ConnectedSocket() client: Socket
+	// ) {
+	// 	this.chatService.chatFriend(client, data);
+	// }
 
-	@SubscribeMessage('reset')
-	resetAll(
-		@ConnectedSocket() client: Socket
-	) {
-			this.chatService.resetAll(client);
-	}
+	// @SubscribeMessage('reset')
+	// resetAll(
+	// 	@ConnectedSocket() client: Socket
+	// ) {
+	// 		this.chatService.resetAll(client);
+	// }
 
 	@SubscribeMessage('handshake')
 	// @UseGuards(AuthGuard)

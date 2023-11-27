@@ -1,14 +1,10 @@
 import { Controller, Post, Body, Get, Req } from '@nestjs/common';
-import { ContextCreator } from '@nestjs/core/helpers/context-creator';
-import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
 import { PrismaClient } from '@prisma/client';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { ChatService } from './chat.service';
-import { Room } from './rooms/model/room.model';
-import { RoomService } from './rooms/services/rooms.service';
-import { MessageService } from './messages/services/messages.service'
-import { Message } from './messages/model/message.model';
-import { UsersService } from './users/services/users.service';
+import { ChatService } from './DBchat.service';
+import { RoomService } from '../rooms/DBrooms.service';
+import { MessagesService } from '../messages/messages.service'
+import { UsersService } from '../users_chat/DBusers.service';
 // import { User } from './users/model/user.model';
 
 
@@ -16,12 +12,12 @@ import { UsersService } from './users/services/users.service';
 export class ChatController {
 
     constructor(
-         private readonly prismaService: PrismaClient,
+        private readonly prismaService: PrismaClient,
         private readonly chatService: ChatService,
 		private readonly userService: UsersService,
         private readonly roomService: RoomService,
 		private readonly authguard: AuthGuard,
-		private readonly messagesService: MessageService
+		private readonly messagesService: MessagesService
     ) {}
 
     /**
@@ -30,24 +26,17 @@ export class ChatController {
      */
     @Get('get-channels') // ne pas oublier les guards.
     async getChannels() {
-        // const rooms = this.roomService.getRooms();
-        // let public : Room[] = [];
-        // rooms.map((room, i) => {
-        //     if (room.visibility == "public")
-        //         public.push(room);
-        // });
-        // return public;
         // les channels qui sont publics et dans lesquels il n'est pas déjà.
-        return await this.prismaService.channel.findMany({
-         where: {
-             visibility: "public",
-			 ChannelMembership: {
-				userId: {
-					not : user.id //of course récupérer le user du Guards
-				}
-			 }
-			}
-        });
+		// const user = AuthGuard.caller; //c'est juste pour essayer
+        // return await this.prismaService.channel.findMany({
+        //  where: {
+		// 	 ChannelMembership: {
+		// 		userId: {
+		// 			not : user.id //of course récupérer le user du Guards
+		// 		}
+		// 	 },
+		// 	}
+        // });
     }
 
 
@@ -59,13 +48,13 @@ export class ChatController {
     @Post('join-channel')
 	//@UseGuards(AuthGuard)
     async joinChannel(
-		@Body() data : {type: string, roomname: string, option : any},
+		@Body() data : {userId: number, type: string, roomname: string,roomId: number, option : any},
 		// canActivate: [AuthGuard]
 	) {
-		if(this.authguard.canActivate()){ // Qu'est ce que c'est que cette histoire de contexte encore ? Puréeeeeeeeee 
+		// if(this.authguard.canActivate()){ // Qu'est ce que c'est que cette histoire de contexte encore ? Puréeeeeeeeee 
 
-			this.chatService.chatRoom(user, data); //récupérer le user de l'authGuard
-		}
+			this.chatService.chatRoom(data.userId, data); //récupérer le user de l'authGuard
+		// }
     }
 
     /**
@@ -75,9 +64,10 @@ export class ChatController {
      */
     @Get('friend-conv')
     async friendMessages(
-		@Req() request: Request	
+		@Body() data: {curruser: any, friendId: number}
 	) {
-		// const user = this.userService.getUserbyId() //! ici il faut retrouver le user avec le token
-        return this.messagesService.getMessages(user, request.body[roomname]);
+		// const user = this.userService.getUserById() //! ici il faut retrouver le user avec le token
+		const user = await this.userService.getUserById(data.curruser.id)
+        return this.messagesService.getMessagesfromConversation(user, data.friendId);
     }
 }

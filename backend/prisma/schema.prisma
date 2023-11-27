@@ -11,131 +11,187 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Ticket {
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  issuedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
 model User {
   id Int @id @default(autoincrement())
 
+  pseudo        String  @unique
   email         String  @unique
   emailVerified Boolean @default(false)
 
-  experience Int @default(0)
+  totpSecret  String?
+  totpEnabled Boolean @default(false)
 
-  befriendedBy Friends[] @relation("users")
-  friends      Friends[] @relation("friends")
-  bannedBy	   Blocked[] @relation("users")
-  blocked	   Blocked[] @relation("blocked")
-  messages     Message[]
+  // The bcrypt password when using email & password login
+  password String?
+
+  avatar String? /////////////////////////////////////////////////
+
+  level      Int   @default(0)
+  experience Float @default(0)
+
+  friends      Friendship[] @relation("users")
+  blocked      Blocked[]    @relation("users")
+  befriendedBy Friendship[] @relation("friends")
+  bannedBy     Blocked[]    @relation("blocked")
+
+  gameParticipation GameParticipation[]
+
+  userConversations UserConversation[]
 
   channelMemberships ChannelMembership[]
-//   ChannelAdministrators	ChannelAdministrators[]
-  conversationTo	Conversations[] @relation("conversations")
-  conversationFrom	Conversations[] @relation("users")
+  ownedChannels      Channel[]
 
-  // gameResults   GameResult[] @relation("players")
+  ftUser  FortyTwoUser?
+  tickets Ticket[]
 
-  ownedChannels Channel[] @relation("ownedChannels")
-
-  ftUser FortyTwoUser?
+  achievements UserAchievement[]
 }
 
-model Conversations {
-	userId		Int
-	converserId	Int
-	createdAt	DateTime	@default(now())
+model Friendship {
+  status Int @default(0) //0 sender   /1 receiver  /2 accepted /3 blocked
 
-	user		User	@relation("users", fields: [userId], references: [id])
-	converser	User	@relation("conversations", fields: [converserId], references: [id])
-
-	//TODO il faut mettre les messages là non ?
-	@@id([userId, converserId])
-}
-
-model Friends {
-  userId    Int
-  friendId  Int
-  createdAt DateTime @default(now())
-  user      User     @relation("users", fields: [userId], references: [id])
-  friend    User     @relation("friends", fields: [friendId], references: [id])
+  userId   Int
+  friendId Int
+  user     User @relation("users", fields: [userId], references: [id])
+  friend   User @relation("friends", fields: [friendId], references: [id])
 
   @@id([userId, friendId])
 }
 
 model Blocked {
-	userId		Int
-	blockedId	Int
-	blockedAt	DateTime	@default(now())
+  userId    Int
+  blockedId Int
+  user      User @relation("users", fields: [userId], references: [id])
+  blocked   User @relation("blocked", fields: [blockedId], references: [id])
 
-	user		User		@relation("users", fields: [userId], references: [id])
-	blocked		User		@relation("blocked", fields: [blockedId], references: [id])
-
-	@@id([userId, blockedId])
+  @@id([userId, blockedId])
 }
 
-model Message {
-  id        Int      @id @default(autoincrement())
+model GameParticipation {
+  id Int @id @default(autoincrement()) // TODO: @@id([userId, gameId])
+
+  opponentId Int
+
+  userId Int
+  gameId Int
+  user   User @relation(fields: [userId], references: [id])
+  game   Game @relation(fields: [gameId], references: [id])
+}
+
+model Game {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+
+  score1             Int
+  score2             Int
+  winnerId           Int
+  looserId           Int
+  gameParticipations GameParticipation[]
+}
+
+model UserConversation {
+  receiverId Int
+
+  userId         Int
+  conversationId Int
+  user           User         @relation(fields: [userId], references: [id])
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+
+  @@id([userId, conversationId])
+}
+
+model Conversation {
+  id Int @id @default(autoincrement())
+
+  socketId String             @unique
+  messages PrivateMessage[]
+  users    UserConversation[]
+}
+
+model PrivateMessage {
+  id Int @id @default(autoincrement())
+
+  authorId  Int
   content   String
   createdAt DateTime @default(now())
-  authorId  Int
-  channelId	Int // est ce que ça peut marcher ça?
 
-  author    User     @relation(fields: [authorId], references: [id])
-}
-
-// enum ChannelVisibility {
-// Private
-// Public
-// InvitationOnly
-// }
-
-model Channel {
-  id         Int      @id @default(autoincrement())
-  ownerId    Int?
-  name	     String
-  createdAt  DateTime @default(now())
-  password   String?
-  visibility String   @default("private")
-  accessMask	Int	@default(0) //0(libre), 1(inviteOnly), 2(Password)
-
-  // visibility ChannelVisibility @default(Private)
-
-  memberships ChannelMembership[]
-//   administration	ChannelAdministrators[]
-
-  
-
-  owner User? @relation("ownedChannels", fields: [ownerId], references: [id])
+  conversationId Int
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
 }
 
 model ChannelMembership {
-  userId         Int
-  channelId      Int
-  joinedAt       DateTime @default(now())
-  permissionMask Int //1(simple member), 2(Administrator) or 4(owner)
-  membershipState	Int @default(1)//1(ok), 2(mute), 4(banned)
+  permissionMask  Int @default(1) //1(simple member), 2(Administrator) or 4(owner)
+  membershipState Int @default(1) //1 (ok), 2 (mute), 4 (ban)
 
-  user    User    @relation(fields: [userId], references: [id])
-  channel Channel @relation(fields: [channelId], references: [id])
+  channelName String
+
+  userId    Int
+  channelId Int
+  user      User    @relation(fields: [userId], references: [id])
+  channel   Channel @relation(fields: [channelId], references: [id])
 
   @@id([userId, channelId])
 }
 
-// enum PlayerSide {
-// Left
-// Right
-// }
+model Channel {
+  id Int @id @default(autoincrement())
 
-// model GameResult {
-//   id Int @default(autoincrement()) @id
-//   createdAt DateTime @default(now())
+  name       String  @unique
+  password   String?
+  accessMask Int     @default(1) //1 (libre), 2 (invite), 4 (pwd)
 
-//   score Int
-//   playerId Int
-//   playerSide String // Either "left" or "right"
+  memberships ChannelMembership[]
+  messages    Message[]
 
-// }
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id])
+}
+
+model Message {
+  id Int @id @default(autoincrement())
+
+  authorId  Int
+  createdAt DateTime @default(now())
+
+  content String
+
+  channelId Int
+  channel   Channel @relation(fields: [channelId], references: [id])
+}
 
 model FortyTwoUser {
-  id          Int    @id
+  id Int @id
+
   accessToken String
   userId      Int?   @unique
   user        User?  @relation(references: [id], fields: [userId])
+}
+
+model UserAchievement {
+  userId        Int
+  achievementId Int
+  createdAt     DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id])
+  achievement Achievement @relation(fields: [achievementId], references: [id])
+
+  @@id([userId, achievementId])
+}
+
+model Achievement {
+  id Int @id @default(autoincrement())
+
+  name        String
+  description String
+  difficulty  Int
+  users       UserAchievement[]
 }

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { UsersService } from '../users/services/users.service';
+import { UsersService } from '../users_chat/DBusers.service';
 import { RoomController } from '../rooms/rooms.controller';
-import { MessageService } from './services/messages.service';
+import { MessagesService } from './messages.service';
 
 @Module({
-  providers: [MessageService, UsersService], //PrismaClient
+  providers: [MessagesService, UsersService], //PrismaClient
 //   controllers: [RoomController],
 })
 export class RoomsModule {}
