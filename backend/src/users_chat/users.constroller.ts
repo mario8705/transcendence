@@ -13,8 +13,6 @@ export class UserController {
 	}
 
 	
-
-	
 	@Post("messages")
 	async messages(
 	@Body('username') username : string,

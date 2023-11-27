@@ -22,6 +22,43 @@ export class ChatService {
 		private readonly socketService: SocketService
 		) {}
 
+
+	async chatUser(
+		userId: number,
+		type: string,
+		targetId: number
+	) {
+		const user = await this.usersService.getUserById(userId);
+		const target = await this.usersService.getUserById(targetId);
+		if (user && target)
+		if (type === "block") {
+			if (await this.usersService.isUserBlocked(user.id, target.id) === true) {
+				this.socketGateway.sendToClient(user.id, 'blocked', "You have already blocked " + target.name);
+				return;
+			}
+			const result = await this.usersService.blockUser(user.id, target.id);
+			if (result !== null) {
+				this.socketGateway.sendToClient(user.id, 'blocked', target.name + "has been blocked");
+				return;
+			}
+			this.socketGateway.sendToClient(userId, 'blocked', "Couldn't block " + target.name + ", please retry later");
+			return;
+		}
+		else if (type === "unblock") {
+			if (await this.usersService.isUserBlocked(user.id, target.id) === false) {
+				this.socketGateway.sendToClient(user.id, 'blocked', target.name + " was not blocked");
+				return;
+			}
+			const result = await this.usersService.unBlockUser(user.id, target.id);
+			if (result !== null) {
+				this.socketGateway.sendToClient(user.id, 'blocked', target.name + " has been successfully unblocked");
+				return;
+			}
+			this.socketGateway.sendToClient(userId, 'blocked', "Couldn't unblock " + target.name + ", please retry later");
+			return;
+		}
+	}
+	
 	// async chatUser(
 	// 	client: Socket, 
 	// 	data : {type: string, option: {target: string}}
@@ -44,26 +81,6 @@ export class ChatService {
 	// 	// 	client.broadcast.emit('newUser', {id: client.id, name: data});
 	// 	// }
 	// 	// console.log(data);
-	// 	if (data.type == "block") {
-	// 		const user = this.usersService.getUserById(client.id); //pb ici
-	// 		const target = this.usersService.getUserbyName(data.option.target);
-	// 		if (target !== null)
-	// 		{
-	// 			const block = await this.prismaService.blocked.create({
-	// 				data: {
-	// 					userId: user.id,
-	// 					blockedId: target.id
-	// 				}
-	// 			});
-	// 			if (block == null) {
-	// 				const msg = "Couln't block " + target.name;
-	// 				this.socketGateway.sendToClient(user.id, 'block', data);
-	// 			} else {
-	// 				const msg = target.name + ' has been blocked';
-	// 				this.socketGateway.sendToClient(user.id, 'block', msg)
-	// 			}
-	// 		}
-	// 	}
 	// }
 
 	async chatMessage(
@@ -92,15 +109,17 @@ export class ChatService {
 						const convSocketId = await this.conversationsService.getConversationSocketId(user.id, dest.id);
 						if (convSocketId !== null && conversation !== null)
 							this.socketService.joinConversation(user.id, dest.id, convSocketId.socketId);
-						else
+						else {
 							this.socketGateway.sendToClient(user.id, 'error', "The server failed to create this conversation, please try again later");
-						// this.socketGateway.server.to(conversation.id).emit('message') //?C'est quoi ça?
+							return;
+						}
 					}
 					const newMsg = this.messagesService.newPrivateMessage(user.id, conversation.id, data.message);
 					//! il faut émettre le message sur la conversation maintenant.
 					// this.socketGateway.server.to(conversationId.id).emit('message', {from : user.pseudo, to: data.to, message: data.message}); //! revoir comment j'envoie le message
 				} else
 					this.socketGateway.sendToClient(user.id, 'message', "No such connected user");
+					return;
 			}
 		}
 		else if (data.type === 'channel') {

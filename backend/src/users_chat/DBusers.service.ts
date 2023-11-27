@@ -12,12 +12,12 @@ export class UsersService {
 		private readonly socketService: SocketService
 		) {}
 
-	async areFriends(user: any, friend: any) : Promise<any> {
+	async areFriends(userId: number, friendId: number) : Promise<any> {
 		const friends = await this.prismaService.friendship.findUnique({
 			where: {
 				userId_friendId: {
-					userId: user.id,
-					friendId: friend.id
+					userId: userId,
+					friendId: friendId
 				}
 			}
 		});
@@ -25,8 +25,8 @@ export class UsersService {
 			return await this.prismaService.friendship.findUnique({
 				where: {
 					userId_friendId : {
-						userId: friend.id,
-						friendId: user.id
+						userId: friendId,
+						friendId: userId
 				}}
 			})
 		}
@@ -35,38 +35,38 @@ export class UsersService {
 	}
 
 
-	async addFriend(user: any, friend: any) : Promise<any> {
+	async addFriend(userId: number, friendId: number) : Promise<any> {
 			const friendship = await this.prismaService.friendship.createMany({
 				data: [
-					{userId_friendId: {userId: user.id, friendId: friend.id}},
-					{userId_friendId: {userId: friend.id, friendId: user.id}}
+					{userId_friendId: {userId: userId, friendId: friendId}},
+					{userId_friendId: {userId: friendId, friendId: userId}}
 				]
 			})
 			return friendship;
 	}
 
 
-	async removeFriend(user: any, friend : any) : Promise<any> {
+	async removeFriend(userId: number, friendId: number) : Promise<any> {
 		return await this.prismaService.friendship.delete({
 			where: {
 				userId_friendId :{
-				userId: user.id,
-				friendId: friend.id
+				userId: userId,
+				friendId: friendId
 			}}
 		});
 	}
 
-	async blockUser(user: any, target: any) : Promise<any> {
+	async blockUser(userId: number, targetId: number) : Promise<any> {
 		return await this.prismaService.blocked.upsert({
 			where: {
 				userId_blockedId: {
-				userId: user.id,
-				blockedId: target.id
+				userId: userId,
+				blockedId: targetId
 			}},
 			update: {},
 			create: {
-				userId: user.id,
-				blockedId: target.id
+				userId: userId,
+				blockedId: targetId
 			}
 		});
 	}
@@ -120,36 +120,6 @@ export class UsersService {
 		});
 	}
 
-	// addSocket(user: any, socket: Socket) {
-	// 	this.connectedUsers.map((obj) => {
-	// 		if (obj.userId === user.id) {
-	// 			obj.sockets.push(socket);
-	// 		}
-	// 	})
-	// }
-
-	// async updateSocketId(name: string, id: number) : Promise<any> {
-	// 	return this.prismaService.user.update({
-	// 		where: {
-	// 			name: name
-	// 		},
-	// 		data: {
-	// 			id: id
-	// 		}
-	// 	});
-	// }
-
-	// async updateSocket(name: string, newSocket : Socket): Promise<any> {
-	// 	return this.prismaService.user.update({
-	// 		where : {
-	// 			name: name
-	// 		},
-	// 		data: {
-	// 			Socket: newSocket
-	// 		}
-	// 	});
-	// }
-
 	async updateName(pseudo: string, id: number) : Promise<any> {
 		return this.prismaService.user.update({
 			where: {
@@ -175,24 +145,33 @@ export class UsersService {
 	// 	})
 	// }
 
-	async isUserBlocked(user: any, target: any) : Promise<any> {
+	async isUserBlocked(userId: number, targetId: number) : Promise<any> {
 		return await this.prismaService.blocked.findUnique({
 			where: {
 				userId_blockedId: {
-				userId: user.id,
-				blockedId: target.id
+				userId: userId,
+				blockedId: targetId
 			}}
 		});
 	}
 
-	async blockedByUser(user: any, target: any) : Promise<any> {
+	async blockedByUser(userId: number, targetId: number) : Promise<any> {
 		return await this.prismaService.blocked.findUnique({
 			where: {
 				userId_blockedId : {
-				userId: target.id,
-				blockedId: user.id
+				userId: targetId,
+				blockedId: userId
 			}}
 		}); 
+	}
+
+	async unBlockUser(userId: number, targetId: number) : Promise<any> {
+		return await this.prismaService.blocked.delete({where: {
+			userId_blockedId: {
+				userId: userId,
+				blockedId: targetId
+			}
+		}});
 	}
 
 }
