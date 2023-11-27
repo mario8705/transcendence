@@ -23,10 +23,10 @@ model User {
   level                Int          @default(0)
   experience           Float        @default(0)
 
-  befriendedBy         Friendship[] @relation("friends")
   friends              Friendship[] @relation("users")
-  bannedBy	           Blocked[]    @relation("users")
-  blocked	             Blocked[]    @relation("blocked")
+  blocked	             Blocked[]    @relation("users")
+  befriendedBy         Friendship[] @relation("friends")
+  bannedBy	           Blocked[]    @relation("blocked")
 
   gameParticipation    GameParticipation[]
 
