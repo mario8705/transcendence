@@ -11,12 +11,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Ticket {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  issuedAt       DateTime @default(now())
+
+  user      User       @relation(fields: [userId], references: [id])
+}
+
 model User {
   id                   Int          @id @default(autoincrement())
 
   pseudo               String       @unique
   email                String       @unique
   emailVerified        Boolean      @default(false)
+
+  totpSecret           String?
+  totpEnabled          Boolean @default(false)
+
+  // The bcrypt password when using email & password login
+  password             String?
 
   avatar               String?   /////////////////////////////////////////////////
 
@@ -36,6 +50,7 @@ model User {
   ownedChannels        Channel[]
 
   ftUser               FortyTwoUser?
+  tickets              Ticket[]
 
   achievements         UserAchievement[]
 }
@@ -61,14 +76,14 @@ model Blocked {
 }
 
 model GameParticipation {
-  @@id([userId, gameId])
+  id          Int     @id @default(autoincrement()) // TODO: @@id([userId, gameId])
 
-  opponentId    Int
+  opponentId Int
 
-  userId        Int
-  gameId        Int
-  user          User     @relation(fields: [userId], references: [id])
-  game          Game     @relation(fields: [gameId], references: [id])
+  userId      Int
+  gameId      Int
+  user        User    @relation(fields: [userId], references: [id])
+  game        Game    @relation(fields: [gameId], references: [id])
 }
 
 model Game {
@@ -76,8 +91,8 @@ model Game {
 
   createdAt          DateTime @default(now())
 
-  winnerScore         Int
-  looserScore         Int
+  score1              Int
+  score2              Int
   winnerId            Int
   looserId            Int
   gameParticipations  GameParticipation[]
