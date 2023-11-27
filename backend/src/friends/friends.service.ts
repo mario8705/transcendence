@@ -207,7 +207,6 @@ export class FriendsService {
         status: true,
       },
     });
-    console.log(friendshipUserToFriend, friendshipFriendToUser);
     if (friendshipUserToFriend.status == 1 && friendshipFriendToUser.status == 0) {
       await this.prisma.friendship.update({
         where: {

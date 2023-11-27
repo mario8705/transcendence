@@ -34,7 +34,6 @@ const FriendList: React.FC = () => {
 	}, []); 
 
 	const ParentRerender = (data: FriendElem[] | null) => {
-		console.log(data);
 		setFriendList(data);
 	};
 	
