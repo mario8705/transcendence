@@ -49,7 +49,7 @@ const PlayPage: React.FC = () => {
             // navigate('/selectfriend');
             return ;
         }
-        }
+    }
 
     const handleCancel = () => {
         SocketState.socket?.emit("cancelGameSearch");
@@ -57,13 +57,14 @@ const PlayPage: React.FC = () => {
     };
 
     const launchRandomNormal = useCallback(() => {
+        console.log("Launch game received");
         navigate('/game-normal');
     }, []);
 
     const launchRandomSpecial = useCallback(() => {
         navigate('/game-special');
     }, []);
-
+    
     useEffect(() => {
         SocketState.socket?.on("launchRandomNormal", launchRandomNormal);
         SocketState.socket?.on("launchRandomSpecial", launchRandomSpecial);

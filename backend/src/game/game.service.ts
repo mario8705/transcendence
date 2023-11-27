@@ -74,6 +74,8 @@ interface gameParam {
 	roomName: string,
 	isFull: boolean,
 	isRunning: boolean,
+	startTime: number | null,
+	countdown: number,
 	userIdLeft: number | null,
 	userIdRight: number | null,
 	socketLeft: Socket | null,
@@ -158,6 +160,8 @@ export class GameService {
 			roomName: roomName,
 			isFull: false,
 			isRunning: false,
+			startTime: null,
+			countdown: 3,
 			userIdLeft: null,
 			userIdRight: null,
 			socketLeft: socket,
@@ -344,20 +348,23 @@ export class GameService {
 			const state = currGame.state;
 
 			if (!currGame.isRunning && currGame.isFull) {
-				if (currGame.mode === NORMAL_MODE) {
+				if (!currGame.startTime && currGame.mode === NORMAL_MODE) {
 					this.socketGateway.server
-						.to(currGame.roomName)
-						.emit("launchRandomNormal");
-					currGame.isRunning = true;
-					
+					.to(currGame.roomName)
+					.emit("launchRandomNormal");
+					currGame.startTime = new Date().getTime();
 				}
-				else if (currGame.mode === SPECIAL_MODE) {
+				else if (!currGame.startTime && currGame.mode === SPECIAL_MODE) {
 					this.socketGateway.server
-						.to(currGame.roomName)
-						.emit("launchRandomSpecial");
-					currGame.isRunning = true;
+					.to(currGame.roomName)
+					.emit("launchRandomSpecial");
+					currGame.startTime = new Date().getTime();
 				}
+				this.updateFrontCountdown(currGame);
+				if (new Date().getTime() - currGame.startTime > 3200)
+					currGame.isRunning = true;
 			}
+
 			if (!currGame.isRunning)
 				continue;
 
@@ -604,6 +611,21 @@ export class GameService {
 				return i;
 		}
 		return SOCKET_NOT_FOUND;
+	}
+
+	updateFrontCountdown(currGame: gameParam) {
+		if (currGame.countdown == 3 && new Date().getTime() - currGame.startTime > 1000) {
+			this.socketGateway.server.to(currGame.roomName).emit("countdown");
+			currGame.countdown = 2;
+		}
+		else if (currGame.countdown == 2 && new Date().getTime() - currGame.startTime > 2000) {
+			this.socketGateway.server.to(currGame.roomName).emit("countdown");
+			currGame.countdown = 1;
+		}
+		else if (currGame.countdown == 1 && new Date().getTime() - currGame.startTime > 3000) {
+			this.socketGateway.server.to(currGame.roomName).emit("countdown");
+			currGame.countdown = 0;
+		}
 	}
 
 }
