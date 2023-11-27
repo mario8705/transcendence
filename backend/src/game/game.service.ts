@@ -20,7 +20,7 @@ const GAME_MAX_GOAL = 2;
 
 const PADDLE_SPEED = 6;
 const BALL_SPEED_Y = 5;
-const BALL_SPEED_X = 1.5;
+const BALL_SPEED_X = 1;
 const BALL_SPEED_MOD = 2;
 
 const NORMAL_MODE = 0;
@@ -30,6 +30,7 @@ const LEFT = 0;
 const RIGHT = 1;
 const SHIELD_NOT_ACTIVATED = -1;
 let TURN = LEFT;
+const SPEED_THRESHOLD = 4
 
 interface scoreElem {
 	leftPlayer: number,
@@ -361,8 +362,10 @@ export class GameService {
 					currGame.startTime = new Date().getTime();
 				}
 				this.updateFrontCountdown(currGame);
-				if (new Date().getTime() - currGame.startTime > 3200)
+				if (new Date().getTime() - currGame.startTime > 3200) {
 					currGame.isRunning = true;
+					this.resetGamePosition(currGame);
+				}
 			}
 
 			if (!currGame.isRunning)
@@ -391,19 +394,25 @@ export class GameService {
 			const state = currGame.state;
 
 			if (!currGame.isRunning && currGame.isFull) {
-				if (currGame.mode === NORMAL_MODE) {
+				if (!currGame.startTime && currGame.mode === NORMAL_MODE) {
 					this.socketGateway.server
-						.to(currGame.roomName)
-						.emit("launchRandomNormal");
-					currGame.isRunning = true;
+					.to(currGame.roomName)
+					.emit("launchRandomNormal");
+					currGame.startTime = new Date().getTime();
 				}
-				else if (currGame.mode === SPECIAL_MODE) {
+				else if (!currGame.startTime && currGame.mode === SPECIAL_MODE) {
 					this.socketGateway.server
-						.to(currGame.roomName)
-						.emit("launchRandomSpecial");
+					.to(currGame.roomName)
+					.emit("launchRandomSpecial");
+					currGame.startTime = new Date().getTime();
+				}
+				this.updateFrontCountdown(currGame);
+				if (new Date().getTime() - currGame.startTime > 3200) {
 					currGame.isRunning = true;
+					this.resetGamePosition(currGame);
 				}
 			}
+
 			if (!currGame.isRunning)
 				continue;
 
@@ -427,9 +436,10 @@ export class GameService {
 		const state = currGame.state;
 
 		state.ball.speed.y = 0;
-		while (Math.abs(state.ball.speed.y) <= 0.2 || Math.abs(state.ball.speed.y) >= 0.9) {
-			const heading = Math.random() * (2 * Math.PI - 0) + 0;
-			state.ball.speed = { x: BALL_SPEED_X, y: Math.sin(heading) }
+		while (Math.abs(state.ball.speed.y) <= 0.2 || Math.abs(state.ball.speed.y) >= 0.8) {
+			const heading = Math.random() * (2 * Math.PI);
+			const x_dir = Math.random() >= 0.5 ? 1 : -1;
+			state.ball.speed = { x: BALL_SPEED_X * x_dir, y: Math.sin(heading) }
 		}
 
 		state.ball.x = Math.round(BOARD_WIDTH / 2);
@@ -469,6 +479,7 @@ export class GameService {
 
 	moveBall(currGame: gameParam) {
 		const state = currGame.state;
+		const server = this.socketGateway.server;
 
 		function checkWallCollision(ball: ballElem) {
 			if (ball.y - ball.radius <= 0 && ball.speed.y < 0
@@ -499,24 +510,40 @@ export class GameService {
 	
 			if (leftPaddleCollision() && ball.speed.x < 0) {
 				const relativeBallPos = ball.y - (leftPad.y + leftPad.length / 2);
-				ball.speed.x *= -1;
-				ball.speed.y = ball.speed.x * BALL_SPEED_Y * (relativeBallPos / leftPad.length / 2);
+				const currTime = new Date().getTime();
+
 				if (currGame.mode == SPECIAL_MODE && Math.abs(new Date().getTime() - leftPad.activate) < 400) {
-					this.socketGateway.server.to(currGame.roomName).emit("shield", "left");
+					server.to(currGame.roomName).emit("shield", "left");
 					ball.speedModifyer += 0.2;
-					console.log("leftPad shielded")
+					ball.speed.x *= -1;
+					ball.speed.y = ball.speed.x * BALL_SPEED_Y * (relativeBallPos / leftPad.length / 2);
+				}
+				else if (currGame.mode == SPECIAL_MODE && ball.speedModifyer > 3 && Math.abs(currTime - rightPad.activate) >= 400) {
+					// destroy paddle
+				}
+				else {
+					ball.speed.x *= -1;
+					ball.speed.y = ball.speed.x * BALL_SPEED_Y * (relativeBallPos / leftPad.length / 2);
 				}
 				leftPad.activate = SHIELD_NOT_ACTIVATED;
 				TURN = RIGHT;
 			}
 			if (rightPaddleCollision() && ball.speed.x > 0) {
 				const relativeBallPos = ball.y - (rightPad.y + rightPad.length / 2);
-				ball.speed.x *= -1;
-				ball.speed.y = ball.speed.x * (BALL_SPEED_Y * -1) * (relativeBallPos / rightPad.length / 2);
-				if (currGame.mode == SPECIAL_MODE && Math.abs(new Date().getTime() - rightPad.activate) < 400) {
-					this.socketGateway.server.to(currGame.roomName).emit("shield", "right");
+				const currTime = new Date().getTime();
+
+				if (currGame.mode == SPECIAL_MODE && Math.abs(currTime - rightPad.activate) < 400) {
+					server.to(currGame.roomName).emit("shield", "right");
 					ball.speedModifyer += 0.2;
-					console.log("rightPad shielded")
+					ball.speed.x *= -1;
+					ball.speed.y = ball.speed.x * (BALL_SPEED_Y * -1) * (relativeBallPos / rightPad.length / 2);
+				}
+				else if (currGame.mode == SPECIAL_MODE && ball.speedModifyer > SPEED_THRESHOLD && Math.abs(currTime - rightPad.activate) >= 400) {
+					// destroy paddle
+				}
+				else {
+					ball.speed.x *= -1;
+					ball.speed.y = ball.speed.x * (BALL_SPEED_Y * -1) * (relativeBallPos / rightPad.length / 2);
 				}
 				rightPad.activate = SHIELD_NOT_ACTIVATED;
 				TURN = LEFT;
