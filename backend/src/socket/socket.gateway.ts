@@ -12,7 +12,14 @@ import {
 import { GameService } from "src/game/game.service";
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { ChatService } from "src/chat/chat.service";
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import { ChatMessageEvent } from "src/events/chat/message.event";
+import { GameJoinRandomEvent } from "src/events/game/joinRandom.event";
+import { GameCancelSearchEvent } from "src/events/game/cancelSearch.event";
+import { GameKeyUpEvent } from "src/events/game/keyUp.event";
+import { GameKeyDownEvent } from "src/events/game/keyDown.event";
 
+@Injectable()
 @WebSocketGateway({
 	cors: {
 		origin: ["http://localhost:5173"],
@@ -30,13 +37,12 @@ export class SocketGateway implements
 	server: Server;
 
 	constructor(
-		@Inject(forwardRef(() => ChatService))
-		private readonly chatService: ChatService
+			@Inject(forwardRef(() => ChatService))
+			private readonly chatService: ChatService,
+			private readonly eventEmitter: EventEmitter2
 		) {}
 
 	afterInit() {
-		this.gameHandler = new GameService(this.server);
-		this.gameHandler.tick();
 		console.log("Init socket Gateway")
 	}
 
@@ -110,24 +116,24 @@ export class SocketGateway implements
 	// GAME EVENTS
 
 	@SubscribeMessage("joinRandomNormal")
-	onRandomNormal(
+	onJoinRandomNormal(
 		@ConnectedSocket() socket: Socket)
 	{
-		this.gameHandler.joinRandomMatch(socket, 0);
+		this.eventEmitter.emit('game.joinRandom', new GameJoinRandomEvent(socket, 0));
 	}
 	
 	@SubscribeMessage("joinRandomSpecial")
 	onRandomSpecial(
 		@ConnectedSocket() socket: Socket)
 	{
-			this.gameHandler.joinRandomMatch(socket, 1);
+		this.eventEmitter.emit('game.joinRandom', new GameJoinRandomEvent(socket, 1));
 	}
 
 	@SubscribeMessage('cancelGameSearch')
 	onCancelSearch(
 		@ConnectedSocket() socket: Socket)
 	{
-		this.gameHandler.removeFromGame(socket);
+		this.eventEmitter.emit('game.cancelSearch', new GameCancelSearchEvent(socket));
 	}
 
 	@SubscribeMessage("keyUp")
@@ -135,7 +141,7 @@ export class SocketGateway implements
 		@ConnectedSocket() socket: Socket,
 		@MessageBody() key: string)
 	{
-		this.gameHandler.keyUp(socket.id, key);
+		this.eventEmitter.emit('game.keyUp', new GameKeyUpEvent(socket, key));
 	}
 
 	@SubscribeMessage("keyDown")
@@ -143,7 +149,7 @@ export class SocketGateway implements
 		@ConnectedSocket() socket: Socket,
 		@MessageBody() key: string)
 	{
-		this.gameHandler.keyDown(socket.id, key);
+		this.eventEmitter.emit('game.keyDown', new GameKeyDownEvent(socket, key));
 	}
 
 }

@@ -1,11 +1,12 @@
 import { Module } from "@nestjs/common";
-import { GameController } from './game.controller';
 import { GameService } from './game.service';
-import { SocketGateway } from "src/socket/socket.gateway";
+import { PrismaModule } from "src/prisma/prisma.module";
+import { SocketModule } from "src/socket/socket.module";
+import { PrismaService } from "src/prisma/prisma.service";
 
 @Module({
-  imports: [],
-  controllers: [GameController],
-  providers: [GameService]
+  imports: [PrismaModule, SocketModule],
+  providers: [GameService],
+  exports: [GameService],
 })
 export class GameModule {}
