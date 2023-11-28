@@ -30,7 +30,8 @@ const LEFT = 0;
 const RIGHT = 1;
 const SHIELD_NOT_ACTIVATED = -1;
 let TURN = LEFT;
-const SPEED_THRESHOLD = 4
+const SPEED_THRESHOLD = 4;
+const SHIELD_MAX_INTERVAL = 400;
 
 interface scoreElem {
 	leftPlayer: number,
@@ -442,6 +443,7 @@ export class GameService {
 			state.ball.speed = { x: BALL_SPEED_X * x_dir, y: Math.sin(heading) }
 		}
 
+		state.ball.speedModifyer = BALL_SPEED_MOD;
 		state.ball.x = Math.round(BOARD_WIDTH / 2);
 		state.ball.y = Math.round(BOARD_HEIGHT / 2);
 
@@ -512,7 +514,7 @@ export class GameService {
 				const relativeBallPos = ball.y - (leftPad.y + leftPad.length / 2);
 				const currTime = new Date().getTime();
 
-				if (currGame.mode == SPECIAL_MODE && Math.abs(new Date().getTime() - leftPad.activate) < 400) {
+				if (currGame.mode == SPECIAL_MODE && Math.abs(new Date().getTime() - leftPad.activate) < SHIELD_MAX_INTERVAL) {
 					server.to(currGame.roomName).emit("shield", "left");
 					ball.speedModifyer += 0.2;
 					ball.speed.x *= -1;
@@ -532,7 +534,7 @@ export class GameService {
 				const relativeBallPos = ball.y - (rightPad.y + rightPad.length / 2);
 				const currTime = new Date().getTime();
 
-				if (currGame.mode == SPECIAL_MODE && Math.abs(currTime - rightPad.activate) < 400) {
+				if (currGame.mode == SPECIAL_MODE && Math.abs(currTime - rightPad.activate) < SHIELD_MAX_INTERVAL) {
 					server.to(currGame.roomName).emit("shield", "right");
 					ball.speedModifyer += 0.2;
 					ball.speed.x *= -1;
