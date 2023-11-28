@@ -13,7 +13,7 @@ interface gameProps {
 	width: number,
 	height: number,
 	className: string,
-	specialMode?: boolean,
+	specialMode: boolean,
 }
 
 interface paddleElem {
@@ -115,8 +115,8 @@ const Game: React.FC<gameProps> = (props) => {
 		// score
 		ctx.fillStyle = colorYellow;
 		ctx.font = "40px Short Stack";
-		ctx.fillText(score.leftPlayer, Math.round(props.width / 2 / 2), Math.round(height / 8));
-		ctx.fillText(score.rightPlayer,Math.round(props.width / 2 * 1.5), Math.round(height / 8));
+		ctx.fillText(score.leftPlayer, Math.round(width / 2 / 2), Math.round(height / 8));
+		ctx.fillText(score.rightPlayer,Math.round(width / 2 * 1.5), Math.round(height / 8));
 	};
 
 	function drawStart(ctx: CanvasRenderingContext2D, count: number): void {
@@ -125,6 +125,7 @@ const Game: React.FC<gameProps> = (props) => {
 
 		ctx.fillStyle = colorYellow;
 		ctx.font = "40px Short Stack";
+		ctx.fillText("Get READY !", Math.round(width / 3), Math.round(height / 8));
 		ctx.fillText(count.toString(), Math.round(width / 2), Math.round(height / 2));
 	};
 
@@ -152,8 +153,7 @@ const Game: React.FC<gameProps> = (props) => {
 		}
 	};
 
-	const activateShield = useCallback((color: string) => {
-
+	const activateShield = useCallback((side: string) => {
 	}, []);
 
 	const finishGame = useCallback(() => {

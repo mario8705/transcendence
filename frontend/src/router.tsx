@@ -9,6 +9,7 @@ import Chat from './components/Chat/Chat';
 import HomePage from './pages/HomePage';
 import PlayPage from './pages/PlayPage';
 import RegisterForm from './components/RegisterForm/RegisterForm';
+import GameWrapper from './components/Game/GameWrapper';
 
 export const router = createBrowserRouter([
     {
@@ -29,11 +30,11 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/game-normal',
-                element: <Game className="gameCanvas" width={800} height={600} specialMode={false} />,
+                element: <GameWrapper width={800} height={600} specialMode={false} />,
             },
             {
                 path: '/game-special',
-                element: <Game className="gameCanvas" width={800} height={600} specialMode={true} />,
+                element: <GameWrapper width={800} height={600} specialMode={true} />,
             },
             {
                 path: '/chat',
