@@ -12,7 +12,6 @@ import {
 import { GameService } from "src/game/game.service";
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { ChatService } from "src/chat/DBchat.service";
-import { User } from "src/users_chat/user.model";
 import { SocketService } from "./socket.service";
 import { RoomService } from "src/rooms/DBrooms.service";
 
@@ -50,13 +49,13 @@ export class SocketGateway implements
 		console.log(`Client connected: ${client.id}`);
 		//TODO rajouter socket pour chaque user, utiliser le token, trouver le moyen de le passe dans le header
 		client.join('server');
-		this.socketService.addSocket(token.id, client);
+		// this.socketService.addSocket(token.id, client);
 	}
 
 	async handleDisconnect(client: Socket) {
 		console.log(`Client disconnected: ${client.id}`);
 		client.leave('server');
-		this.socketService.removeSocket(token.id, client);
+		// this.socketService.removeSocket(token.id, client);
 		
 	}
 
@@ -97,14 +96,15 @@ export class SocketGateway implements
 		this.chatService.chatMessage(client, data);
 	}
 
-	// @SubscribeMessage('room')
-	// // @UseGuards(AuthGuard)
-	// chatRoom(
-	// 	@MessageBody('') data : {type: string, roomname: string, option: any},
-	// 	@ConnectedSocket()  client:Socket
-	// ) {
-	// 	this.chatService.chatRoom(client, data);
-	// }
+	@SubscribeMessage('room')
+	// @UseGuards(AuthGuard)
+	chatRoom(
+		@MessageBody('') data : {userId: number, type: string, roomname: string, roomId: number, option: any},
+		@ConnectedSocket()  client:Socket
+	) {
+		this.chatService.chatRoom(data);
+	}
+
 
 	// @SubscribeMessage('friend')
 	// // @UseGuards(AuthGuard)

@@ -32,12 +32,17 @@ export class ConversationsService {
 			}
 		})
 		if(conversation) {
-			const userConversations = this.prismaService.userConversation.createMany({
-			data: [
-				{userId: userId, receiverId: targetId, conversationId: conversation.id},
-				{userId: targetId, receiverId: userId, conversationId: conversation.id}
-		]});
-			if (!userConversations)
+			const conversation1 = await this.prismaService.userConversation.create({
+				data: {
+					userId: userId, receiverId: targetId, conversationId: conversation.id
+				}
+			});
+			const conversation2 = await this.prismaService.userConversation.create({
+				data: {
+					userId: userId, receiverId: targetId, conversationId: conversation.id
+				}
+			});
+			if (!conversation1 || !conversation2)
 				return "coulnd't create user conversation."
 			
 		}

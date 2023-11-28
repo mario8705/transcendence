@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-// import { MessagesService } from 'src/modules/messages/services/messages.service';
-import { UsersService } from '../users_chat/DBusers.service';
 import { SocketGateway } from './socket.gateway';
-import { RoomService } from '../rooms/DBrooms.service'
-import { ChatService } from 'src/chat/DBchat.service';
-import { GameService } from 'src/game/game.service';
+import { SocketService } from './socket.service';
+import { GameModule } from 'src/game/game.module';
+import { UsersModule } from 'src/users_chat/users.module';
+import { RoomsModule } from 'src/rooms/rooms.module';
+import { ChatModule } from 'src/chat/chat.module';
 
 @Module({
-	imports: [GameService],
-	providers: [ChatService, GameService, UsersService, RoomService, SocketGateway],
-	controllers: [],
+	providers: [SocketService, SocketGateway],
+	imports: [RoomsModule, ChatModule],
+	exports: [SocketService, SocketGateway]
 })
 
 export class SocketModule {}

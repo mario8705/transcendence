@@ -12,6 +12,7 @@ import { SocketService } from 'src/socket/socket.service';
 export class ChatService {
 	constructor(
 		private readonly usersService: UsersService,
+		@Inject(forwardRef(() => RoomService))
 		private readonly roomService: RoomService,
 		@Inject(forwardRef(() => SocketGateway))
 		private readonly socketGateway: SocketGateway,
@@ -147,7 +148,7 @@ export class ChatService {
 	}
 
 	async chatRoom( //! modifier cette fonction pour qu'elle renvoie par API et non pas par socket
-		client: Socket,
+		// client: Socket,
 		data: {userId: number, type: string, roomname: string, roomId: number, option: any},
 	) {
 		const user = await this.usersService.getUserById(data.userId);
@@ -288,6 +289,18 @@ export class ChatService {
 				}
 			}
 			
+		}
+	}
+
+	async getPrivateConversations(
+		userId: number,
+		targetId: number
+	){
+		const conversation = await this.conversationsService.conversationExists(userId, targetId);
+		if (conversation) {
+			return await this.messagesService.getMessagesfromConversation(userId, targetId);
+		}else {
+			return "No such Conversation";
 		}
 	}
 

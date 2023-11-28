@@ -1,14 +1,17 @@
 import { Module } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
-import { SocketGateway } from 'src/socket/socket.gateway';
 import { SocketModule } from 'src/socket/socket.module';
 import { ChatService } from './DBchat.service';
 import { RoomsModule } from '../rooms/rooms.module';
-import { RoomService } from '../rooms/DBrooms.service';
-import { UsersService } from '../users_chat/DBusers.service';
+import { UsersModule } from 'src/users_chat/users.module';
+import { ChatController } from './chat.controller';
+import { MessagesModule } from 'src/messages/messages.module';
+import { PrismaModule } from 'src/prisma/prisma.module';
+import { GameModule } from 'src/game/game.module';
 
 @Module({
-  providers: [ChatService, RoomService, UsersService, SocketGateway], //PrismaClient
-  imports: [SocketModule, RoomsModule],
+	providers: [ChatService],
+	imports: [SocketModule, RoomsModule, MessagesModule, UsersModule, PrismaModule, GameModule],
+	controllers: [ChatController],
+	exports: [ChatService]
 })
 export class ChatModule {}

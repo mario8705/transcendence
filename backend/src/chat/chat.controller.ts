@@ -29,35 +29,31 @@ export class ChatController {
 		return this.roomService.getPublicRooms(userId);
     }
 
-
-    /**
-     * @param {User} user // from the authguard
-     * @param {any} data
-	 * @return //je ne sais pas encore
-     */
-    @Post('join-channel')
-	//@UseGuards(AuthGuard)
-    async joinChannel(
-		@Body() data : {userId: number, type: string, roomname: string,roomId: number, option : any},
-		// canActivate: [AuthGuard]
+	@Post('join-channel')
+	async joinChannel(
+		@Body() data: {userId: number, type: string, roomname: string, roomId: number, option: any}
 	) {
-		// if(this.authguard.canActivate()){ // Qu'est ce que c'est que cette histoire de contexte encore ? Puréeeeeeeeee 
+		return await this.chatService.chatRoom(data);
+	}
 
-			this.chatService.chatRoom(data.userId, data); //récupérer le user de l'authGuard
-		// }
-    }
-
-    /**
-     * @param {User} user
-     * @param {string} friend
-     * @return all messages from the private conversation between two users.
-     */
-    @Get('friend-conv')
-    async friendMessages(
-		@Body() data: {curruser: any, friendId: number}
+	@Get('private-conv')
+	async privateMessages(
+		@Body() data: {userId: number, targetId: number}
 	) {
-		// const user = this.userService.getUserById() //! ici il faut retrouver le user avec le token
-		const user = await this.userService.getUserById(data.curruser.id)
-        return this.messagesService.getMessagesfromConversation(user, data.friendId);
-    }
+		return await this.chatService.getPrivateConversations(data.userId, data.targetId);
+	}
+
+    // /**
+    //  * @param {User} user
+    //  * @param {string} friend
+    //  * @return all messages from the private conversation between two users.
+    //  */
+    // @Get('friend-conv')
+    // async friendMessages(
+	// 	@Body() data: {curruser: any, friendId: number}
+	// ) {
+	// 	// const user = this.userService.getUserById() //! ici il faut retrouver le user avec le token
+	// 	const user = await this.userService.getUserById(data.curruser.id)
+    //     return this.messagesService.getMessagesfromConversation(user, data.friendId);
+    // }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 import { Socket } from 'socket.io';
 import { SocketService } from 'src/socket/socket.service';
 
@@ -8,7 +8,7 @@ import { SocketService } from 'src/socket/socket.service';
 export class UsersService {
 
 	constructor(
-		private readonly prismaService : PrismaClient,
+		private readonly prismaService : PrismaService,
 		private readonly socketService: SocketService
 		) {}
 
@@ -35,15 +35,14 @@ export class UsersService {
 	}
 
 
-	async addFriend(userId: number, friendId: number) : Promise<any> {
-			const friendship = await this.prismaService.friendship.createMany({
-				data: [
-					{userId_friendId: {userId: userId, friendId: friendId}},
-					{userId_friendId: {userId: friendId, friendId: userId}}
-				]
-			})
-			return friendship;
-	}
+	// async addFriend(userId: number, friendId: number) : Promise<any> {
+	// 		const friendship1 = await this.prismaService.friendship.createMany({
+	// 			data:
+	// 				{userId_friendId: {userId: userId, friendId: friendId}},
+	// 				{userId_friendId: {userId: friendId, friendId: userId}},
+	// 		});
+	// 		return friendship;
+	// }
 
 
 	async removeFriend(userId: number, friendId: number) : Promise<any> {

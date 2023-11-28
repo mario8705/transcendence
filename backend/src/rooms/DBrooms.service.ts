@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 // import { User } from '../../users/model/user.model';
 // import { Room } from '../model/room.model'
 import { v4 as uuidv4 } from 'uuid';
@@ -20,6 +20,7 @@ export class RoomService {
 	constructor(
 		private readonly prismaService : PrismaClient,
 		private readonly messageService: MessagesService,
+		@Inject(forwardRef(() => SocketService))
 		private readonly socketService: SocketService
 		) {}
 

@@ -5,7 +5,7 @@ import { RoomController } from '../rooms/rooms.controller';
 import { MessagesService } from './messages.service';
 
 @Module({
-  providers: [MessagesService, UsersService], //PrismaClient
-//   controllers: [RoomController],
+  providers: [MessagesService], //PrismaClient
+  exports: [MessagesService]
 })
-export class RoomsModule {}
+export class MessagesModule {}
