@@ -5,7 +5,6 @@ import { ChatService } from './DBchat.service';
 import { RoomService } from '../rooms/DBrooms.service';
 import { MessagesService } from '../messages/messages.service'
 import { UsersService } from '../users_chat/DBusers.service';
-// import { User } from './users/model/user.model';
 
 
 @Controller("chat")
@@ -21,22 +20,13 @@ export class ChatController {
     ) {}
 
     /**
-	 * TODO: demander à max des précisions sur la route selon le type de channel
      * @returns list of channels the user can join
      */
     @Get('get-channels') // ne pas oublier les guards.
-    async getChannels() {
-        // les channels qui sont publics et dans lesquels il n'est pas déjà.
-		// const user = AuthGuard.caller; //c'est juste pour essayer
-        // return await this.prismaService.channel.findMany({
-        //  where: {
-		// 	 ChannelMembership: {
-		// 		userId: {
-		// 			not : user.id //of course récupérer le user du Guards
-		// 		}
-		// 	 },
-		// 	}
-        // });
+    async getChannels( 
+		@Body() userId: number
+	) {
+		return this.roomService.getPublicRooms(userId);
     }
 
 

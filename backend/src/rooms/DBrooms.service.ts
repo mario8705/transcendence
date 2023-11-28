@@ -276,4 +276,15 @@ export class RoomService {
 			where: {id: channelId}
 		});
 	}
+
+	async getPublicRooms(userId: number) : Promise<any> {
+		return await this.prismaService.channel.findMany({
+			where: {
+				accessMask: 1,
+				memberships : {
+					none: { userId: userId, },
+				},
+			},
+		});
+	}
 }

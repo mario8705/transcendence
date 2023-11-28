@@ -3,7 +3,6 @@ import { Socket } from 'socket.io';
 import { UsersService } from '../users_chat/DBusers.service';
 import { RoomService } from '../rooms/DBrooms.service';
 import { SocketGateway } from '../socket/socket.gateway'
-import { v4 as uuidv4 } from 'uuid';
 import { MessagesService } from '../messages/messages.service'
 import { ConversationsService } from '../conversations/conversations.service'
 import { PrismaClient } from '@prisma/client';
