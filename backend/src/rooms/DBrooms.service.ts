@@ -1,8 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-// import { User } from '../../users/model/user.model';
-// import { Room } from '../model/room.model'
 import { v4 as uuidv4 } from 'uuid';
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 import { MessagesService } from 'src/messages/messages.service';
 import { User } from 'src/users_chat/user.model';
 import { userInfo } from 'os';
@@ -18,9 +16,8 @@ export class RoomService {
 
 	
 	constructor(
-		private readonly prismaService : PrismaClient,
+		private readonly prismaService : PrismaService,
 		private readonly messageService: MessagesService,
-		// @Inject(forwardRef(() => SocketService))
 		private readonly socketService: SocketService
 		) {}
 

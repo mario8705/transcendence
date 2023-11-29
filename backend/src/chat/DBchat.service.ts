@@ -17,7 +17,6 @@ export class ChatService {
 	constructor(
 		private readonly usersService: UsersService,
 		private readonly roomService: RoomService,
-		private readonly socketGateway: SocketGateway,
 		private readonly messagesService: MessagesService,
 		private readonly conversationsService: ConversationsService,
 		private readonly socketService: SocketService,
@@ -132,7 +131,7 @@ export class ChatService {
 						return;
 					}
 					const newMsg = await this.messagesService.newChannelMessage(user.id, event.channelId, event.message);
-					this.socketGateway.sendChannelMessage(user.id, event.to, event.channelId, 'message', newMsg);
+					// this.socketGateway.sendChannelMessage(user.id, event.to, event.channelId, 'message', newMsg);
 					// this.socketGateway.server.to(room.id).emit('message', {from : user.pseudo, to: event.to, message: event.message});
 					return;
 				}
@@ -197,7 +196,7 @@ export class ChatService {
 				if (data.option.type === 'invite') {
 					const target = await this.usersService.getUserById(data.option.targetId);
 					if (target && !this.roomService.isUserinRoom(target.id, data.roomId)) {
-						this.socketGateway.server.to(target.id).emit('room', {type: 'invite', roomname: data.roomname});
+						// this.socketGateway.server.to(target.id).emit('room', {type: 'invite', roomname: data.roomname});
 					} 
 				}
 				if (this.roomService.isRoomAdmin(user, data.roomId)) {

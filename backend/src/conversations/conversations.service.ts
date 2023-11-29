@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { v4 as uuidv4 } from 'uuid';
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ConversationsService {
 
 	constructor(
-		private readonly prismaService: PrismaClient
+		private readonly prismaService: PrismaService
 	) {};
 
 	async conversationExists(userId: number, targetId: number) : Promise<any> {

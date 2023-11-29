@@ -4,13 +4,13 @@ import { UsersService } from 'src/users_chat/DBusers.service';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaClient } from '@prisma/client';
 import { RoomService} from '../rooms/DBrooms.service'
-import { User } from "src/users_chat/user.model";
+import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
 export class MessagesService {
 
 	constructor(
-		private readonly prismaService: PrismaClient
+		private readonly prismaService: PrismaService
 	) {};
 
 	async getMessagesfromChannel(userId: number, channelId: number): Promise<any> {

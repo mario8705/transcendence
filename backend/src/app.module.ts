@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ChatModule } from './chat/chat.module';
 // import { AuthModule } from './auth/auth.module';
 import { GameModule } from './game/game.module';
 import { SocketModule } from './socket/socket.module';
@@ -8,6 +9,7 @@ import { SocketModule } from './socket/socket.module';
   imports: [
 	GameModule, 
 	SocketModule,
+	ChatModule
 ], //AuthModule, TestModule
   controllers: [],
   providers: [],
