@@ -24,6 +24,7 @@ async function main() {
   //await prisma.$executeRaw`UPDATE sqlite_sequence SET seq = 0 WHERE name = 'Achievement';`;
     const user1 = await prisma.user.create({
       data: {
+        id: 1,
         pseudo: "User1",
         email: "user1@example.com",
         emailVerified: false,
