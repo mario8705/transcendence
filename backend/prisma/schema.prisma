@@ -76,14 +76,14 @@ model Blocked {
 }
 
 model GameParticipation {
-  @@id([userId, gameId])
+  id          Int     @id @default(autoincrement()) // TODO: @@id([userId, gameId])
 
-  opponentId    Int
+  opponentId Int
 
-  userId        Int
-  gameId        Int
-  user          User     @relation(fields: [userId], references: [id])
-  game          Game     @relation(fields: [gameId], references: [id])
+  userId      Int
+  gameId      Int
+  user        User    @relation(fields: [userId], references: [id])
+  game        Game    @relation(fields: [gameId], references: [id])
 }
 
 model Game {
@@ -91,8 +91,8 @@ model Game {
 
   createdAt          DateTime @default(now())
 
-  winnerScore         Int
-  looserScore         Int
+  score1              Int
+  score2              Int
   winnerId            Int
   looserId            Int
   gameParticipations  GameParticipation[]

@@ -21,9 +21,12 @@ export const router = createBrowserRouter([
         element: <Auth isCallbackUrl />,
     },
     {
-        path: '/',
         element: <AppLayout />,
         children: [
+            {
+                path: '/profile/:userId',
+                element: <Profile onRouteChange={() => void 0} />,
+            },
             {
                 path: '/friends',
                 element: <FriendList />,
@@ -41,7 +44,7 @@ export const router = createBrowserRouter([
                 element: <Chat />
             },
             {
-                path: '/pong',
+                path: '/',
                 element: <PlayPage />
             },
         ],
