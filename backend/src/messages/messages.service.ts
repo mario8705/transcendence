@@ -10,7 +10,6 @@ import { User } from "src/users_chat/user.model";
 export class MessagesService {
 
 	constructor(
-		private readonly roomService : RoomService,
 		private readonly prismaService: PrismaClient
 	) {};
 

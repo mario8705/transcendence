@@ -10,10 +10,16 @@ import {
 	WebSocketServer
 } from "@nestjs/websockets";
 import { GameService } from "src/game/game.service";
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
+import { Body, forwardRef, Inject, Injectable } from "@nestjs/common";
 import { ChatService } from "src/chat/DBchat.service";
 import { SocketService } from "./socket.service";
 import { RoomService } from "src/rooms/DBrooms.service";
+import { ChatChannelMessageEvent } from "src/events/chat/channelMessage.event";
+import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
+import { ChatPrivateMessageEvent } from "src/events/chat/privateMessage.event";
+import { ChatUserBlockEvent } from "src/events/chat/userBlock.event";
+import { ChatUserUnBlockEvent } from "src/events/chat/userUnBlock.event";
+import { ChatSendToClientEvent } from "src/events/chat/sendToClient.event";
 
 @WebSocketGateway({
 	cors: {
@@ -33,10 +39,8 @@ export class SocketGateway implements
 	server: Server;
 
 	constructor(
-		@Inject(forwardRef(() => ChatService))
-		private readonly chatService: ChatService,
 		private readonly socketService: SocketService,
-		private readonly roomService: RoomService
+		private readonly eventEmitter: EventEmitter2
 		) {}
 
 	afterInit() {
@@ -59,10 +63,11 @@ export class SocketGateway implements
 		
 	}
 
-	sendToClient = (userId: number, type: string, data: any) => {
-		const sockets = this.socketService.getSockets(userId);
+	@OnEvent('chat.sendtoclient')
+	sendToClient(event: ChatSendToClientEvent) {
+		const sockets = this.socketService.getSockets(event.userId);
 		sockets.map((sock) => {
-			this.server.to(sock.id).emit('info', {type: type, msg: data});
+			this.server.to(sock.id).emit('info', {type: event.type, msg: event.data});
 		});
 	}
 
@@ -78,32 +83,45 @@ export class SocketGateway implements
 	}
 
 	// CHAT EVENTS
-
-	@SubscribeMessage('user')
-	chatUser(
-		@MessageBody('') data : any, //ici il faut faire le truc de block
-		@ConnectedSocket()  client:Socket
-		) :void  {
-		// this.chatService.chatUser(client, data);
-	}
-
-	@SubscribeMessage('message')
-	// @UseGuards(AuthGuard)
-	chatMessage(
-		@MessageBody('') data: {curruser: any, type: string, to: string, channelId: number, message: string, options: string},
-		@ConnectedSocket() client : Socket
+	
+	@SubscribeMessage('blockuser')
+	handleBlockUser(
+		@MessageBody() data: {userId: number, targetId: number}
 	) {
-		this.chatService.chatMessage(client, data);
+		this.eventEmitter.emit('chat.blockuser', new ChatUserBlockEvent(data.userId, data.targetId));
 	}
 
-	@SubscribeMessage('room')
-	// @UseGuards(AuthGuard)
-	chatRoom(
-		@MessageBody('') data : {userId: number, type: string, roomname: string, roomId: number, option: any},
-		@ConnectedSocket()  client:Socket
+	@SubscribeMessage('unblockuser')
+	handleUnBlockUser(
+		@MessageBody() data: {userId: number, targetId: number}
 	) {
-		this.chatService.chatRoom(data);
+		this.eventEmitter.emit('chat.unblockuser', new ChatUserUnBlockEvent(data.userId, data.targetId));
 	}
+
+	@SubscribeMessage('privatemessage')
+	handlePrivateMessage(
+		@MessageBody('') data: {userId: number, type: string, to: string, channelId: number, message: string, options: string},
+		@ConnectedSocket() client : Socket 
+	) {
+		this.eventEmitter.emit('chat.privatemessage', new ChatPrivateMessageEvent(data.userId, data.type, data.to, data.channelId, data.message, data.options));
+	}
+
+	@SubscribeMessage('channelmessage')
+	handleChannelMessage(
+		@MessageBody('') data: {userId: number, type: string, to: string, channelId: number, message: string, options: string},
+		@ConnectedSocket() client : Socket 
+	) {
+		this.eventEmitter.emit('chat.channelmessage', new ChatChannelMessageEvent(data.userId, data.type, data.to, data.channelId, data.message, data.options));
+	}
+
+	// @SubscribeMessage('room')
+	// // @UseGuards(AuthGuard)
+	// chatRoom(
+	// 	@MessageBody('') data : {userId: number, type: string, roomname: string, roomId: number, option: any},
+	// 	@ConnectedSocket()  client:Socket
+	// ) {
+	// 	this.chatService.chatRoom(data);
+	// }
 
 
 	// @SubscribeMessage('friend')
@@ -113,13 +131,6 @@ export class SocketGateway implements
 	// 	@ConnectedSocket() client: Socket
 	// ) {
 	// 	this.chatService.chatFriend(client, data);
-	// }
-
-	// @SubscribeMessage('reset')
-	// resetAll(
-	// 	@ConnectedSocket() client: Socket
-	// ) {
-	// 		this.chatService.resetAll(client);
 	// }
 
 	@SubscribeMessage('handshake')

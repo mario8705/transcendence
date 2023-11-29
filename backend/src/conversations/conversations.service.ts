@@ -1,16 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { ChatService } from 'src/chat/DBchat.service';
-import { UsersService } from 'src/users_chat/DBusers.service';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaClient } from '@prisma/client';
-import { RoomService} from '../rooms/DBrooms.service'
-import { User } from "src/users_chat/user.model";
 
 @Injectable()
 export class ConversationsService {
 
 	constructor(
-		private readonly userService: UsersService,
 		private readonly prismaService: PrismaClient
 	) {};
 

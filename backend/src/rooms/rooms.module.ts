@@ -7,7 +7,7 @@ import { MessagesModule } from 'src/messages/messages.module';
 
 @Module({
 	exports: [RoomService],
-	imports: [SocketModule, PrismaModule, MessagesModule],
+	imports: [PrismaModule, MessagesModule],
 	providers: [RoomService],
 	controllers: [RoomController]
 })

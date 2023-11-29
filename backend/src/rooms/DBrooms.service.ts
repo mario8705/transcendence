@@ -20,7 +20,7 @@ export class RoomService {
 	constructor(
 		private readonly prismaService : PrismaClient,
 		private readonly messageService: MessagesService,
-		@Inject(forwardRef(() => SocketService))
+		// @Inject(forwardRef(() => SocketService))
 		private readonly socketService: SocketService
 		) {}
 

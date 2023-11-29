@@ -5,11 +5,12 @@ import { GameModule } from 'src/game/game.module';
 import { UsersModule } from 'src/users_chat/users.module';
 import { RoomsModule } from 'src/rooms/rooms.module';
 import { ChatModule } from 'src/chat/chat.module';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
-	providers: [SocketService, SocketGateway],
-	imports: [RoomsModule, ChatModule],
-	exports: [SocketService, SocketGateway]
+	providers: [SocketService],
+	imports: [PrismaModule],
+	exports: [SocketService]
 })
 
 export class SocketModule {}

@@ -8,6 +8,6 @@ import { UserController } from './users.constroller';
   providers: [UsersService],
   controllers: [UserController],
   exports: [UsersService],
-  imports: [SocketModule, PrismaModule]
+  imports: [PrismaModule, SocketModule]
 })
 export class UsersModule {}

@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
 import { SocketAddress } from 'net';
 import { Socket } from 'socket.io';
-import { UsersService } from 'src/users_chat/DBusers.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 interface connectedUsers {
 	userId: number,
@@ -13,8 +12,7 @@ interface connectedUsers {
 export class SocketService {
 	
 	constructor(
-		private readonly prismaService : PrismaClient,
-		private readonly usersService: UsersService 
+		private readonly prismaService : PrismaService,
 		) {}
 
 	connectedusers : connectedUsers[] = [];
