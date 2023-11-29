@@ -3,6 +3,7 @@ import { ApiProperty, ApiTags } from '@nestjs/swagger';
 import { IsEmail, IsEnum, IsNotEmpty, IsNumberString, IsString, Length } from 'class-validator';
 import { Request as ExpressRequest } from 'express';
 import { AuthService } from './auth.service';
+import { UserRegisterDto } from './dto/register.dto';
 import { TicketGuard } from './ticket.guard';
 import { TicketPayload } from './ticket.service';
 
@@ -62,6 +63,16 @@ export class SendVerificationMailDto {
 @UsePipes(new ValidationPipe({
     whitelist: true,
     forbidNonWhitelisted: true,
+    exceptionFactory(errors) {
+        return new BadRequestException({
+            errors: errors.reduce((errors, { property, constraints }) => ({
+                ...errors,
+                [property]: Object.values(constraints)[0],
+            }), {}),
+            statusCode: 400,
+            message: 'Invalid form fields',
+        });
+    },
 }))
 export class AuthController {
     constructor(private authService: AuthService) {}
@@ -97,25 +108,11 @@ export class AuthController {
         }
     }
 
-    // @UseGuards(TicketGuard)
-    // @Post('/mfa/email')
-    // async verifyEmail(@Body() { code }: VerifyEmailDto, @Request() req: ExpressRequest) {
-    //     try {
-    //         return await this.authService.verifyEmailCode(req.ticket!, parseInt(code, 10));
-    //     } catch {
-    //         throw new UnauthorizedException();
-    //     }
-    // }
-
-    // @UseGuards(TicketGuard)
-    // @Post('/mfa/email/send')
-    // async sendVerificationMail(@Body() {}: SendVerificationMailDto, @Request() req: ExpressRequest) {
-    //     try {
-    //         return await this.authService.sendEmailVerification(req.ticket!);
-    //     } catch {
-    //         throw new UnauthorizedException();
-    //     }
-    // }
+    @Post('/register')
+    /* TODO return 201 created */
+    async registerUser(@Body() payload: UserRegisterDto) {
+        return await this.authService.registerUser(payload);
+    }
 }
 
 declare global {

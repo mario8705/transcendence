@@ -1,13 +1,13 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import * as _ from 'lodash';
 import * as speakeasy from 'speakeasy';
 import { FortyTwoService } from 'src/ft/ft.service';
 import { MailService } from 'src/mail/mail.service';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UserRegisterDto } from './dto/register.dto';
 import { TicketPayload, TicketService } from './ticket.service';
 
 type Ticket = {
@@ -77,6 +77,15 @@ export class AuthService {
         return await this.loginUser(ftUser.user);
     }
 
+    private async signToken(user: User): Promise<Token> {
+        return {
+            token: await this.jwtService.signAsync({
+
+            }, { subject: `${user.id}` }),
+            type: 'bearer',
+        };
+    }
+
     private async loginUser(user: User): Promise<Ticket | Token> {
         const methods = [];
 
@@ -90,12 +99,7 @@ export class AuthService {
             };
         }
 
-        return {
-            token: await this.jwtService.signAsync({
-
-            }, { subject: `${user.id}` }),
-            type: 'bearer',
-        };
+        return await this.signToken(user);
     }
 
     async loginWithPassword(email: string, password: string): Promise<Ticket | Token> {
@@ -149,5 +153,44 @@ export class AuthService {
         }
 
         return await this.generateTokenFromTicket(ticket);
+    }
+
+    /**
+     * Registers a new user into the system.
+     * @param payload 
+     */
+    async registerUser({ username, email, password }: UserRegisterDto) {
+        try {
+            const user = await this.prismaService.user.create({
+                data: {
+                    email,
+                    pseudo: username,
+                    password: await bcrypt.hash(password, 10),
+                }
+            });
+
+            return await this.signToken(user);
+        } catch (e) {
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                if (e.code === 'P2002') {
+                    /* Unique constraint violation (likely an already existing username or email) */
+                    const { target } = e.meta;
+                    let fieldName = target as string;
+
+                    if (target === 'pseudo')
+                        fieldName = 'username';
+
+                    throw new BadRequestException({
+                        statusCode: 400,
+                        message: 'Invalid form fields',
+                        errors: {
+                            [fieldName]: `${fieldName} already exists`,
+                        }
+                    });
+                }
+            } else {
+                throw e;
+            }
+        }
     }
 }

@@ -7,6 +7,8 @@ import MainButton from '../MainButton/MainButton';
 import { useSnackbar } from 'notistack';
 import { AxiosError } from 'axios';
 import './LoginForm.scss';
+import { Input } from '../Form/Input';
+import { Link } from 'react-router-dom';
 
 type LoginFormProps = Pick<AuthReducerProps, 'dispatch'>;
 
@@ -72,29 +74,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ dispatch }) => {
 	return (
 		<form action="#" className="login-form" onSubmit={handleOnSubmit}>
 			<h2>Login</h2>
-			<div className="input-box">
-				<input
-					id="email"
-					name="email"
-					type="email"
-					autoComplete="email"
-					placeholder=""
-					required
-					/>
-				<label>Email</label>
-				<IoMailOutline className="icon" />
-			</div>
-			<div className="input-box">
-				<input
-					id="password"
-					name="password"
-					type="password"
-					placeholder=""
-					required
-					/>
-				<label>Password</label>
-				<IoLockClosedOutline className="icon" />
-			</div>
+			<Input
+				label="Email"
+				icon={<IoMailOutline />}
+				name="email"
+				type="email"
+				autoComplete="email"
+				required />
+			<Input
+				label="Password"
+				icon={<IoLockClosedOutline />}
+				name="password"
+				type="password"
+				autoComplete="email"
+				required />
 			<div className="remember-forgot">
 				<label className="checkbox">
 					<input type="checkbox" name="remember_me" />
@@ -106,7 +99,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ dispatch }) => {
 			<MainButton as="button" type="submit" buttonName="Login" loading={loginMutation.isLoading} />
 			<p className="or">or</p>
 			<MainButton as="a" href={authorizeUrl} buttonName="42 Account" />
-			<p>Don't have an account ? <a href="#" className="register-link">Register</a></p>
+			<p>
+				Don't have an account ? <Link to="/auth/register" className="register-link">Register</Link>
+			</p>
 		</form>
 	);
 };
