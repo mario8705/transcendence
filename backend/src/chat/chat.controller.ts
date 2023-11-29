@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Get, Req } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { AuthGuard } from 'src/auth/auth.guard';
+// import { AuthGuard } from 'src/auth/auth.guard';
 import { ChatService } from './DBchat.service';
 import { RoomService } from '../rooms/DBrooms.service';
 import { MessagesService } from '../messages/messages.service'
@@ -15,7 +15,7 @@ export class ChatController {
         private readonly chatService: ChatService,
 		private readonly userService: UsersService,
         private readonly roomService: RoomService,
-		private readonly authguard: AuthGuard,
+		// private readonly authguard: AuthGuard,
 		private readonly messagesService: MessagesService
     ) {}
 
@@ -31,9 +31,10 @@ export class ChatController {
 
 	@Post('join-channel')
 	async joinChannel(
-		@Body() data: {userId: number, type: string, roomname: string, roomId: number, option: any}
+		// @Body() data: {userId: number, type: string, roomname: string, roomId: number, option: any}
 	) {
-		return await this.chatService.chatRoom(data);
+		// return await this.chatService.chatRoom(data);
+		console.log('marche');
 	}
 
 	@Get('private-conv')
