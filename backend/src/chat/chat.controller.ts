@@ -1,22 +1,18 @@
 import { Controller, Post, Body, Get, Req } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-// import { AuthGuard } from 'src/auth/auth.guard';
 import { ChatService } from './DBchat.service';
 import { RoomService } from '../rooms/DBrooms.service';
 import { MessagesService } from '../messages/messages.service'
 import { UsersService } from '../users_chat/DBusers.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 
 @Controller("chat")
 export class ChatController {
 
     constructor(
-        private readonly prismaService: PrismaClient,
         private readonly chatService: ChatService,
-		private readonly userService: UsersService,
         private readonly roomService: RoomService,
-		// private readonly authguard: AuthGuard,
-		private readonly messagesService: MessagesService
     ) {}
 
     /**
@@ -39,9 +35,10 @@ export class ChatController {
 
 	@Get('private-conv')
 	async privateMessages(
-		@Body() data: {userId: number, targetId: number}
+		// @Body() data: {userId: number, targetId: number}
 	) {
-		return await this.chatService.getPrivateConversations(data.userId, data.targetId);
+		console.log('passe ici');
+		// return await this.chatService.getPrivateConversations(data.userId, data.targetId);
 	}
 
     // /**

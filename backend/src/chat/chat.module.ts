@@ -7,6 +7,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { ConversationsModule } from 'src/conversations/conversations.module';
 import { SocketModule } from 'src/socket/socket.module';
 import { EventEmitter2, EventEmitterModule } from '@nestjs/event-emitter';
+import { ChatController } from './chat.controller';
 
 @Module({
 	providers: [ChatService],
@@ -19,6 +20,7 @@ import { EventEmitter2, EventEmitterModule } from '@nestjs/event-emitter';
 		SocketModule,
 		EventEmitterModule.forRoot()
 	],
+	controllers: [ChatController],
 	exports: [ChatService]
 })
 export class ChatModule {}
