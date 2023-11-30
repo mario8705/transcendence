@@ -9,7 +9,6 @@ import {
 	WebSocketGateway,
 	WebSocketServer
 } from "@nestjs/websockets";
-import { GameService } from
 import { Body, forwardRef, Inject, Injectable } from "@nestjs/common";
 import { ChatService } from "src/chat/DBchat.service";
 import { SocketService } from "./socket.service";
@@ -26,7 +25,7 @@ import { GameCancelSearchEvent } from "src/events/game/cancelSearch.event";
 import { GameKeyUpEvent } from "src/events/game/keyUp.event";
 import { GameKeyDownEvent } from "src/events/game/keyDown.event";
 
-@Injectable(
+@Injectable()
 @WebSocketGateway({
 	cors: {
 		origin: ["http://localhost:5173"],
@@ -39,7 +38,6 @@ export class SocketGateway implements
 {
 
 	sockets: Socket[] = [];
-	gameHandler: GameService;
 	
 	@WebSocketServer()
 	server: Server;

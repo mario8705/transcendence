@@ -532,9 +532,9 @@ async function main() {
 	const id2 : string = uuidv4();
 	const id3: string= uuidv4();
     // CONVERSATIONS
-    const conv1 = await prisma.conversation.create({data: {socketId: id1}})
-    const conv2 = await prisma.conversation.create({data: {socketId: id2}})
-    const conv3 = await prisma.conversation.create({data: {socketId: id3}})
+    const conv1 = await prisma.conversation.create({data: {name: id1}})
+    const conv2 = await prisma.conversation.create({data: {name: id2}})
+    const conv3 = await prisma.conversation.create({data: {name: id3}})
 
 
     // PRIVATE MESSAGES

@@ -50,11 +50,11 @@ export class SocketService {
 		this.connectedusers = [];
 	}
 		
-	joinConversation(userId: number, destId: number, convSocketId: string) {
+	joinConversation(userId: number, destId: number, convName: string) {
 		this.connectedusers.map((user) => {
 			if(user.userId === userId ||user.userId === destId) {
 				user.sockets.map((sock) => {
-					sock.join(convSocketId);
+					sock.join(convName);
 				})
 			}
 		})

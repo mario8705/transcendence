@@ -112,6 +112,7 @@ model UserConversation {
 model Conversation {
 	id           Int      @id    @default(autoincrement())
 
+  name		   String	@unique
   messages     PrivateMessage[]
   users        UserConversation[]
 }

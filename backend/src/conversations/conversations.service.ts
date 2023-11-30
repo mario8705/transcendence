@@ -23,7 +23,7 @@ export class ConversationsService {
 		const id : string = uuidv4();
 		const conversation = await this.prismaService.conversation.create({
 			data: {
-				socketId : id
+				name : id
 			}
 		})
 		if(conversation) {
@@ -44,7 +44,7 @@ export class ConversationsService {
 		return conversation
 	}
 
-	async getConversationSocketId(userId: number, destId: number) : Promise<any> {
+	async getConversationName(userId: number, destId: number) : Promise<any> {
 		const user = await this.prismaService.user.findUnique({where : {id: userId}, include : {userConversations: true}});
 		let conversationId = undefined;
 		user.userConversations.map((conv) => {
