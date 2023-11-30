@@ -4,12 +4,13 @@ import { UsersService } from '../chat/users/services/users.service';
 import { SocketGateway } from './socket.gateway';
 import { RoomService } from '../chat/rooms/services/rooms.service'
 import { ChatService } from 'src/chat/chat.service';
-import { GameService } from 'src/game/game.service';
+import { GameModule } from 'src/game/game.module';
 
 @Module({
-	imports: [GameService],
-	providers: [ChatService, GameService, UsersService, RoomService, SocketGateway],
+	imports: [],
+	providers: [ChatService, UsersService, RoomService, SocketGateway],
 	controllers: [],
+	exports: [SocketGateway],
 })
 
 export class SocketModule {}
