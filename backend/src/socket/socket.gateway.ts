@@ -9,7 +9,7 @@ import {
 	WebSocketGateway,
 	WebSocketServer
 } from "@nestjs/websockets";
-import { GameService } from "src/game/game.service";
+import { GameService } from
 import { Body, forwardRef, Inject, Injectable } from "@nestjs/common";
 import { ChatService } from "src/chat/DBchat.service";
 import { SocketService } from "./socket.service";
@@ -20,7 +20,13 @@ import { ChatPrivateMessageEvent } from "src/events/chat/privateMessage.event";
 import { ChatUserBlockEvent } from "src/events/chat/userBlock.event";
 import { ChatUserUnBlockEvent } from "src/events/chat/userUnBlock.event";
 import { ChatSendToClientEvent } from "src/events/chat/sendToClient.event";
+import { ChatMessageEvent } from "src/events/chat/message.event";
+import { GameJoinRandomEvent } from "src/events/game/joinRandom.event";
+import { GameCancelSearchEvent } from "src/events/game/cancelSearch.event";
+import { GameKeyUpEvent } from "src/events/game/keyUp.event";
+import { GameKeyDownEvent } from "src/events/game/keyDown.event";
 
+@Injectable(
 @WebSocketGateway({
 	cors: {
 		origin: ["http://localhost:5173"],
@@ -44,8 +50,6 @@ export class SocketGateway implements
 		) {}
 
 	afterInit() {
-		this.gameHandler = new GameService(this.server);
-		this.gameHandler.tick();
 		console.log("Init socket Gateway")
 	}
 
@@ -145,24 +149,24 @@ export class SocketGateway implements
 	// GAME EVENTS
 
 	@SubscribeMessage("joinRandomNormal")
-	onRandomNormal(
+	onJoinRandomNormal(
 		@ConnectedSocket() socket: Socket)
 	{
-		this.gameHandler.joinRandomMatch(socket, 0);
+		this.eventEmitter.emit('game.joinRandom', new GameJoinRandomEvent(socket, 0));
 	}
 	
 	@SubscribeMessage("joinRandomSpecial")
 	onRandomSpecial(
 		@ConnectedSocket() socket: Socket)
 	{
-			this.gameHandler.joinRandomMatch(socket, 1);
+		this.eventEmitter.emit('game.joinRandom', new GameJoinRandomEvent(socket, 1));
 	}
 
 	@SubscribeMessage('cancelGameSearch')
 	onCancelSearch(
 		@ConnectedSocket() socket: Socket)
 	{
-		this.gameHandler.removeFromGame(socket);
+		this.eventEmitter.emit('game.cancelSearch', new GameCancelSearchEvent(socket));
 	}
 
 	@SubscribeMessage("keyUp")
@@ -170,7 +174,7 @@ export class SocketGateway implements
 		@ConnectedSocket() socket: Socket,
 		@MessageBody() key: string)
 	{
-		this.gameHandler.keyUp(socket.id, key);
+		this.eventEmitter.emit('game.keyUp', new GameKeyUpEvent(socket, key));
 	}
 
 	@SubscribeMessage("keyDown")
@@ -178,7 +182,7 @@ export class SocketGateway implements
 		@ConnectedSocket() socket: Socket,
 		@MessageBody() key: string)
 	{
-		this.gameHandler.keyDown(socket.id, key);
+		this.eventEmitter.emit('game.keyDown', new GameKeyDownEvent(socket, key));
 	}
 
 }

@@ -11,6 +11,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 	providers: [SocketService],
 	imports: [PrismaModule],
 	exports: [SocketService]
+  
 })
 
 export class SocketModule {}
