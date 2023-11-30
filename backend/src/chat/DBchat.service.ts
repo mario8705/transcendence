@@ -91,9 +91,9 @@ export class ChatService {
 				let conversation = await this.conversationsService.conversationExists(user.id, dest.id);
 				if (conversation === null) {
 					conversation = await this.conversationsService.createConversation(user.id, dest.id);
-					const convSocketId = await this.conversationsService.getConversationSocketId(user.id, dest.id);
-					if (convSocketId !== null && conversation !== null)
-						this.socketService.joinConversation(user.id, dest.id, convSocketId.socketId);
+					const convName = await this.conversationsService.getConversationName(user.id, dest.id);
+					if (convName !== null && conversation !== null)
+						this.socketService.joinConversation(user.id, dest.id, convName.name);
 					else {
 						this.eventEmitter.emit('chat.sendtoclient', new ChatSendToClientEvent(user.id, 'error', "The server failed to create this conversation, please try again later"));
 						// this.socketGateway.sendToClient(user.id, 'error', "The server failed to create this conversation, please try again later");

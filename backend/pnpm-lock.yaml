@@ -15,10 +15,11 @@ dependencies:
     specifier: ^3.1.1
     version: 3.1.1(@nestjs/common@10.2.7)(reflect-metadata@0.1.13)
   '@nestjs/core':
+    specifier: ^10.0.0
     version: 10.2.7(@nestjs/common@10.2.7)(@nestjs/platform-express@10.2.7)(@nestjs/websockets@10.2.7)(reflect-metadata@0.1.13)(rxjs@7.8.1)
   '@nestjs/event-emitter':
     specifier: ^2.0.3
-    version: 2.0.3(@nestjs/common@10.2.7)(@nestjs/core@10.2.7)(reflect-metadata@0.1.13
+    version: 2.0.3(@nestjs/common@10.2.7)(@nestjs/core@10.2.7)(reflect-metadata@0.1.13)
   '@nestjs/jwt':
     specifier: ^10.1.1
     version: 10.1.1(@nestjs/common@10.2.7)
@@ -1938,6 +1939,7 @@ packages:
   /ansi-regex@5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
     engines: {node: '>=8'}
+
   /ansi-regex@6.0.1:
     resolution: {integrity: sha512-n5M855fKb2SsfMIiFFoVrABHJC8QtHwVx+mHWP3QcEqBHYienj5dHSgjbxtC0WEZXYt4wcD6zrQElDPhFuZgfA==}
     engines: {node: '>=12'}
