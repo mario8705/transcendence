@@ -1,24 +1,20 @@
-import { Controller, Post, Body, Get, Req } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
-import { ChatService } from './DBchat.service';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { RoomService } from '../rooms/DBrooms.service';
-import { MessagesService } from '../messages/messages.service'
-import { UsersService } from '../users_chat/DBusers.service';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { ChatService } from './DBchat.service';
 
 
 @Controller("chat")
 export class ChatController {
 
     constructor(
-        private readonly chatService: ChatService,
         private readonly roomService: RoomService,
+		private readonly chatService: ChatService
     ) {}
 
     /**
      * @returns list of channels the user can join
      */
-    @Get('get-channels') // ne pas oublier les guards.
+    @Get('get-channels')
     async getChannels( 
 		@Body() userId: number
 	) {
@@ -27,18 +23,18 @@ export class ChatController {
 
 	@Post('join-channel')
 	async joinChannel(
-		// @Body() data: {userId: number, type: string, roomname: string, roomId: number, option: any}
+		@Body() data: {userId: number, type: string, roomname: string, roomId: number, option: any}
 	) {
-		// return await this.chatService.chatRoom(data);
-		console.log('marche');
+		console.log(await this.chatService.chatRoom(data));
+		return 'worked';
 	}
 
 	@Get('private-conv')
 	async privateMessages(
-		// @Body() data: {userId: number, targetId: number}
+		@Body() data: {userId: number, targetId: number}
 	) {
 		console.log('passe ici');
-		// return await this.chatService.getPrivateConversations(data.userId, data.targetId);
+		return await this.chatService.getPrivateConversations(data.userId, data.targetId);
 	}
 
     // /**

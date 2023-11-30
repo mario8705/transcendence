@@ -5,6 +5,7 @@ import { MessagesService } from 'src/messages/messages.service';
 import { User } from 'src/users_chat/user.model';
 import { userInfo } from 'os';
 import { SocketService } from 'src/socket/socket.service';
+import { Prisma } from '@prisma/client';
 
 // /**
 //  * TODO Mettre le masque des permissions quand création ou join de channel
@@ -57,18 +58,19 @@ export class RoomService {
 			const channel = await this.createRoom(roomname, userId, option);
 			if (channel !== undefined) {
 				const channelMembership = await this.prismaService.channelMembership.create({
-				data: {
-					channelName: roomname,
-					userId: userId,
-					channelId: channel,
-					permissionMask: 4
+					data: {
+						channelName: roomname,
+						userId: userId,
+						channelId: channel,
+						permissionMask: 4
 					}
 				});
 				return channelMembership;
 			}
 			return undefined;
 		}
-		else if (channelId !== undefined && this.prismaService.channelMembership.findUnique({where: {userId_channelId : {channelId : channelId, userId: userId}}}) === null) {
+		else if (channelId !== undefined) { // && this.prismaService.channelMembership.findUnique({where: {userId_channelId : {channelId : channelId, userId: userId}}}) === null
+			console.log('ici', userId, channelId);
 			const channel = await this.getRoom(channelId);
 			if (channel.accessMask !== 0) {
 					if (channel.accessMask == 2)
@@ -76,15 +78,21 @@ export class RoomService {
 					else if (channel.accessMask == 4 && option.value !== channel.password)
 						return; //error, pas le bon mot de passe
 			}
-			const channelMembership = this.prismaService.channelMembership.create({
+			try {
+				const channelMembership = await this.prismaService.channelMembership.create({
 				data: {
+					userId: userId, 
+					channelId: channelId,
 					channelName: roomname,
-					userId: userId,
-					channelId: channel.id,
 					permissionMask: 1
+					}
+				});
+				return channelMembership;
+			} catch (error) {
+				if (error instanceof Prisma.PrismaClientKnownRequestError) {
+					throw new Error('User is already a user in this channel');
 				}
-			});
-			return channelMembership;
+			}
 		}
 		else {
 			return 'already in the channel';
@@ -152,9 +160,13 @@ export class RoomService {
 	 * @returns list of channelMemberships and not users ?? And with the select ? 
 	 */
 	async getUsersfromRoom(channelId: number) : Promise<any> {
-		return await this.prismaService.channelMembership.findMany({
-			where: {channelId: channelId},
-			select: {userId: true}});
+		console.log(channelId);
+		const users = await this.prismaService.channelMembership.findMany({
+			where: {channelId: channelId}});
+		users.map((user) => {
+			console.log(user.userId);
+		});
+		return users;
 	}
 	
 	async getRooms() : Promise<any> {

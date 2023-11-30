@@ -142,38 +142,42 @@ export class ChatService {
 		// this.socketGateway.sendToClient(user.id, 'channel', msg)
 	}
 
-	async chatRoom( //! modifier cette fonction pour qu'elle renvoie par API et non pas par socket
+	async chatRoom(
 		// client: Socket,
 		data: {userId: number, type: string, roomname: string, roomId: number, option: any},
 	) {
-		const user = await this.usersService.getUserById(data.userId);
-		if (data.type === 'join') {
-			if (this.roomService.joinRoom(user.id, data.roomId, data.roomname, data.option)) {
-				this.socketService.joinChannel(user.id, data.roomname);
-				//TODO prévenir les autres qu'il est entré dans la room.
-				// this.socketGateway.server.to(data.roomname).emit('message', {from: 'server', to: 'moi', message: user.pseudo + ' has joined this room'});
-				// this.socketGateway.server.to('server').emit('roomupdate', {type: 'add', room: data.roomname});
-			}
-		} else if(data.type === 'exit') {
-			if (this.roomService.roomExists(data.roomId)){
-				if (this.roomService.isUserinRoom(user.id, data.roomId)) {
-					this.roomService.removeUserfromRoom(user.id, data.roomId);
-					this.socketService.leaveChannel(user.id, data.roomname);
-					//TODO prévenir les autres qu'il est parti.
-					// this.socketGateway.server.to(data.roomname).emit('message', {from: 'server', to: 'users', message: user.pseudo + ' has left this room'});
-				} else
-					this.eventEmitter.emit('chat.sendtoclient', new ChatSendToClientEvent(data.userId, 'channel', "You are not in this room"));
-					// this.socketGateway.sendToClient(user.id, 'channel', "You are not in this room");
-				} else this.eventEmitter.emit('chat.sendtoclient', new ChatSendToClientEvent(data.userId, 'channel', "This channel does not exsits"));
-			// this.socketGateway.sendToClient(user.id, 'channel', "This channel does not exsits");
-		} else if (data.type === 'invite') {
-			if (this.roomService.roomExists(data.roomId)) {
-				if (this.roomService.isUserinRoom(user.id, data.roomId)) {
-					if (this.roomService.isUserinRoom(data.option.target, data.roomId)) {
-						this.eventEmitter.emit('chat.sendtoclient', new ChatSendToClientEvent(data.userId, 'invite', data.option.target + ' is already in ' + data.roomname));
-						// this.socketGateway.sendToClient(user.id, 'invite', data.option.target + ' is already in ' + data.roomname);
-						return;
-					} else {
+		try {
+			const user = await this.usersService.getUserById(data.userId);
+			if (data.type === 'join') {
+				console.log('1', data.userId);
+				if (this.roomService.joinRoom(user.id, data.roomId, data.roomname, data.option)) {
+					const users = await this.roomService.getUsersfromRoom(data.roomId);
+					console.log("coucou" , users);
+					this.socketService.joinChannel(user.id, data.roomname);
+					//TODO prévenir les autres qu'il est entré dans la room.
+					// this.socketGateway.server.to(data.roomname).emit('message', {from: 'server', to: 'moi', message: user.pseudo + ' has joined this room'});
+					// this.socketGateway.server.to('server').emit('roomupdate', {type: 'add', room: data.roomname});
+				}
+				} else if(data.type === 'exit') {
+					if (this.roomService.roomExists(data.roomId)){
+						if (this.roomService.isUserinRoom(user.id, data.roomId)) {
+							this.roomService.removeUserfromRoom(user.id, data.roomId);
+							this.socketService.leaveChannel(user.id, data.roomname);
+							//TODO prévenir les autres qu'il est parti.
+							// this.socketGateway.server.to(data.roomname).emit('message', {from: 'server', to: 'users', message: user.pseudo + ' has left this room'});
+						} else
+							this.eventEmitter.emit('chat.sendtoclient', new ChatSendToClientEvent(data.userId, 'channel', "You are not in this room"));
+							// this.socketGateway.sendToClient(user.id, 'channel', "You are not in this room");
+					} else this.eventEmitter.emit('chat.sendtoclient', new ChatSendToClientEvent(data.userId, 'channel', "This channel does not exsits"));
+						// this.socketGateway.sendToClient(user.id, 'channel', "This channel does not exsits");
+				} else if (data.type === 'invite') {
+					if (this.roomService.roomExists(data.roomId)) {
+						if (this.roomService.isUserinRoom(user.id, data.roomId)) {
+							if (this.roomService.isUserinRoom(data.option.target, data.roomId)) {
+								this.eventEmitter.emit('chat.sendtoclient', new ChatSendToClientEvent(data.userId, 'invite', data.option.target + ' is already in ' + data.roomname));
+								// this.socketGateway.sendToClient(user.id, 'invite', data.option.target + ' is already in ' + data.roomname);
+								return;
+							} else {
 						if (await this.roomService.isBan(data.option.targetId, data.roomId) === true) {
 							this.eventEmitter.emit('chat.sendtoclient', new ChatSendToClientEvent(data.userId, 'ban', data.option.target + " is banned from " + data.roomname));
 							// this.socketGateway.sendToClient(user.id, 'ban', data.option.target + " is banned from " + data.roomname);
@@ -181,7 +185,7 @@ export class ChatService {
 						}
 						const membership = await this.roomService.joinByInvite(user.id, data.roomId, data.roomname);
 						if (membership === null) {
-								this.eventEmitter.emit('chat.sendtoclient', new ChatSendToClientEvent(data.userId, 'error', "Server error, please retry later"));
+							this.eventEmitter.emit('chat.sendtoclient', new ChatSendToClientEvent(data.userId, 'error', "Server error, please retry later"));
 							// this.socketGateway.sendToClient(user.id, "error", "Server error, please retry later");
 							return;
 						}
@@ -307,7 +311,12 @@ export class ChatService {
 				}
 			}
 			
+		}}
+		catch (error) {
+			console.log(error.message);
+			return "didn't work";
 		}
+	
 	}
 
 	async getPrivateConversations(
