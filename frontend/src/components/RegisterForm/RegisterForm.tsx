@@ -1,26 +1,108 @@
 import React from 'react';
-import './RegisterForm.css';
+import './RegisterForm.scss';
 import MainButton from '../MainButton/MainButton'
 import { IoMailOutline } from "react-icons/io5";
 import { IoLockClosedOutline } from "react-icons/io5";
 import { IoPawOutline } from "react-icons/io5";
 import { GiFireflake } from "react-icons/gi";
 import { HiOutlineUserCircle } from "react-icons/hi2";
+import { Stack } from '@mui/material';
+import { Input } from '../Form/Input';
+import { Link } from 'react-router-dom';
+import { Form, FormValidator } from '../Form/Form';
+import { useMutation } from 'react-query';
+import { registerUser } from '../../api';
+import { useSnackbar } from 'notistack';
+import { AxiosError } from 'axios';
+import { useAuthContext } from '../../contexts/AuthContext';
 
+const registerFormValidator: FormValidator = {
+	username(value: string) {
+		if (value.length < 3) {
+			throw new Error('Usernames must be at least 3 characters in length');
+		}
 
+		if (value.length > 32) {
+			throw new Error('Usernames must be less than 32 characters');
+		}
+	},
+	password(value: string, data: object) {
+		if (value !== data['password_confirm']) {
+			throw new Error('Passwords do not match');
+		}
+	},
+	password_confirm(value: string, data: object) {
+		if (value !== data['password']) {
+			throw new Error('Passwords do not match');
+		}
+	},
+	email(value: string) {
+
+	}
+};
 
 const RegisterForm: React.FC = () => {
+	const { enqueueSnackbar } = useSnackbar();
+	const [ formErrors, setFormErrors ] = React.useState<object>({});
+	const { authenticate } = useAuthContext();
+
+	const registerMutation = useMutation(registerUser, {
+		onSuccess(data, variables, context) {
+			if ('token' in data) {
+				/* TODO broken */
+				// authenticate(data['token']);
+			}
+
+			setFormErrors({});
+			/* TODO here we should login the user */
+		},
+		onError(error: AxiosError) {
+			if (error.response?.status === 400) {
+				const { errors } = (error.response.data as any);
+
+				if (typeof errors === 'object') {
+					setFormErrors(errors as object);
+					return ;
+				}
+			}
+
+			enqueueSnackbar({
+				message: `Could not register : ${error.message}`,
+				variant: 'error',
+				anchorOrigin: {
+					horizontal: 'center',
+					vertical: 'top',
+				},
+			});
+		},
+	});
+
+	const handleOnSubmit = React.useCallback((data: any) => {
+		registerMutation.mutate(data);
+	}, []);
+
 	return (
-		<div className="register-wrapper">
-			<div className="box-popup">
-				<form action="#">
+		<Stack direction="row" justifyContent="center">
+			<div className="auth-container register-form">
+				<Form validator={registerFormValidator} onSubmit={handleOnSubmit} errors={formErrors}>
 					<h2>Register</h2>
-					<div className="input-box">
-						<input type="text" required />
-						<label>Username</label>
-						<HiOutlineUserCircle className="icon"/>
-					</div>
-					<div className="input-box">
+					<Input
+						label="Username"
+						icon={<HiOutlineUserCircle />}
+						name="username"
+						autoComplete="off"
+						type="text"
+						required
+						/>
+					<Input
+						label="Email"
+						icon={<IoMailOutline />}
+						name="email"
+						type="email"
+						autoComplete="email"
+						required
+						/>
+					{/* <div className="input-box">
 						<select name="element" className="element">
 							<option value="fire">fire</option>
 							<option value="water">water</option>
@@ -29,48 +111,35 @@ const RegisterForm: React.FC = () => {
 						</select>
 						<label>Your favorite element:</label>
 						<GiFireflake className="icon"/>
-					</div>
-					<div className="input-box">
-						<label>Email</label>
-						<input
-						id="email"
-						name="email"
-						type="email"
-						autoComplete="email"
+					</div> */}
+					<Input
+						label="Password"
+						icon={<IoLockClosedOutline />}
+						name="password"
+						type="password"
 						required
 						/>
-						<IoMailOutline className="icon"/>
-					</div>
-					<div className="input-box">
-						<label>Password</label>
-						<input
-						id="password"
-						name="password"
+					<Input
+						label="Confirm Password"
+						icon={<IoPawOutline />}
+						name="password_confirm"
 						type="password"
-						required/>
-						<IoLockClosedOutline className="icon"/>
-					</div>
-					<div className="input-box">
-						<label>Confirm Password</label>
-						<input
-						id="password"
-						name="password"
-						type="password"
-						required/>
-						<IoPawOutline className="icon"/>
-					</div>
-					<div className="remember-forgot">
-						<input type="checkbox"/>I agree to the terms & conditions
-					</div>
-					<MainButton buttonName='Register'/>
-					<div className="input-box">
-						<p>or</p>
-					<MainButton buttonName='42 Account'/>
-					</div>
-					<p>Already have an account ? <a href="#" className="register-link">Login</a></p>
-				</form>
+						required
+						/>
+					<Stack direction="row" justifyContent="flex-start">
+						<div className="remember-forgot">
+							<input type="checkbox"/>I agree to the terms & conditions
+						</div>
+					</Stack>
+					<MainButton buttonName="Register" loading={registerMutation.isLoading} />
+					<p className="or">or</p>
+					<MainButton buttonName="42 Account" />
+					<p>
+						Already have an account ? <Link to="/auth/login">Login</Link>
+					</p>
+				</Form>
 			</div>
-		</div>
+		</Stack>
 	);
 };
 

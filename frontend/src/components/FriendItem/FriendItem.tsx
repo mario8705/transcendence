@@ -1,4 +1,3 @@
-import React, { useCallback, useState, useRef } from 'react';
 import './FriendItem.css';
 import MainButton from '../MainButton/MainButton'
 import AvatarOthers from '../AvatarOthers/AvatarOthers';
@@ -9,12 +8,90 @@ const FRIENDS = 2;
 const BLOCKED = 3;
 //0 sender   /1 receiver  /2 accepted /3 blocked
 
-interface Props {
-	friendName: string;
-	status: number;
+interface FriendElem {
+	status: number,
+	friend: {
+		id: number,
+		pseudo: string,
+	}
 }
 
-const FriendItem: React.FC<Props> = ({friendName, status}) => {
+interface Props {
+	userId: number;
+	friendName: string;
+	status: number;
+	friendId: number;
+	parentRerender: (data: FriendElem[] | null) => void;
+}
+
+const FriendItem: React.FC<Props> = ({userId, friendName, status, friendId, parentRerender}) => {
+
+	const handleUnblock = () => {
+		fetch(`http://localhost:3000/api/friends/${userId}/unblock/${friendId}`, {
+			method: 'POST',
+		})
+		.then(response => response.json())
+		.then(data => parentRerender(data))
+		.catch((error) => {
+			console.error('Error:', error);
+		});
+	}
+
+	const handleBlock = () => {
+		fetch(`http://localhost:3000/api/friends/${userId}/block/${friendId}`, {
+			method: 'POST',
+		})
+		.then(response => response.json())
+		.then(data => parentRerender(data))
+		.catch((error) => {
+			console.error('Error:', error);
+		});
+	}
+
+	const handleDelete = () => {
+		fetch(`http://localhost:3000/api/friends/${userId}/delete/${friendId}`, {
+			method: 'POST',
+		})
+		.then(response => response.json())
+		.then(data => parentRerender(data))
+		.catch((error) => {
+			console.error('Error:', error);
+		});
+	}
+
+	const handleCancel = () => {
+		fetch(`http://localhost:3000/api/friends/${userId}/cancel/${friendId}`, {
+			method: 'POST',
+		})
+		.then(response => response.json())
+		.then(data => parentRerender(data))
+		.catch((error) => {
+			console.error('Error:', error);
+		});
+	}
+
+
+	const handleAccept = () => {
+		fetch(`http://localhost:3000/api/friends/${userId}/accept/${friendId}`, {
+			method: 'POST',
+		})
+		.then(response => response.json())
+		.then(data => parentRerender(data))
+		.catch((error) => {
+			console.error('Error:', error);
+		});
+	}
+
+	const handleDecline = () => {
+		fetch(`http://localhost:3000/api/friends/${userId}/decline/${friendId}`, {
+			method: 'POST',
+		})
+		.then(response => response.json())
+		.then(data => parentRerender(data))
+		.catch((error) => {
+			console.error('Error:', error);
+		});
+	}
 
     if(status === FRIENDS)
 	{
@@ -24,11 +101,9 @@ const FriendItem: React.FC<Props> = ({friendName, status}) => {
 					<div className="input-box">
 						<AvatarOthers status='Online'/>
 						<p>{friendName}</p>
-						{/* <MainButton onClick={() => handleClick(PLAY_MODE)}>lol</MainButton> */}
-						{/* <MainButton buttonName='Play' mode={PLAY_MODE} onClick={handleClick} />*/}
 						<MainButton buttonName='Play' />
 						<MainButton buttonName='MSG' />
-						<MainButton buttonName='Block' />
+						<MainButton buttonName='Block' onClick={() => handleBlock()} />
 					</div>
 				</div>
 			</div>
@@ -42,8 +117,8 @@ const FriendItem: React.FC<Props> = ({friendName, status}) => {
 					<div className="input-box">
 						<AvatarOthers status='Offline'/>
 						<p>{friendName}</p>
-						<MainButton buttonName='Unblock' mode={FRIENDS} />
-						<MainButton buttonName='Delete' />
+						<MainButton buttonName='Unblock' onClick={() => handleUnblock()} />
+						<MainButton buttonName='Delete' onClick={() => handleDelete()} />
 					</div>
 				</div>
 			</div>
@@ -57,7 +132,7 @@ const FriendItem: React.FC<Props> = ({friendName, status}) => {
 					<div className="input-box">
 						<AvatarOthers status='Online'/>
 						<p>{friendName}</p>
-						<MainButton buttonName='Cancel' />
+						<MainButton buttonName='Cancel' onClick={() => handleCancel()} />
 					</div>
 				</div>
 			</div>
@@ -71,8 +146,8 @@ const FriendItem: React.FC<Props> = ({friendName, status}) => {
 					<div className="input-box">
 						<AvatarOthers status='Online'/>
 						<p>{friendName}</p>
-						<MainButton buttonName='Accept' />
-						<MainButton buttonName='Decline' />
+						<MainButton buttonName='Accept' onClick={() => handleAccept()} />
+						<MainButton buttonName='Decline'onClick={() => handleDecline()}  />
 					</div>
 				</div>
 			</div>
