@@ -30,7 +30,7 @@ jobs:
 
     - name: Build
       working-directory: frontend/
-      run: pnpm run build
+      run: pnpx vite build
 
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v3
