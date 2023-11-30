@@ -1,33 +1,23 @@
 import { Module } from '@nestjs/common';
-import { ChatModule } from './chat/chat.module';
 // import { AuthModule } from './auth/auth.module';
 import { GameModule } from './game/game.module';
+import { ChatModule } from './chat/chat.module';
 import { SocketModule } from './socket/socket.module';
-// import { TestModule } from './users/users.module';
+import { TestModule } from './users/users.module';
 
 @Module({
   imports: [
-	GameModule, 
-	SocketModule,
-	ChatModule
-], //AuthModule, TestModule
+    AuthModule,
+    GameModule,
+    SocketModule,
+	ChatModule,
+    ProfileModule,
+    FriendsModule,
+    TestModule,
+    PrismaModule,
+  ],
   controllers: [],
   providers: [],
 })
 
 export class AppModule {}
-
-// imports: [
-//     AuthModule,
-//     GameModule,
-//     SocketModule,
-//     UsersModule,
-//     RoomsModule,
-//     ProfileModule,
-//     FriendsModule,
-//     TestModule,
-//     PrismaModule,
-//   ],
-//   controllers: [],
-//   providers: [],
-// })

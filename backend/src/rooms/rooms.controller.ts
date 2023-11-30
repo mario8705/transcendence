@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Controller, Post, Body, Get } from '@nestjs/common';
 import { RoomService } from './DBrooms.service';
 

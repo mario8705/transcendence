@@ -1,5 +1,4 @@
 .chat-msgs {
-    /* border: 2px solid white; */
     height: 100%;
     width: 60%;
 }
@@ -12,6 +11,10 @@
     height: 10%;
     position: relative;
     background: linear-gradient(to right, #BF9CE8 10%, #FFEA95 100%) no-repeat;
+}
+
+.chat-msgs .small-box:last-child {
+    height: 15%;
 }
 
 .chat-msgs .small-box .nav-info {
@@ -33,6 +36,7 @@
 }
 
 .chat-msgs .chat-input {
+    font-family: "Short Stack";
     border: 2px solid white;
     border-radius: 20px;
     backdrop-filter: blur(20px);
@@ -75,7 +79,7 @@
     border: 2px solid white;
     padding: 10px 10px;
     overflow: hidden;
-    height: 80%;
+    height: 75%;
     overflow-y: scroll;
 }
 

@@ -1,12 +1,12 @@
-// import { Module } from "@nestjs/common";
-// import { UsersController } from "./users.controller";
-// import { JwtModule } from "@nestjs/jwt";
-// import { PrismaClient } from "@prisma/client";
+import { Module } from "@nestjs/common";
+import { UsersController } from "./users.controller";
+import { JwtModule } from "@nestjs/jwt";
+import { PrismaService } from 'src/prisma/prisma.service';
 
-// @Module({
-//     // providers: [ UsersService]
-//     providers: [ PrismaClient ],
-//     controllers: [ UsersController ],
-//     imports: [ JwtModule ]
-// })
-// export class TestModule {}
+@Module({
+    // providers: [ UsersService]
+    providers: [ PrismaService ],
+    controllers: [ UsersController ],
+    imports: [ JwtModule ]
+})
+export class TestModule {}

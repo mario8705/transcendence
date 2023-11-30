@@ -23,9 +23,15 @@ const AddChannel: React.FC = () => {
 				type="text" 
 				value={chanPwd} 
 				onChange={(event) => setChanPwd(event.target.value)}
-				placeholder="password" 
+				placeholder="password"
 			/>
 			<button type="submit" >ADD</button>
+			{/* <input type="checkbox" className="check"></input> */}
+			{/* <div>
+				<button type="submit" >ADD</button>
+				<input type="checkbox" id="check" className="scales" />
+				<label htmlFor="check">Create</label>
+			</div> */}
 		</form>
 	)
 }
@@ -37,7 +43,7 @@ interface channelsProp {
 const DisplayChannels: React.FC<channelsProp> = ({ channels }) => {
 	let listChannels = channels.map((channel) => 
 		<li key={ channel }>
-			<button>{ channel }</button>
+			<button className='channels-button'>{ channel }</button>
 		</li>
 	);
 
@@ -51,13 +57,16 @@ const DisplayChannels: React.FC<channelsProp> = ({ channels }) => {
 const ChatChannels: React.FC = () => {
 	
 
+	// const channels = ["General", "Gaming", "Coding chat lol", "test","General", "Gaming", "Coding chat lol", "test","General", "Gaming", "Coding chat lol", "test","General", "Gaming", "Coding chat lol", "test","General", "Gaming", "Coding chat lol", "test","General", "Gaming", "Coding chat lol", "test"]
 	const channels = ["General", "Gaming", "Coding chat lol"]
 
 	// Get list of subsribed channel for the current user
 
 	return (
 		<div className='chat-channels' >
-			<h3>Channels</h3>
+			<div className='title'>
+				<h3>Channels</h3>
+			</div>
 			{channels && <DisplayChannels channels={channels} />}
 			{!channels && <DisplayChannels channels={[]} />}
 			<AddChannel />

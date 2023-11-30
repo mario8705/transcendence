@@ -1,4 +1,7 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState, useContext } from 'react';
+import { useParams } from 'react-router-dom';
+import { LeaderContext } from '../../../contexts/LeaderContext';
+import { LeaderContextType } from '../Profile';
 import { 
     Table, 
     TableBody, 
@@ -12,26 +15,8 @@ import AvatarOthers from '../../AvatarOthers/AvatarOthers';
 
 import './Ladder.css';
 
-const Ladder: React.FC = () => {
-
-    function mockData(
-        rank: number,
-        pseudo: string,
-        wins: number,
-        losses: number,
-        status: string
-    ) {
-        return { rank, pseudo, wins, losses, status };
-    }
-    
-    const rows = [
-        mockData(1, 'ycurbill', 15, 0, 'Online'),
-        mockData(2, 'nul1', 9, 2, 'Add'),
-        mockData(3, 'nul2', 9, 3, 'Playing'),
-        mockData(4, 'nul3', 5, 1, 'Online'),
-        mockData(5, 'nul4', 4, 5, 'Offline'),
-        mockData(6, 'nul5', 4, 5, 'Add'),
-    ];
+const Ladder: React.FC = ({ currentPopup }) => {
+    // const { setSmallLeader, setGreatLeader } = useContext(LeaderContext) as LeaderContextType;
 
     interface CellStyle {
         color: string,
@@ -51,10 +36,61 @@ const Ladder: React.FC = () => {
         }
     };
 
+    type User = {
+        gameParticipation: never[]
+        avatar?: string
+        pseudo?: string
+        id?: number
+    };
+
     const tableBodyRef = useRef<HTMLTableSectionElement>(null);
     const firstRowRef = useRef<HTMLTableRowElement>(null);
+    const [ladder, setLadder] = useState<User[]>([]);
+    const { userId } = useParams();
+
+    const calculateWinsAndLosses = (data: User[]) => {
+        data.map(user => {
+            user.wins = 0;
+            user.losses = 0;
+
+            user.gameParticipation.forEach(game => {
+                if (game.game.winnerId === game.userId) {
+                    user.wins++;
+                } else {
+                    user.losses++;
+                }
+            });
+        })
+        return data;
+    };
+
+    const calculateRanking = (data: User[]) => {
+        const ranking =  data.sort((a, b) => {
+            if (a.wins > b.wins) {
+                return -1;
+            }
+            if (a.wins < b.wins) {
+                return 1;
+            }
+            return a.losses - b.losses;
+        });
+        // if (ranking.length >= 3 && ranking[0].id == userId) {
+        //     setSmallLeader(true);
+        // } else if (ranking.length >= 10 && ranking[0].id == userId) {
+        //     setGreatLeader(true);
+        // }
+        return ranking;
+    };
+
 
     useEffect(() => {
+        fetch(`http://localhost:3000/api/profile/${userId}/ladder`)
+            .then(response => response.json())
+            .then(data => {
+                setLadder(calculateRanking(calculateWinsAndLosses(data)));
+            }
+        );
+
         const currentDiv = tableBodyRef.current;
         const currentFirstRow = firstRowRef.current;
         const handleScroll = () => {
@@ -75,7 +111,7 @@ const Ladder: React.FC = () => {
                 currentDiv.removeEventListener("scroll", handleScroll);
             }
         };
-    }, []);
+    }, [userId]);
 
     return (
         <div className="ladder">
@@ -96,8 +132,8 @@ const Ladder: React.FC = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody id='table-body-l' ref={tableBodyRef}>
-                        {rows.map((row, index) => (
-                            <TableRow key={row.pseudo} id="row-body-l">
+                        {ladder.map((user, index) => (
+                            <TableRow key={user.id} id="row-body-l">
                                 <TableCell 
                                     sx={{ 
                                         borderBottom: '1px solid #F8A38B',
@@ -107,19 +143,19 @@ const Ladder: React.FC = () => {
                                         fontWeight: rankNumberStyles(index).fontWeight,
                                     }}
                                 >
-                                    {row.rank}
+                                    {index + 1}
                                 </TableCell>
                                 <TableCell id="cell-pseudo-l">
-                                    {row.pseudo}
+                                    {user.pseudo}
                                 </TableCell>
                                 <TableCell id="cell-wins-l">
-                                    {row.wins}
+                                    {user.wins}
                                 </TableCell>
                                 <TableCell id="cell-losses-l">
-                                    {row.losses}
+                                    {user.losses}
                                 </TableCell>
                                 <TableCell id="cell-avatar-l">
-                                    <AvatarOthers status={row.status}/>
+                                    <AvatarOthers status="Online"/>
                                 </TableCell>
                             </TableRow>
                         ))}
