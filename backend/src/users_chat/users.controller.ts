@@ -1,7 +1,5 @@
-/* eslint-disable prettier/prettier */
 import { Controller, Post, Body, Get } from '@nestjs/common';
-import { brotliDecompressSync } from 'zlib';
-import { UsersService } from './services/users.service';
+import { UsersService } from './DBusers.service';
 
 @Controller("users")
 export class UserController {

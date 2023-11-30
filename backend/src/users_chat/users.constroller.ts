@@ -1,5 +1,6 @@
+/* eslint-disable prettier/prettier */
 import { Controller, Post, Body, Get } from '@nestjs/common';
-import { UsersService } from './services/users.service';
+import { UsersService } from './DBusers.service';
 
 @Controller("users")
 export class UserController {
@@ -10,8 +11,6 @@ export class UserController {
 	getAllUsers() {
 		return this.userService.getUsers();
 	}
-
-	
 
 	
 	@Post("messages")

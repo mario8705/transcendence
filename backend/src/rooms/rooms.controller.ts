@@ -1,28 +1,27 @@
 /* eslint-disable prettier/prettier */
 import { Controller, Post, Body, Get } from '@nestjs/common';
-import { UsersService } from '../users/services/users.service';
-import { RoomService } from './services/rooms.service';
+import { RoomService } from './DBrooms.service';
 
 @Controller("room")
 export class RoomController {
 	constructor(private roomService: RoomService,
-				private usersService: UsersService) {}
+				) {}
 
 	@Get("allMessages")
 	GetMessages(
-		@Body('room') roomname: string
+		@Body('room') data : {name: string, id: number}
 		) {
-		const room = this.roomService.getRoom(roomname);
+		const room = this.roomService.getRoom(data.id);
 		//Aller chercher dans la database les messages de cette room pour pouvoir les display dans le front
 	}
 
 	@Get('allUsers')
 	getUsers(
-		@Body('room') roomname: string
+		@Body('room') data: {name: string, id: number}
 	) {
-		console.log(roomname);
-		console.log(this.roomService.getUsersfromRoom(roomname))
-		return this.roomService.getUsersfromRoom(roomname);
+		console.log(data.name);
+		console.log(this.roomService.getUsersfromRoom(data.id))
+		return this.roomService.getUsersfromRoom(data.id);
 	}
 	
 

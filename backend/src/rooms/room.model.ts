@@ -1,4 +1,4 @@
-import { User } from "../../users/model/user.model";
+import { User } from "../users_chat/user.model";
 
 export class Room {
 	id: string;

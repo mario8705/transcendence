@@ -1,4 +1,4 @@
-import { User } from "../../users/model/user.model";
+import { User } from "../users_chat/user.model";
 
 export class Message {
 	id: string;
@@ -12,5 +12,6 @@ export class Message {
 		this.id = id;
 		const date = new Date();
 		this.createdAt = date.getTime(); // mais le moment de l'envoi il va plutot falloir le récupérer du front non ? 
+		//a moins que ce soit par sockets et dans ce cas là c'est presque instantané? 
 	}
 }
