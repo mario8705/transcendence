@@ -13,6 +13,15 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Authenticate To Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v1
+      with:
+        token_type: access_token
+        workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+        service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+        access_token_lifetime: 300s
+
     - uses: pnpm/action-setup@v2
       with:
         version: 8
@@ -37,61 +46,3 @@ jobs:
       with:
         name: frontend-data
         path: frontend/dist
-        
-  build_backend:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - uses: pnpm/action-setup@v2
-      with:
-        version: 8
-
-    - name: Use Node.js 18.x
-      uses: actions/setup-node@v3
-      with:
-        cache: 'pnpm'
-        cache-dependency-path: backend/pnpm-lock.yaml
-        node-version: 18.x
-
-    - name: Install dependencies
-      working-directory: backend/
-      run: pnpm i --frozen-lockfile
-    
-    - name: Generate Prisma client schema
-      working-directory: backend
-      run: npx prisma generate
-
-    - name: Build
-      working-directory: backend/
-      run: pnpm run build
-
-    - name: Upload artifact for deployment job
-      uses: actions/upload-artifact@v3
-      with:
-        name: backend-data
-        path: backend/dist
-
-    - name: Authenticate To Google Cloud
-      id: auth
-      uses: google-github-actions/auth@v1
-      with:
-        token_type: access_token
-        workload_identity_provider: 'projects/799723412304/locations/global/workloadIdentityPools/github-gcr'
-        service_account: 'github-gcr-service-account@magnetic-lore-402317.iam.gserviceaccount.com'
-        access_token_lifetime: 300s
-
-    - name: Login to Artifact Registry
-      uses: docker/login-action@v1
-      with:
-        registry: europe-west9-docker.pkg.dev
-        username: oauth2accesstoken
-        password: ${{ steps.auth.outputs.access_token }}
-
-    - name: Build the Docker image
-      working-directory: backend/
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
