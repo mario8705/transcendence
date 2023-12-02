@@ -55,20 +55,21 @@ jobs:
         name: frontend-data
         path: frontend/dist
 
-    - id: 'deploy'
+    - name: Build, tag and push container
+      id: build-image
+      uses: docker/build-push-action@v3
+      with:
+        context: frontend/
+        push: true 
+        tags: |
+          europe-west9-docker.pkg.dev/magnetic-lore-402317/transcendence/frontend:${{ inputs.ref }}
+
+    - name: 'Deploy to Cloud Run'
+      id: 'deploy'
       uses: 'google-github-actions/deploy-cloudrun@v1'
       with:
-        service: 'hello-cloud-run'
-        image: 'gcr.io/cloudrun/hello'
+        service: 'transcendence-frontend'
+        image: europe-west9-docker.pkg.dev/magnetic-lore-402317/transcendence/frontend:${{ inputs.ref }}
 
     - name: 'Use output'
       run: 'curl "${{ steps.deploy.outputs.url }}"'
-
-      # - name: Build, tag and push container
-      #   id: build-image
-      #   uses: docker/build-push-action@v3
-      #   with:
-      #     context: ${{ vars.code_directory }}
-      #     push: true 
-      #     tags: |
-      #       ${{ vars.REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.ARTIFACT_REPO }}/${{ vars.SERVICE_NAME }}:${{ inputs.ref }}
