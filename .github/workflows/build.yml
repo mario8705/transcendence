@@ -62,14 +62,15 @@ jobs:
         context: frontend/
         push: true 
         tags: |
-          europe-west9-docker.pkg.dev/magnetic-lore-402317/transcendence/frontend:${{ inputs.ref }}
+          europe-west9-docker.pkg.dev/magnetic-lore-402317/transcendence/frontend:${{ github.sha }}
 
     - name: 'Deploy to Cloud Run'
       id: 'deploy'
       uses: 'google-github-actions/deploy-cloudrun@v1'
       with:
         service: 'transcendence-frontend'
-        image: europe-west9-docker.pkg.dev/magnetic-lore-402317/transcendence/frontend:${{ inputs.ref }}
+        image: europe-west9-docker.pkg.dev/magnetic-lore-402317/transcendence/frontend:${{ github.sha }}
+        
 
     - name: 'Use output'
       run: 'curl "${{ steps.deploy.outputs.url }}"'
